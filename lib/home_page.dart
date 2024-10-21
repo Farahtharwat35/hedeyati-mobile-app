@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hedeyati/app_bar.dart';
-import 'package:hedeyati/home_body.dart';
+import 'package:hedeyati/reusable_components/app_bar.dart';
+import 'package:hedeyati/home_page_body.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -13,8 +13,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const CustomAppBar(title: 'Hedeyati'),
+    return const Scaffold(
+      appBar: CustomAppBar(title: 'Hedeyati'),
       body: FriendsListWidget(),
     );
   }
