@@ -32,8 +32,9 @@ class EventsListPage extends StatefulWidget {
   _EventsListPageState createState() => _EventsListPageState(filter: filter);
 
   final String filter;
+  final String sortBy;
 
-  EventsListPage({Key? key, required this.filter}) : super(key: key);
+  EventsListPage({Key? key, required this.filter,this.sortBy=""}) : super(key: key);
 }
 
 class _EventsListPageState extends State<EventsListPage> {
@@ -42,6 +43,8 @@ class _EventsListPageState extends State<EventsListPage> {
   List<Event> past_events = [];
 
   var filter;
+  var sortBy = "";
+
 
   _EventsListPageState({required this.filter});
 
@@ -54,13 +57,28 @@ class _EventsListPageState extends State<EventsListPage> {
       owner: owner
     );
 
-    setState(() {
+
+
+    void sortEventsByName() {
+      upcoming_events.sort((a, b) => a.owner.compareTo(b.owner));
+      current_events.sort((a, b) => a.owner.compareTo(b.owner));
+      past_events.sort((a, b) => a.owner.compareTo(b.owner));
+    }
+
+    void filter_by_date() {
       if (newEvent.date.isAfter(DateTime.now())) {
         upcoming_events.add(newEvent);
       } else if (newEvent.date.isBefore(DateTime.now())) {
         past_events.add(newEvent);
       } else {
         current_events.add(newEvent);
+      }
+    }
+
+    setState(() {
+      filter_by_date();
+      if (sortBy == "name") {
+        sortEventsByName();
       }
     });
   }
