@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-List<String> users = List<String>.generate(10000, (i) => 'Contact $i');
+
+List<String> users = ["John", "Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Helen", "Ivy" , "Jack", "Kate", "Liam", "Mia", "Noah" , "Olivia", "Peter", "Quinn", "Rose", "Sam", "Tina", "Uma", "Victor", "Wendy", "Xander", "Yara", "Zane"];
 
 class FriendsListWidget extends StatefulWidget {
   const FriendsListWidget({super.key});
@@ -10,7 +11,7 @@ class FriendsListWidget extends StatefulWidget {
 }
 
 class _FriendsListState extends State<FriendsListWidget> {
-  Future<List<String>> future = Future.value(users); //moking
+  Future<List<String>> future = Future.value(users); // Mocking
 
   @override
   void initState() {
@@ -37,6 +38,9 @@ class _FriendsListState extends State<FriendsListWidget> {
                     );
                   },
                   child: ListTile(
+                    leading: CircleAvatar(
+                      child: Icon(Icons.person),
+                    ),
                     title: Text(snapshot.data![index]),
                   ),
                 );
@@ -52,24 +56,6 @@ class _FriendsListState extends State<FriendsListWidget> {
   }
 }
 
-class HomeBody extends StatelessWidget {
-  const HomeBody({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: users.length,
-      prototypeItem: ListTile(
-        title: Text(users.first),
-      ),
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(users[index]),
-        );
-      },
-    );
-  }
-}
 
 class DetailPage extends StatelessWidget {
   final String user;
@@ -88,8 +74,3 @@ class DetailPage extends StatelessWidget {
     );
   }
 }
-// @override
-// void initState(repository) {
-//   future = repository.fetchFriendsList();
-//   super.initState();
-// }
