@@ -1,8 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 
-
-
 // Event model
 class Event {
   final EventCategory Category;
@@ -28,10 +26,10 @@ enum EventCategory {
 }
 
 class EventsListPage extends StatefulWidget {
+  final String filter;
   @override
   _EventsListPageState createState() => _EventsListPageState(filter: filter);
 
-  final String filter;
   final String sortBy;
 
   EventsListPage({Key? key, required this.filter,this.sortBy=""}) : super(key: key);
@@ -41,6 +39,7 @@ class _EventsListPageState extends State<EventsListPage> {
   List<Event> upcoming_events = [];
   List<Event> current_events = [];
   List<Event> past_events = [];
+  List<String> names = ["John", "Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Helen", "Ivy" , "Jack", "Kate", "Liam", "Mia", "Noah" , "Olivia", "Peter", "Quinn", "Rose", "Sam", "Tina", "Uma", "Victor", "Wendy", "Xander", "Yara", "Zane"];
 
   var filter;
   var sortBy = "";
@@ -56,41 +55,46 @@ class _EventsListPageState extends State<EventsListPage> {
       Category: Category,
       owner: owner
     );
-
-
-
-    void sortEventsByName() {
-      upcoming_events.sort((a, b) => a.owner.compareTo(b.owner));
-      current_events.sort((a, b) => a.owner.compareTo(b.owner));
-      past_events.sort((a, b) => a.owner.compareTo(b.owner));
-    }
-
-    void filter_by_date() {
-      if (newEvent.date.isAfter(DateTime.now())) {
-        upcoming_events.add(newEvent);
-      } else if (newEvent.date.isBefore(DateTime.now())) {
-        past_events.add(newEvent);
-      } else {
-        current_events.add(newEvent);
-      }
-    }
-
     setState(() {
-      filter_by_date();
-      if (sortBy == "name") {
-        sortEventsByName();
-      }
+      filter_by_date(newEvent);
     });
   }
 
+   List<Event> sortEventsByName(events) {
+    events.sort((a, b) => a.owner.compareTo(b.owner));
+    return events;
+  }
+
+  List<Event> getEvents (events) {
+    if (filter == "upcoming") {
+      return upcoming_events;
+    }
+    else if (filter == "current") {
+      return current_events;
+    }
+    else if (filter == "past") {
+      return past_events;
+    }
+    else {
+      return events;
+    }
+  }
+
+  void filter_by_date(newEvent) {
+    if (newEvent.date.isAfter(DateTime.now())) {
+      upcoming_events.add(newEvent);
+    } else if (newEvent.date.isBefore(DateTime.now())) {
+      past_events.add(newEvent);
+    } else {
+      current_events.add(newEvent);
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-
-    // Create 15 sample events
     for (int i = 1; i <= 15; i++) {
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(Duration(milliseconds: 5), () {
         Random random = Random();
 
         // Generate a random integer between -5 and 5
@@ -102,7 +106,7 @@ class _EventsListPageState extends State<EventsListPage> {
           "https://images.squarespace-cdn.com/content/v1/60da576b8b440e12699c9263/1650354559198-U58EM4C8OL0QIVOW3CSN/Ovation.jpg?format=2500w",
           category,
           DateTime.now().add(Duration(days: randomDays)),
-          "Owner $i",
+          names[random.nextInt(names.length)],
         );
       });
     }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-List<String> users = List<String>.generate(10000, (i) => 'Contact $i');
+
+List<String> users = ["John", "Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Helen", "Ivy" , "Jack", "Kate", "Liam", "Mia", "Noah" , "Olivia", "Peter", "Quinn", "Rose", "Sam", "Tina", "Uma", "Victor", "Wendy", "Xander", "Yara", "Zane"];
 
 class FriendsListWidget extends StatefulWidget {
   const FriendsListWidget({super.key});
