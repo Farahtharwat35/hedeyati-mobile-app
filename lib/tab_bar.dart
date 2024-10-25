@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-
-import 'package:flutter/material.dart';
 import 'package:hedeyati/app_bar.dart';
-import 'package:hedeyati/app_theme.dart';
 import 'package:hedeyati/home_page.dart';
+import 'package:hedeyati/notifications_page.dart';
 
 
 class MyTabBar extends StatelessWidget {
@@ -17,11 +15,12 @@ class MyTabBar extends StatelessWidget {
       length: 3,
       child: Scaffold(
         appBar: CustomAppBar(title: 'Hedeyati'),
-        body: const TabBarView(
+        body: TabBarView(
           children: <Widget>[
             HomePage(),
             NestedTabBar('Trips'),
-            NestedTabBar('Explore'),
+            NotificationPage(),
+            // NestedTabBar('Explore'),
           ],
         ),
       ),
@@ -45,7 +44,7 @@ class _NestedTabBarState extends State<NestedTabBar>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -61,8 +60,9 @@ class _NestedTabBarState extends State<NestedTabBar>
         TabBar.secondary(
           controller: _tabController,
           tabs: const <Widget>[
-            Tab(text: 'Overview'),
-            Tab(text: 'Specifications'),
+            Tab(text: 'upcoming', icon: Icon(Icons.calendar_today)),
+            Tab(text: 'current', icon: Icon(Icons.calendar_view_day)),
+            Tab(text: 'past', icon: Icon(Icons.alarm_rounded)),
           ],
         ),
         Expanded(

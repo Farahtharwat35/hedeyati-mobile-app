@@ -73,8 +73,3 @@ class DetailPage extends StatelessWidget {
     );
   }
 }
-// @override
-// void initState(repository) {
-//   future = repository.fetchFriendsList();
-//   super.initState();
-// }
