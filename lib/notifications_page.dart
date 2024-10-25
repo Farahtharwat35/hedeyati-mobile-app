@@ -8,7 +8,6 @@ class Notification {
   final DateTime date;
   final String friendName;
   final String friendAvatar;
-  // New field for friend's avatar
 
   Notification({
     required this.title,
@@ -34,7 +33,7 @@ class _NotificationPageState extends State<NotificationPage> {
       description: friendName + description,
       date: DateTime.now(),
       friendName: friendName,
-      friendAvatar: friendAvatar, // Pass avatar URL or initials here
+      friendAvatar: friendAvatar,
     );
 
     setState(() {
@@ -76,7 +75,6 @@ class _NotificationPageState extends State<NotificationPage> {
           return ListTile(
             leading: CircleAvatar(
               backgroundImage: NetworkImage(notification.friendAvatar),
-              // If no URL, display initials instead
               child: notification.friendAvatar.isEmpty
                   ? Text(notification.title[0])
                   : null,
