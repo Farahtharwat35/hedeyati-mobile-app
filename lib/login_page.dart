@@ -32,9 +32,9 @@ class LoginPage extends StatelessWidget {
       children: [
         Text(
           "Welcome Back!",
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold , fontFamily: 'GreatVibes'),
         ),
-        Text("Enter your credentials to login"),
+        Text("Enter your credentials to login" , style: TextStyle(fontStyle: FontStyle.italic)),
       ],
     );
   }

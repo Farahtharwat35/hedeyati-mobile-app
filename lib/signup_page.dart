@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hedeyati/home_page.dart';
 import 'package:hedeyati/login_page.dart';
+import 'package:hedeyati/tab_bar.dart';
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
@@ -46,10 +47,11 @@ class SignupPage extends StatelessWidget {
         SizedBox(height: 60.0),
         Text(
           "Sign up",
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold , fontFamily: 'GreatVibes'),
         ),
         SizedBox(height: 10),
-        Text("Create your account"),
+        Text("Create your account" , style: TextStyle(fontStyle: FontStyle.italic)),
+        SizedBox(height:10)
       ],
     );
   }
@@ -120,7 +122,7 @@ class SignupPage extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => HomePage(title: "Hedeyati")),
+          MaterialPageRoute(builder: (context) => MyTabBar()),
         );
       },
       style: ElevatedButton.styleFrom(
@@ -135,22 +137,22 @@ class SignupPage extends StatelessWidget {
     );
   }
 
-  }
+}
 
-  Widget _loginPrompt(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Already have an account?"),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-          },
-          child: Text("Login", style: Theme.of(context).textTheme.bodyMedium),
-        ),
-      ],
-    );
-  }
+Widget _loginPrompt(BuildContext context) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      const Text("Already have an account?"),
+      TextButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        },
+        child: Text("Login", style: Theme.of(context).textTheme.bodyMedium),
+      ),
+    ],
+  );
+}
