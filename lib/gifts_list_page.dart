@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app_theme.dart';
+import 'package:hedeyati/gift_page.dart';
 
 
 
@@ -81,7 +82,7 @@ class _GiftsListPageState extends State<GiftsListPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => DetailPage(),
+              builder: (context) => GiftPage(),
             ),
           );
         },
