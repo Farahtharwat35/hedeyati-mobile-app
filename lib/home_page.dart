@@ -6,7 +6,6 @@ import 'package:hedeyati/home_page_body.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
-  // final String title;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,10 +17,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: const Column(
         children: [
           MySearchBar(),
-          Expanded(child: FriendsListWidget())
+          Expanded(child:
+          FriendsListWidget())
         ],
       ),
       floatingActionButton: SpeedDial(
@@ -29,13 +29,13 @@ class _HomePageState extends State<HomePage> {
         foregroundColor: myTheme.colorScheme.onPrimary,
         children: [
           SpeedDialChild(
-            child: Icon(Icons.person_add),
+            child: const Icon(Icons.person_add),
             label: 'Add Friend',
             onTap: () {
             },
           ),
           SpeedDialChild(
-            child: Icon(Icons.event),
+            child: const Icon(Icons.event),
             label: 'Add event',
             onTap: () {
             },

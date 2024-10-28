@@ -3,6 +3,8 @@ import 'package:intl/intl.dart'; // To format the date
 import 'package:hedeyati/app_theme.dart';
 
 class GiftPage extends StatefulWidget {
+  const GiftPage({super.key});
+
   @override
   _GiftPageState createState() => _GiftPageState();
 }
@@ -31,9 +33,9 @@ class _GiftPageState extends State<GiftPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Gift Details')),
-        titleTextStyle: Theme.of(context).textTheme.headlineMedium,
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        title: const Padding(
+            padding: EdgeInsets.fromLTRB(15, 0, 70, 0),
+            child: Center(child: Text('Gift Details'))),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -46,26 +48,26 @@ class _GiftPageState extends State<GiftPage> {
                 height: 200,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Center(
               child: Text(
                 'Gift Description',
                 style: myTheme.textTheme.headlineMedium,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Center(
               child: Text(
                 'This is a wonderful gift that you can pledge for your loved one.',
                 style: myTheme.textTheme.bodyMedium,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               'Price: \$49.99',
               style: myTheme.textTheme.bodyMedium,
             ),
-            Spacer(),
+            const Spacer(),
             Center(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -75,13 +77,14 @@ class _GiftPageState extends State<GiftPage> {
                 onPressed: isPledged ? null : () => _selectDate(context), // Disable button if pledged
                 child: Text(
                   isPledged ? 'Pledged on ${DateFormat('yyyy-MM-dd').format(selectedDate!)}' : 'Pledge',
-                  style: TextStyle(color: Colors.black, fontFamily: "Times New Roman"), // Ensure text is black for contrast
+                  style: const TextStyle(color: Colors.black, fontFamily: "Times New Roman"), // Ensure text is black for contrast
                 ),
               ),
             ),
           ],
         ),
       ),
+      backgroundColor: myTheme.colorScheme.secondary,
     );
   }
 }

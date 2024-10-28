@@ -1,7 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:hedeyati/app_theme.dart';
 
 
 List<String> users = ["John", "Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Helen", "Ivy" , "Jack", "Kate", "Liam", "Mia", "Noah" , "Olivia", "Peter", "Quinn", "Rose", "Sam", "Tina", "Uma", "Victor", "Wendy", "Xander", "Yara", "Zane"];
+List<int> numbers = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+
+int generate_random_number () {
+  return numbers[Random().nextInt(numbers.length)];
+}
 
 class FriendsListWidget extends StatefulWidget {
   const FriendsListWidget({super.key});
@@ -38,9 +46,17 @@ class _FriendsListState extends State<FriendsListWidget> {
                     );
                   },
                   child: ListTile(
-                    leading: CircleAvatar(
+                    leading: const CircleAvatar(
                       child: Icon(Icons.person),
                     ),
+                    trailing: (() {
+                      int x = generate_random_number();
+                      return x > 0 ?
+                      CircleAvatar(
+                        radius: 12,
+                        child: Text(numbers[Random().nextInt(numbers.length)].toString(), style: const TextStyle(fontSize: 12)),
+                      ) : null;
+                    })(),
                     title: Text(snapshot.data![index]),
                   ),
                 );
@@ -66,11 +82,15 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(user),
+        title: Padding(padding: const EdgeInsets.fromLTRB(15,0,70,0),
+          child: Center(child: Text(user)),
+        ),
+        titleTextStyle: myTheme.appBarTheme.titleTextStyle,
       ),
       body: Center(
         child: Text('Details for $user'),
       ),
+      backgroundColor: myTheme.colorScheme.secondary,
     );
   }
 }

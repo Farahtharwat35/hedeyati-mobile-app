@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hedeyati/home_page.dart';
 import 'package:hedeyati/login_page.dart';
 import 'package:hedeyati/tab_bar.dart';
 
@@ -75,14 +74,14 @@ class SignupPage extends StatelessWidget {
         const SizedBox(height: 10),
         TextField(
           decoration: InputDecoration(
-            hintText: "Email",
+            hintText: "Phone number",
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: BorderSide.none,
             ),
             fillColor: Colors.pink[100],
             filled: true,
-            prefixIcon: const Icon(Icons.email),
+            prefixIcon: const Icon(Icons.phone),
           ),
         ),
         const SizedBox(height: 10),
@@ -122,7 +121,7 @@ class SignupPage extends StatelessWidget {
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyTabBar()),
+          MaterialPageRoute(builder: (context) => const MyTabBar()),
         );
       },
       style: ElevatedButton.styleFrom(

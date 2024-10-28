@@ -5,7 +5,6 @@ import 'package:hedeyati/home_page.dart';
 import 'package:hedeyati/notifications_page.dart';
 import 'package:hedeyati/events_list_page.dart';
 import 'package:hedeyati/gifts_list_page.dart';
-
 import 'app_theme.dart';
 
 
@@ -15,7 +14,7 @@ class MyTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return const DefaultTabController(
       initialIndex: 0,
       length: 3,
       child: Scaffold(
@@ -34,7 +33,6 @@ class MyTabBar extends StatelessWidget {
 }
 
 class NestedTabBar extends StatefulWidget {
-
   const NestedTabBar(this.outerTab, {super.key});
 
   final String outerTab;
@@ -47,9 +45,9 @@ class _NestedTabBarState extends State<NestedTabBar>
     with TickerProviderStateMixin {
   late final TabController _tabController;
 
-  EventsListPage upcoming = EventsListPage(filter: 'upcoming');
-  EventsListPage current = EventsListPage(filter: 'current');
-  EventsListPage past = EventsListPage(filter: 'past');
+  EventsListPage upcoming = const EventsListPage(filter: 'upcoming');
+  EventsListPage current = const EventsListPage(filter: 'current');
+  EventsListPage past = const EventsListPage(filter: 'past');
 
   @override
   void initState() {
@@ -86,7 +84,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => GiftsListPage(), // You can pass the relevant event details here
+                        builder: (context) => const GiftsListPage(), // You can pass the relevant event details here
                       ),
                     );
                   },
@@ -100,7 +98,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => GiftsListPage(), // Pass relevant details
+                        builder: (context) => const GiftsListPage(), // Pass relevant details
                       ),
                     );
                   },
@@ -114,7 +112,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => GiftsListPage() // Pass relevant details
+                        builder: (context) => const GiftsListPage() // Pass relevant details
                       ),
                     );
                   },
@@ -132,7 +130,7 @@ class _NestedTabBarState extends State<NestedTabBar>
         foregroundColor: myTheme.colorScheme.onPrimary,
         children: [
           SpeedDialChild(
-            child: Icon(Icons.text_fields),
+            child: const Icon(Icons.text_fields),
             label: 'Name',
             onTap: () {
               setState(() {
@@ -140,7 +138,7 @@ class _NestedTabBarState extends State<NestedTabBar>
             },
           ),
           SpeedDialChild(
-            child: Icon(Icons.category),
+            child: const Icon(Icons.category),
             label: 'Category',
             onTap: () {
               // Update filter or sort settings here if needed

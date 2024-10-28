@@ -40,57 +40,60 @@ class LoginPage extends StatelessWidget {
   }
 
   _inputField(context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TextField(
-          decoration: InputDecoration(
-            hintText: "Username",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            decoration: InputDecoration(
+              hintText: "Username",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide.none,
+              ),
+              fillColor: Colors.pink[100],
+              filled: true,
+              prefixIcon: const Icon(Icons.person),
             ),
-            fillColor: Colors.pink[100],
-            filled: true,
-            prefixIcon: const Icon(Icons.person),
           ),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          decoration: InputDecoration(
-            hintText: "Password",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
+          const SizedBox(height: 10),
+          TextField(
+            decoration: InputDecoration(
+              hintText: "Password",
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(18),
+                borderSide: BorderSide.none,
+              ),
+              fillColor: Colors.pink[100],
+              filled: true,
+              prefixIcon: const Icon(Icons.password),
             ),
-            fillColor: Colors.pink[100],
-            filled: true,
-            prefixIcon: const Icon(Icons.password),
+            obscureText: true,
           ),
-          obscureText: true,
-        ),
-        const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            shape: const StadiumBorder(),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            backgroundColor: Theme.of(context).elevatedButtonTheme.style?.backgroundColor?.resolve({}) ?? Colors.pink,
-          ),
-          child: InkWell(
-            child: Text(
-              "Login",
-              style: Theme.of(context).textTheme.bodyMedium,
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              shape: const StadiumBorder(),
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              backgroundColor: Theme.of(context).elevatedButtonTheme.style?.backgroundColor?.resolve({}) ?? Colors.pink,
             ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-            },
+            child: InkWell(
+              child: Text(
+                "Login",
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginPage()),
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

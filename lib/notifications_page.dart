@@ -14,12 +14,14 @@ class Notification {
     required this.description,
     required this.date,
     required this.friendAvatar,
-    required this.friendName// Initialize avatar field
+    required this.friendName
   });
 }
 
 // NotificationPage widget
 class NotificationPage extends StatefulWidget {
+  const NotificationPage({super.key});
+
   @override
   _NotificationPageState createState() => _NotificationPageState();
 }
@@ -47,7 +49,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
     // Create 15 sample notifications
     for (int i = 1; i <= 15; i++) {
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         addNotification(
           "Gift Selected",
           " has selected a gift from your wishlist!",
@@ -63,8 +65,12 @@ class _NotificationPageState extends State<NotificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text("Activity")),
+        title: Padding(
+          padding: const EdgeInsets.fromLTRB(15,0,70,0),
+          child: const Center(child: Text("Activity")),
+        ),
         titleTextStyle: myTheme.textTheme.headlineMedium,
+        backgroundColor: Colors.white70,
       ),
       body: notifications.isEmpty
           ? Center(child: Text("No notifications yet!", style: myTheme.textTheme.headlineMedium))
@@ -83,7 +89,7 @@ class _NotificationPageState extends State<NotificationPage> {
             subtitle: Text(notification.description),
             trailing: Text(
               "${notification.date.hour}:${notification.date.minute}",
-              style: TextStyle(color: Colors.grey),
+              style: const TextStyle(color: Colors.grey),
             ),
           );
         },

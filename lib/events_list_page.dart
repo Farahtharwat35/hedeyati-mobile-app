@@ -32,7 +32,7 @@ class EventsListPage extends StatefulWidget {
 
   final String sortBy;
 
-  EventsListPage({Key? key, required this.filter,this.sortBy=""}) : super(key: key);
+  const EventsListPage({super.key, required this.filter,this.sortBy=""});
 }
 
 class _EventsListPageState extends State<EventsListPage> {
@@ -94,7 +94,7 @@ class _EventsListPageState extends State<EventsListPage> {
   void initState() {
     super.initState();
     for (int i = 1; i <= 15; i++) {
-      Future.delayed(Duration(milliseconds: 5), () {
+      Future.delayed(const Duration(milliseconds: 5), () {
         Random random = Random();
 
         // Generate a random integer between -5 and 5
@@ -138,14 +138,14 @@ class _EventsListPageState extends State<EventsListPage> {
               radius: 25,
             ),
             title: Text(event.description),
-            subtitle: Text(event.date.day.toString() + "/" + event.date.month.toString() + "/" + event.date.year.toString()),
+            subtitle: Text("${event.date.day}/${event.date.month}/${event.date.year}"),
             trailing: Column(
               children: [
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: Icon(Icons.edit),
+                      icon: const Icon(Icons.edit),
                       onPressed: () {
                         // Edit event Page
                       },
@@ -155,7 +155,7 @@ class _EventsListPageState extends State<EventsListPage> {
                         filteredEvents.removeAt(index);
                       });
                    }
-                       , icon: Icon(Icons.delete))
+                       , icon: const Icon(Icons.delete))
                   ],
                 )
               ],

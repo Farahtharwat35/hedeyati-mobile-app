@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hedeyati/login_page.dart';
-import 'package:hedeyati/tab_bar.dart';
 import 'package:hedeyati/app_theme.dart';
 
 void main() {
@@ -15,7 +14,7 @@ class Hedeyati extends StatelessWidget {
     return MaterialApp(
       title: 'Hedeyati',
       theme: myTheme,
-      home: LoginPage(),
+      home: const LoginPage(),
     );
   }
 }

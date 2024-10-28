@@ -23,7 +23,7 @@ List<String> gifts_names = ["car" , "sunglasses", "watch", "shoes", "bag", "jack
 class GiftsListPage extends StatefulWidget {
 
 
- const GiftsListPage({Key? key}) : super(key: key);
+ const GiftsListPage({super.key});
 
   @override
   _GiftsListPageState createState() => _GiftsListPageState();
@@ -48,12 +48,12 @@ class _GiftsListPageState extends State<GiftsListPage> {
   void initState() {
     super.initState();
     for (int i = 1; i <= 15; i++) {
-      Future.delayed(Duration(milliseconds: 5), () {
+      Future.delayed(const Duration(milliseconds: 5), () {
         Random random = Random();
         add(
           gifts_names[random.nextInt(gifts_names.length)],
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-          "https://img.freepik.com/free-photo/3d-render-blue-gift-box-with-ribbon-male-package_107791-16197.jpg?t=st=1729882225~exp=1729885825~hmac=46d8dc7b187a6f6c2f54a83998c82ef659c83dd324e5b903b35c44c7db4bd99c&w=1060"
+          "https://image.similarpng.com/very-thumbnail/2022/02/Geft-box-with-red-bow-isolated-on-transparent-background-PNG.png"
         );
       });
     }
@@ -62,9 +62,10 @@ class _GiftsListPageState extends State<GiftsListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text('Gifts List')),
-        titleTextStyle: myTheme.textTheme.headlineMedium,
-        backgroundColor: myTheme.colorScheme.primary,
+        title:  Padding(
+          padding: const EdgeInsets.fromLTRB(15,0,70,0),
+          child: const Center(child: Text("Gifts List")),
+        ),
       ),
       body: InkWell(
         child: ListView.builder(
@@ -72,7 +73,7 @@ class _GiftsListPageState extends State<GiftsListPage> {
           itemCount: gifts.length,
           itemBuilder: (context, index) {
             return ListTile(
-              title: Text("Gift ${index + 1}"),
+              title: Text("Gift ${index + 1}" , style: myTheme.textTheme.headlineMedium),
               leading: Image.network(gifts[index].imageUrl),
               trailing: Text(gifts[index].price),
             );
@@ -82,11 +83,12 @@ class _GiftsListPageState extends State<GiftsListPage> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => GiftPage(),
+              builder: (context) => const GiftPage(),
             ),
           );
         },
       ),
+      backgroundColor: myTheme.colorScheme.secondary,
     );
   }
 }
@@ -98,9 +100,9 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gift details'),
+        title: const Text('Gift details'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'),
       ),
     );
