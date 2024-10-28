@@ -5,6 +5,7 @@ import 'package:hedeyati/home_page.dart';
 import 'package:hedeyati/notifications_page.dart';
 import 'package:hedeyati/events_list_page.dart';
 import 'package:hedeyati/gifts_list_page.dart';
+import 'package:hedeyati/tab_bar_friendslist.dart';
 import 'app_theme.dart';
 
 
@@ -84,7 +85,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const GiftsListPage(), // You can pass the relevant event details here
+                        builder: (context) => const MyTabBarFriendList(), // You can pass the relevant event details here
                       ),
                     );
                   },
@@ -98,7 +99,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const GiftsListPage(), // Pass relevant details
+                        builder: (context) => const MyTabBarFriendList(), // Pass relevant details
                       ),
                     );
                   },
@@ -112,7 +113,7 @@ class _NestedTabBarState extends State<NestedTabBar>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const GiftsListPage() // Pass relevant details
+                        builder: (context) => const MyTabBarFriendList() // Pass relevant details
                       ),
                     );
                   },

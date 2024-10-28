@@ -2,21 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app_theme.dart';
 import 'package:hedeyati/gift_page.dart';
-
-
-
-class Gift {
-  final String description;
-  final String imageUrl;
-  final String price;
-  final isPledged = false;
-
-  Gift({
-    required this.description,
-    required this.imageUrl,
-    required this.price,
-  });
-}
+import 'package:hedeyati/models/gift.dart';
 
 List<String> gifts_names = ["car" , "sunglasses", "watch", "shoes", "bag", "jacket", "dress", "shirt", "pants", "hat", "gloves", "scarf", "socks", "shoes", "boots", "sneakers", "heels", "flats", "sandals", "slippers", "shorts", "skirt", "suit", "tie", "belt", "wallet", "backpack", "earrings", "necklace", "bracelet", "ring", "cufflinks", "brooch", "hairpin", "hairband", "hairclip", "hairtie", "headband", "headscarf", "headwrap", "headpiece", "headwear", "headgear", "headphones", "earmuffs", "earplugs", "earcuffs", "earcrawlers", "earstuds", "earhoops", "earjackets", "earchains", "earpendants", "earthreaders", "earwraps", "earhuggies", "earclimbers", "earhooks", "eardangles", "eardrops", "earstuds", "earcrawlers", "earstuds", "earhoops", "earjackets", "earchains", "earpendants", "earthreaders", "earwraps", "earhuggies", "earclimbers", "earhooks", "eardangles", "eardrops", "earstuds", "earcrawlers", "earstuds", "earhoops", "earjackets", "earchains", "earpendants", "earthreaders", "earwraps", "earhuggies", "earclimbers", "earhooks", "eardangles", "eardrops", "earstuds", "earcrawlers", "earstuds", "earhoops", "earjackets", "earchains", "earpendants", "earthreaders", "earwraps", "earhuggies", "earclimbers", "earhooks", "eardangles", "eardrops", "earstuds", "earcrawlers", "earstuds", "earhoops", "earjackets", "earchains", "earpendants", "earthreaders", "earwraps", "earhuggies", "earclimbers", "earhooks", "eardangles", "eardrops", "earstuds", "earcrawlers", "earstuds", "earhoops", "earjackets", "earchains", "earpendants", "earthreaders", "earwraps", "earhuggies", "earclimbers", "earhooks", "eardangles", "eardrops", "earstuds", "earcrawlers", "earstuds", "earhoops", "earjackets", "earchains", "earpendants", "earthreaders", "earwraps", "earhuggies", "earclimbers", "earhooks", "eardangles", "eardrops", "earstuds", "earcrawlers", "earstuds", "earhoops", "earjackets", "earchains", "earpendants", "earthreaders", "earwraps", "earhuggies", "earclimbers", "earhooks", "eardangles", "eardrops", "ear"];
 
@@ -32,6 +18,7 @@ class GiftsListPage extends StatefulWidget {
 class _GiftsListPageState extends State<GiftsListPage> {
 
   List<Gift> gifts = [];
+
 
   void add(String name, String description ,String imageUrl) {
     final newGift = Gift(
@@ -61,12 +48,6 @@ class _GiftsListPageState extends State<GiftsListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title:  Padding(
-          padding: const EdgeInsets.fromLTRB(15,0,70,0),
-          child: const Center(child: Text("Gifts List")),
-        ),
-      ),
       body: InkWell(
         child: ListView.builder(
           padding: const EdgeInsets.fromLTRB(0,20, 0, 0),
@@ -76,17 +57,17 @@ class _GiftsListPageState extends State<GiftsListPage> {
               title: Text("Gift ${index + 1}" , style: myTheme.textTheme.headlineMedium),
               leading: Image.network(gifts[index].imageUrl),
               trailing: Text(gifts[index].price),
+              onTap: () async {
+                await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => GiftPage(giftIdx: index),
+                  ),
+                );
+              },
             );
           },
         ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const GiftPage(),
-            ),
-          );
-        },
       ),
       backgroundColor: myTheme.colorScheme.secondary,
     );

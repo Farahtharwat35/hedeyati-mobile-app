@@ -3,7 +3,8 @@ import 'package:intl/intl.dart'; // To format the date
 import 'package:hedeyati/app_theme.dart';
 
 class GiftPage extends StatefulWidget {
-  const GiftPage({super.key});
+  late int giftIdx;
+  GiftPage({super.key, required this.giftIdx});
 
   @override
   _GiftPageState createState() => _GiftPageState();
