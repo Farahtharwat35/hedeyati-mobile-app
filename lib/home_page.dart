@@ -3,6 +3,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hedeyati/app_theme.dart';
 import 'package:hedeyati/search_bar.dart';
 import 'package:hedeyati/home_page_body.dart';
+import 'package:hedeyati/add_friend.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,6 +33,7 @@ class _HomePageState extends State<HomePage> {
             child: const Icon(Icons.person_add),
             label: 'Add Friend',
             onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => AddFriendPage()));
             },
           ),
           SpeedDialChild(
