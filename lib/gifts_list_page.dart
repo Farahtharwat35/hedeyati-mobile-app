@@ -22,6 +22,7 @@ class _GiftsListPageState extends State<GiftsListPage> {
 
   void add(String name, String description ,String imageUrl) {
     final newGift = Gift(
+        id: Random().nextInt(1000),
         description: description,
         imageUrl: imageUrl,
         price: "100 EGP",

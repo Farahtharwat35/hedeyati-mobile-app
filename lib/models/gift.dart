@@ -1,12 +1,7 @@
-import 'package:sqflite/sqflite.dart';
-import 'dart:async';
-import 'package:flutter/widgets.dart';
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
-
 class Gift {
   final int id;
-  String description ;
+  String description;
+
   String imageUrl;
   String price;
   bool isPledged;
@@ -18,3 +13,22 @@ class Gift {
     required this.price,
     this.isPledged = false,
   });
+  factory Gift.fromJson(Map<String, dynamic> json) {
+    return Gift(
+      id: json['id'],
+      description: json['description'],
+      imageUrl: json['imageUrl'],
+      price: json['price'],
+      isPledged: json['isPledged'],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'description': description,
+      'imageUrl': imageUrl,
+      'price': price,
+      'isPledged': isPledged,
+    };
+  }
+}
