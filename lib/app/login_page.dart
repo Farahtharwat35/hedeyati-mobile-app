@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hedeyati/signup_page.dart';
+import 'package:hedeyati/app/signup_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
