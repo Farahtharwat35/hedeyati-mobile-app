@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hedeyati/login_page.dart';
+import 'package:hedeyati/app/login_page.dart';
 import 'package:hedeyati/app_theme.dart';
 
 void main() {

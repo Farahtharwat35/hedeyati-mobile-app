@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:hedeyati/reusable_components//app_bar.dart';
-import 'package:hedeyati/home_page.dart';
+import 'package:hedeyati/app/reusable_components/app_bar.dart';
+import 'package:hedeyati/app/home_page.dart';
 import 'package:hedeyati/notifications_page.dart';
 import 'package:hedeyati/events_list_page.dart';
-import 'package:hedeyati/gifts_list_page.dart';
 import 'package:hedeyati/tab_bar_friendslist.dart';
 import 'app_theme.dart';
 

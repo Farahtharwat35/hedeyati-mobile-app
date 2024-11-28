@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hedeyati/login_page.dart';
-import 'package:hedeyati/tab_bar.dart';
+
+import '../app_theme.dart';
+
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});

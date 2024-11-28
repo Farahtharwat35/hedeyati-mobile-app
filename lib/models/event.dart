@@ -1,39 +1,41 @@
+// Event Class
 class Event {
-  final String title;
-  final String description;
-  final String date;
-  final String time;
-  final String location;
-  final String image;
+  final int? id;
+  final String name;
+  final String? description;
+  final int categoryID;
+  final DateTime startDate;
+  final DateTime? endDate;
+  final int status;
+  final int createdBy;
+  final DateTime createdAt;
+  final DateTime? deletedAt;
 
   Event({
-    required this.title,
-    required this.description,
-    required this.date,
-    required this.time,
-    required this.location,
-    required this.image,
-  });
+    this.id,
+    required this.name,
+    this.description,
+    required this.categoryID,
+    required this.startDate,
+    this.endDate,
+    required this.status,
+    required this.createdBy,
+    DateTime? createdAt,
+    this.deletedAt,
+  }) : createdAt = createdAt ?? DateTime.now();
 
-  factory Event.fromJson(Map<String, dynamic> json) {
-    return Event(
-      title: json['title'],
-      description: json['description'],
-      date: json['date'],
-      time: json['time'],
-      location: json['location'],
-      image: json['image'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toMap() {
     return {
-      'title': title,
+      'id': id,
+      'name': name,
       'description': description,
-      'date': date,
-      'time': time,
-      'location': location,
-      'image': image,
+      'categoryID': categoryID,
+      'start_date': startDate.toIso8601String(),
+      'end_date': endDate?.toIso8601String(),
+      'status': status,
+      'created_by': createdBy,
+      'created_at': createdAt.toIso8601String(),
+      'deleted_at': deletedAt?.toIso8601String(),
     };
   }
 }
