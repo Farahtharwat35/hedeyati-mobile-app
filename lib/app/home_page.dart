@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:hedeyati/app/home_page_body.dart';
-import 'package:hedeyati/app_theme.dart';
-import 'package:hedeyati/search_bar.dart';
-import 'package:hedeyati/add_friend.dart';
-
+import '../add_friend.dart';
+import '../search_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

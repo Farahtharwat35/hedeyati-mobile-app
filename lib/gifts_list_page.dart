@@ -21,10 +21,10 @@ class _GiftsListPageState extends State<GiftsListPage> {
 
 
   void add(String name, String description ,String imageUrl) {
-    final newGift = Gift(
-        description: description,
-        imageUrl: imageUrl,
-        price: "100 EGP",
+    var newGift = Gift(
+      description: description,
+      imageUrl: imageUrl,
+      price: "100 EGP",
     );
     gifts.add(newGift);
     setState(() {
