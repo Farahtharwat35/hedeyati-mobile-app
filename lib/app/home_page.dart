@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:hedeyati/app/reusable_components/app_theme.dart';
+import 'package:hedeyati/app_theme.dart';
 import 'package:hedeyati/app/home_page_body.dart';
 import '../add_friend.dart';
 import '../search_bar.dart';
