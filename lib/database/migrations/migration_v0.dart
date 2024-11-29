@@ -89,6 +89,36 @@ class MigrationV0 implements Migration {
         status TEXT NOT NULL
       );
     ''');
+
+    // Insert initial data //
+
+    batch.execute('''
+  INSERT INTO GiftCategory (name) VALUES
+  ('Electronics'), 
+  ('Clothing'), 
+  ('Books');
+''');
+
+    batch.execute('''
+  INSERT INTO EventCategory (name) VALUES
+  ('Birthday'), 
+  ('Anniversary'), 
+  ('Graduation');
+''');
+
+    batch.execute('''
+  INSERT INTO EventStatus (status) VALUES
+  ('Upcoming'), 
+  ('Ongoing'), 
+  ('Completed');
+''');
+
+    batch.execute('''
+  INSERT INTO FriendshipStatus (status) VALUES
+  ('Pending'), 
+  ('Accepted'), 
+  ('Blocked');
+''');
   }
 
   @override

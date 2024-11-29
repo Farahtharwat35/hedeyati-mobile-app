@@ -1,19 +1,19 @@
-import 'package:hedeyati/models/gift.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class GiftState {}
-
-class GiftInitialState extends GiftState {}
-
-class GiftLoadingState extends GiftState {}
-
-class GiftLoadedState extends GiftState {
-  final List<Gift> gifts;
-
-  GiftLoadedState(this.gifts);
+abstract class GiftState extends Equatable {
+  @override
+  List<Object?> get props => [];
 }
 
-class GiftErrorState extends GiftState {
-  final String error;
+class GiftInitial extends GiftState {}
 
-  GiftErrorState(this.error);
+class GiftsLoading extends GiftState {}
+
+class GiftsLoaded extends GiftState {
+  final List<dynamic> gifts;
+
+  GiftsLoaded({required this.gifts});
+
+  @override
+  List<Object?> get props => [gifts];
 }

@@ -7,7 +7,7 @@ import 'package:hedeyati/database/sqlite_migration_factory.dart';
 
 class SqliteConnectionFactory {
   static const _version = 1;
-  static const _databaseName = 'TODO_LIST_PROVIDER';
+  static const _databaseName = 'Hedeyaty.db';
 
   static SqliteConnectionFactory? _instance;
 
