@@ -1,3 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:json_annotation/json_annotation.dart';
+
+part 'event.g.dart';
+
+@JsonSerializable()
 // Event Class
 class Event {
   final int? id;
@@ -24,18 +30,15 @@ class Event {
     this.deletedAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'categoryID': categoryID,
-      'start_date': startDate.toIso8601String(),
-      'end_date': endDate?.toIso8601String(),
-      'status': status,
-      'created_by': createdBy,
-      'created_at': createdAt.toIso8601String(),
-      'deleted_at': deletedAt?.toIso8601String(),
-    };
+
+  factory Event.fromJson(Map<String, dynamic> json) =>
+      _$EventFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EventToJson(this);
+
+  static get instance => FirebaseFirestore.instance.collection('events').withConverter<Event>(
+    fromFirestore: (snapshot, _) => Event.fromJson(snapshot.data()!),
+    toFirestore: (movie, _) => _$EventToJson(movie),
+  );
+
   }
-}

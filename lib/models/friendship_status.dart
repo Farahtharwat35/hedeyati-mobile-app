@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'friendship_status.g.dart';
+
+@JsonSerializable()
 // FriendshipStatus Class
 class FriendshipStatus {
   final int? id;
@@ -7,11 +12,4 @@ class FriendshipStatus {
     this.id,
     required this.status,
   });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'status': status,
-    };
-  }
 }

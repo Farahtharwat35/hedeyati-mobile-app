@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'event_category.g.dart';
+
+@JsonSerializable()
 // EventCategory Class
 class EventCategory {
   final int? id;
@@ -8,10 +13,4 @@ class EventCategory {
     required this.name,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-    };
-  }
 }

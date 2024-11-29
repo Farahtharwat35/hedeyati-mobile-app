@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hedeyati/app/login_page.dart';
 import 'package:hedeyati/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
-import '../firebase_options.dart';
+import 'firebase_options.dart';
 
 
 Future<void> main() async {

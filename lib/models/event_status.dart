@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'event_status.g.dart';
+
+@JsonSerializable()
 // EventStatus Class
 class EventStatus {
   final int? id;
@@ -7,11 +12,4 @@ class EventStatus {
     this.id,
     required this.status,
   });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'status': status,
-    };
-  }
 }
