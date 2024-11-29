@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:hedeyati/tab_bar.dart';
-import '../app_theme.dart';
+import 'package:hedeyati/app/home_page.dart';
+import 'package:hedeyati/authentication/signup_by_email_and_password.dart';
+import '../tab_bar.dart';
 import 'login_page.dart';
 
 
 class SignupPage extends StatelessWidget {
-  const SignupPage({super.key});
+  SignupPage({super.key});
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +65,8 @@ class SignupPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
-          decoration: InputDecoration(
+            keyboardType: TextInputType.text,
+            decoration: InputDecoration(
             hintText: "Username",
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
@@ -75,6 +79,22 @@ class SignupPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         TextField(
+          controller: emailController,
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(
+            hintText: "EmailAddress",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide.none,
+            ),
+            fillColor: Colors.pink[100],
+            filled: true,
+            prefixIcon: const Icon(Icons.person),
+          ),
+        ),
+        const SizedBox(height: 10),
+        TextField(
+          keyboardType: TextInputType.phone,
           decoration: InputDecoration(
             hintText: "Phone number",
             border: OutlineInputBorder(
@@ -88,22 +108,10 @@ class SignupPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         TextField(
+          keyboardType: TextInputType.visiblePassword,
+          controller: passwordController,
           decoration: InputDecoration(
             hintText: "Password",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
-            ),
-            fillColor: Colors.pink[100],
-            filled: true,
-            prefixIcon: const Icon(Icons.lock),
-          ),
-          obscureText: true,
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          decoration: InputDecoration(
-            hintText: "Confirm Password",
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
               borderSide: BorderSide.none,
@@ -120,11 +128,21 @@ class SignupPage extends StatelessWidget {
 
   Widget _signupButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const MyTabBar()),
-        );
+      onPressed: () async {
+        final response = await SignUpByEmailAndPassword.signUp(emailController.text,passwordController.text);
+        if (response.success) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const MyTabBar()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(response.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),

@@ -3,7 +3,7 @@ import 'package:hedeyati/response.dart';
 
 
 class SignUpByEmailAndPassword {
-  Future<Response> signUp(String email, String password) async {
+  static Future<Response> signUp(String email, String password) async {
     try {
       final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
