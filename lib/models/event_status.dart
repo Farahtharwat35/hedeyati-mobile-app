@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'event_status.g.dart';
@@ -12,4 +13,14 @@ class EventStatus {
     this.id,
     required this.status,
   });
+
+  factory EventStatus.fromJson(Map<String, dynamic> json) =>
+      _$EventStatusFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EventStatusToJson(this);
+
+  static get instance => FirebaseFirestore.instance.collection('EventStatus').withConverter<EventStatus>(
+    fromFirestore: (snapshot, _) => EventStatus.fromJson(snapshot.data()!),
+    toFirestore: (eventStatus, _) => _$EventStatusToJson(eventStatus),
+  );
 }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'gift.g.dart';
@@ -49,4 +50,13 @@ class Gift {
       categoryID: categoryID ?? this.categoryID,
     );
   }
+
+  factory Gift.fromJson(Map<String, dynamic> json) => _$GiftFromJson(json);
+
+  Map<String, dynamic> toJson() => _$GiftToJson(this);
+
+  static get instance => FirebaseFirestore.instance.collection('Gift').withConverter<Gift>(
+    fromFirestore: (snapshot, _) => Gift.fromJson(snapshot.data()!),
+    toFirestore: (gift, _) => _$GiftToJson(gift),
+  );
 }

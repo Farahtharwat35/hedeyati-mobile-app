@@ -36,9 +36,9 @@ class Event {
 
   Map<String, dynamic> toJson() => _$EventToJson(this);
 
-  static get instance => FirebaseFirestore.instance.collection('events').withConverter<Event>(
+  static get instance => FirebaseFirestore.instance.collection('Events').withConverter<Event>(
     fromFirestore: (snapshot, _) => Event.fromJson(snapshot.data()!),
-    toFirestore: (movie, _) => _$EventToJson(movie),
+    toFirestore: (event, _) => _$EventToJson(event),
   );
 
   }
