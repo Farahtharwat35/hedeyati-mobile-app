@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/signup_page.dart';
+import 'package:hedeyati/authentication/signin_by_email_and_password.dart';
+
+import '../tab_bar.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +52,10 @@ class LoginPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
             decoration: InputDecoration(
-              hintText: "Username",
+              hintText: "EmailAddress",
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide.none,
@@ -59,6 +67,8 @@ class LoginPage extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           TextField(
+            controller: _passwordController,
+            keyboardType: TextInputType.visiblePassword,
             decoration: InputDecoration(
               hintText: "Password",
               border: OutlineInputBorder(
@@ -84,11 +94,17 @@ class LoginPage extends StatelessWidget {
                 "Login",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LoginPage()),
-                );
+              onTap: () async {
+                final response = await SignInByEmailAndPassword.login(_emailController.text,_passwordController.text);
+                if (response.success) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const MyTabBar()));
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(response.message),
+                    ),
+                  );
+                }
               },
             ),
           ),

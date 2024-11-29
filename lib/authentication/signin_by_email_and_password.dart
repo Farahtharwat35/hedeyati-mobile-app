@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hedeyati/response.dart';
 
-class LoginByEmailAndPassword {
-  Future<Response> login(String email, String password) async {
+class SignInByEmailAndPassword {
+  static Future<Response> login(String email, String password) async {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: email,

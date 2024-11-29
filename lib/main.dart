@@ -21,7 +21,7 @@ class Hedeyati extends StatelessWidget {
     return MaterialApp(
       title: 'Hedeyati',
       theme: myTheme,
-      home: const LoginPage(),
+      home: LoginPage(),
     );
   }
 }
