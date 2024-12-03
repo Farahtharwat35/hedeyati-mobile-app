@@ -14,7 +14,7 @@ final ThemeData myTheme = ThemeData(
   ),
   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.pink).copyWith(
     primary: Colors.pink,
-    surface: Colors.white70,
+    surface: Color(0xFFF5F5F5),
     secondary: Colors.white,
   ),
   tabBarTheme: const TabBarTheme(
