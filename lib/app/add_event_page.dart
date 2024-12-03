@@ -4,9 +4,9 @@ import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/helpers/userCredentials.dart';
 import 'package:hedeyati/models/event.dart';
 import 'package:hedeyati/app/app_theme.dart';
-import 'package:intl/intl.dart';
-
 import '../bloc/events/event_bloc_events.dart';
+import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
+import 'package:hedeyati/app/reusable_components/date_picker_field_widget.dart';
 
 class CreateEventPage extends StatefulWidget {
   const CreateEventPage({Key? key}) : super(key: key);
@@ -35,18 +35,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
     setState(() {
       userFirestoreID = credentials; // Update state with the resolved value
     });
-  }
-
-  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      controller.text = DateFormat('yyyy-MM-dd').format(picked);
-    }
   }
 
   @override
@@ -82,11 +70,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     mainAxisSize: MainAxisSize.min, // Keep the form's size minimal
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildTextField(_nameController, 'Event Name', Icons.event),
-                      _buildTextField(_descriptionController, 'Description', Icons.description),
-                      _buildTextField(_categoryIDController, 'Category ID', Icons.category),
-                      _buildDatePickerField(_startDateController, 'Start Date', context),
-                      _buildDatePickerField(_endDateController, 'End Date', context),
+                      buildTextField(_nameController, 'Event Name', Icons.event),
+                      buildTextField(_descriptionController, 'Description', Icons.description),
+                      buildTextField(_categoryIDController, 'Category ID', Icons.category),
+                      buildDatePickerField(_startDateController, 'Start Date', context),
+                      buildDatePickerField(_endDateController, 'End Date', context),
                       const SizedBox(height: 20),
                       Center( // Center the button
                         child: ElevatedButton(
@@ -130,64 +118,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(TextEditingController controller, String label, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when focused
-            borderRadius: BorderRadius.circular(16),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when enabled
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter $label';
-          }
-          return null;
-        },
-      ),
-    );
-  }
-
-  Widget _buildDatePickerField(TextEditingController controller, String label, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(Icons.calendar_today),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when focused
-            borderRadius: BorderRadius.circular(16),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when enabled
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty || DateTime.tryParse(value) == null) {
-            return 'Please select a valid $label';
-          }
-          return null;
-        },
-        readOnly: true,
-        onTap: () => _selectDate(context, controller),
       ),
     );
   }
