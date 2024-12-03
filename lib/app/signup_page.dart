@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hedeyati/app/home_page.dart';
 import 'package:hedeyati/authentication/signup_by_email_and_password.dart';
-import '../tab_bar.dart';
+import '../app/tab_bar.dart';
 import 'login_page.dart';
 
 

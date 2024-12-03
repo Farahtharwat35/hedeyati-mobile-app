@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hedeyati/response.dart';
+import '../helpers/response.dart';
 
 class Signout {
   Future<Response> signOut() async {

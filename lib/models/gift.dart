@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'model.dart';
+
 part 'gift.g.dart';
 
 @JsonSerializable()
 // Gift Class
-class Gift {
+class Gift extends Model{
   final int? id;
+  final String firestoreID;
+  final String firestoreUserID;
+  final int userID;
   final String description;
   final String? photoUrl;
   final bool isPledged;
@@ -20,6 +25,9 @@ class Gift {
 
   Gift({
     this.id,
+    this.firestoreID = '',
+    this.firestoreUserID = '',
+    required this.userID,
     required this.description,
     this.photoUrl,
     this.isPledged = false,
@@ -35,20 +43,49 @@ class Gift {
 
   Gift copyWith({
     int? id,
+    String? firestoreID,
+    String? firestoreUserID,
+    int? userID,
     String? description,
     String? photoUrl,
-    double? price,
     bool? isPledged,
+    int? pledgedBy,
+    DateTime? pledgedDate,
+    double? price,
     int? categoryID,
+    String? storesLocationRecommendation,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return Gift(
       id: id ?? this.id,
+      firestoreID: firestoreID ?? this.firestoreID,
+      firestoreUserID: firestoreUserID ?? this.firestoreUserID,
+      userID: userID ?? this.userID,
       description: description ?? this.description,
       photoUrl: photoUrl ?? this.photoUrl,
-      price: price ?? this.price,
       isPledged: isPledged ?? this.isPledged,
+      pledgedBy: pledgedBy ?? this.pledgedBy,
+      pledgedDate: pledgedDate ?? this.pledgedDate,
+      price: price ?? this.price,
       categoryID: categoryID ?? this.categoryID,
+      storesLocationRecommendation:
+      storesLocationRecommendation ?? this.storesLocationRecommendation,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
+  }
+
+  static Future<void> addGiftToFirestore(Gift gift) async {
+    await Gift.instance.add(gift);
+  }
+
+  static Future<void> updateGiftInFirestore(Gift gift) async {
+    await Gift.instance.doc(gift.firestoreID).update(gift);
+  }
+
+  static Future<void> deleteGiftFromFirestore(Gift gift) async {
+    await Gift.instance.doc(gift.firestoreID).delete();
   }
 
   factory Gift.fromJson(Map<String, dynamic> json) => _$GiftFromJson(json);
@@ -59,4 +96,7 @@ class Gift {
     fromFirestore: (snapshot, _) => Gift.fromJson(snapshot.data()!),
     toFirestore: (gift, _) => _$GiftToJson(gift),
   );
+
+  @override
+  CollectionReference<Gift> getReference() => instance;
 }

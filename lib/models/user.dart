@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:hedeyati/models/model.dart';
 
 part 'user.g.dart';
 
 @JsonSerializable()
-class User {
+class User extends Model {
   final int id;
   String name;
   String email;
@@ -31,4 +32,7 @@ class User {
     fromFirestore: (snapshot, _) => User.fromJson(snapshot.data()!),
     toFirestore: (user, _) => _$UserToJson(user),
   );
+
+  @override
+  CollectionReference<User> getReference() => instance;
 }

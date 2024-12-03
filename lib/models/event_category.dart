@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:hedeyati/models/model.dart';
 
 part 'event_category.g.dart';
 
 @JsonSerializable()
 // EventCategory Class
-class EventCategory {
+class EventCategory extends Model {
   final int? id;
   final String name;
 
@@ -25,5 +26,7 @@ class EventCategory {
     toFirestore: (eventCategory, _) => _$EventCategoryToJson(eventCategory),
   );
 
+  @override
+  CollectionReference<EventCategory> getReference() => instance;
 
 }

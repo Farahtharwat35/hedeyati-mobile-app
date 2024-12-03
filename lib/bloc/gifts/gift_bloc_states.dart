@@ -17,3 +17,14 @@ class GiftsLoaded extends GiftState {
   @override
   List<Object?> get props => [gifts];
 }
+
+class GiftsError extends GiftState {
+  final String message;
+
+  GiftsError({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+

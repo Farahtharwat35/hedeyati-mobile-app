@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hedeyati/app/signup_page.dart';
 import 'package:hedeyati/authentication/signin_by_email_and_password.dart';
 
-import '../tab_bar.dart';
+import '../app/tab_bar.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});

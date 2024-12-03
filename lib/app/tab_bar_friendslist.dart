@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hedeyati/gifts_list_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hedeyati/app/gifts_list_page.dart';
+
+import '../bloc/gifts/gift_bloc.dart';
 
 class MyTabBarFriendList extends StatelessWidget {
 
@@ -71,9 +74,18 @@ class _NestedTabBarState extends State<NestedTabBarFriendList> with TickerProvid
             child: TabBarView(
               controller: _tabController,
               children: <Widget>[
-                const GiftsListPage(), // All gifts
-                const GiftsListPage(),
-                const GiftsListPage(),
+                BlocProvider(
+                  create: (context) => GiftBloc(),
+                  child: GiftsListPage(),
+                ), // All gifts
+                BlocProvider(
+                  create: (context) => GiftBloc(),
+                  child: GiftsListPage(),
+                ),
+                BlocProvider(
+                  create: (context) => GiftBloc(),
+                  child: GiftsListPage(),
+                ),
               ],
             ),
           ),

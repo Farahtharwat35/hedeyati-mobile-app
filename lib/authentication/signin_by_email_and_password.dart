@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hedeyati/response.dart';
+import '../helpers/response.dart';
+import '../helpers/userCredentials.dart';
 
 class SignInByEmailAndPassword {
   static Future<Response> login(String email, String password) async {
@@ -8,6 +9,8 @@ class SignInByEmailAndPassword {
           email: email,
           password: password
       );
+      UserCredentials.saveCredentials(credential.user!.uid);
+      print('User logged in successfully + ${UserCredentials.getCredentials()}');
       return Response(
         success: true,
         message: 'User logged in successfully',
