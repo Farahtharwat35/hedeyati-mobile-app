@@ -64,55 +64,62 @@ class _CreateEventPageState extends State<CreateEventPage> {
               color: Color(0xFFF1F1F1), // Soft light gray card background
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min, // Keep the form's size minimal
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      buildTextField(_nameController, 'Event Name', Icons.event),
-                      buildTextField(_descriptionController, 'Description', Icons.description),
-                      buildTextField(_categoryIDController, 'Category ID', Icons.category),
-                      buildDatePickerField(_startDateController, 'Start Date', context),
-                      buildDatePickerField(_endDateController, 'End Date', context),
-                      const SizedBox(height: 20),
-                      Center( // Center the button
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40), // Button width based on content
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                            backgroundColor: Theme.of(context).colorScheme.primary,
-                            foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                          onPressed: userFirestoreID == null
-                              ? null // Disable button until credentials are loaded
-                              : () async {
-                            if (_formKey.currentState!.validate()) {
-                              final event = Event(
-                                firestoreID: '', // Firestore generates this ID
-                                firestoreUserID: userFirestoreID!,
-                                name: _nameController.text,
-                                description: _descriptionController.text,
-                                categoryID: int.parse(_categoryIDController.text),
-                                startDate: DateTime.parse(_startDateController.text),
-                                endDate: DateTime.parse(_endDateController.text),
-                                status: 1, // Default status
-                                createdBy: userFirestoreID!,
-                                createdAt: DateTime.now(),
-                              );
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _header(), // Add header here
+                    const SizedBox(height: 20), // Space between header and form
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min, // Keep the form's size minimal
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildTextField(_nameController, 'Event Name', Icons.event),
+                          buildTextField(_descriptionController, 'Description', Icons.description),
+                          buildTextField(_categoryIDController, 'Category ID', Icons.category),
+                          buildDatePickerField(_startDateController, 'Start Date', context),
+                          buildDatePickerField(_endDateController, 'End Date', context),
+                          const SizedBox(height: 20),
+                          Center( // Center the button
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40), // Button width based on content
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              onPressed: userFirestoreID == null
+                                  ? null // Disable button until credentials are loaded
+                                  : () async {
+                                if (_formKey.currentState!.validate()) {
+                                  final event = Event(
+                                    firestoreID: '', // Firestore generates this ID
+                                    firestoreUserID: userFirestoreID!,
+                                    name: _nameController.text,
+                                    description: _descriptionController.text,
+                                    categoryID: int.parse(_categoryIDController.text),
+                                    startDate: DateTime.parse(_startDateController.text),
+                                    endDate: DateTime.parse(_endDateController.text),
+                                    status: 1, // Default status
+                                    createdBy: userFirestoreID!,
+                                    createdAt: DateTime.now(),
+                                  );
 
-                              BlocProvider.of<EventBloc>(context).add(AddEvent(event));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Event added successfully!')),
-                              );
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: const Text('Create Event', style: TextStyle(fontSize: 18)),
-                        ),
+                                  BlocProvider.of<EventBloc>(context).add(AddEvent(event));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Event added successfully!')),
+                                  );
+                                  Navigator.pop(context);
+                                }
+                              },
+                              child: const Text('Create Event', style: TextStyle(fontSize: 18)),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -130,5 +137,31 @@ class _CreateEventPageState extends State<CreateEventPage> {
     _startDateController.dispose();
     _endDateController.dispose();
     super.dispose();
+  }
+
+  _header() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 50, left: 20, right: 20), // Adjust padding as needed
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Event",
+                style: TextStyle(
+                  fontSize: 45,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'GreatVibes',
+                  color: Colors.pinkAccent,
+                ),
+              ),
+              const SizedBox(width: 10), // Space between icon and text
+              Icon(Icons.event, color: Colors.pinkAccent, size: 40), // Event icon
+            ],
+          ),
+        ],
+      ),
+    );
   }
 }
