@@ -151,7 +151,7 @@ class LoginPage extends StatelessWidget {
   _forgotPassword(context) {
     return TextButton(
       onPressed: () {},
-      child: Text("Forgot password?", style: Theme.of(context).textTheme.bodyMedium),
+      child: Text("Forgot password?", style: Theme.of(context).textTheme.bodyMedium?.apply(fontStyle: FontStyle.italic)),
     );
   }
 

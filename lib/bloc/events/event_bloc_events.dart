@@ -1,13 +1,19 @@
+import 'package:equatable/equatable.dart';
 import 'package:hedeyati/models/event.dart';
-import '../generic_bloc_event.dart';
 
-class Event_E extends BlocEvent {
+abstract class Event_E extends Equatable {
   @override
   List<Object?> get props => [];
 }
 
+
+class LoadMyEvents extends Event_E {}
+
+class LoadFriendsEvents extends Event_E {}
+
 class AddEvent extends Event_E {
   final Event event;
+
   AddEvent(this.event);
 
   @override
@@ -16,6 +22,7 @@ class AddEvent extends Event_E {
 
 class UpdateEvent extends Event_E {
   final Event updatedEvent;
+
   UpdateEvent(this.updatedEvent);
 
   @override
@@ -24,26 +31,9 @@ class UpdateEvent extends Event_E {
 
 class DeleteEvent extends Event_E {
   final Event event;
+
   DeleteEvent(this.event);
 
   @override
   List<Object?> get props => [event];
-
 }
-
-class LoadMyEvents extends Event_E {
-  final int id;
-  LoadMyEvents(this.id);
-
-  @override
-  List<Object?> get props => [id];
-}
-
-class LoadFriendsEvents extends Event_E {
-  final int id;
-  LoadFriendsEvents(this.id);
-
-  @override
-  List<Object?> get props => [id];
-}
-

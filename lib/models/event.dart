@@ -10,8 +10,9 @@ class Event extends Model {
   final int? id;
   final String firestoreID;
   final String firestoreUserID;
+  final String image;
   final String name;
-  final String? description;
+  final String description;
   final int categoryID;
   final DateTime startDate;
   final DateTime endDate;
@@ -25,13 +26,14 @@ class Event extends Model {
     required this.firestoreID,
     required this.firestoreUserID,
     required this.name,
-    this.description,
+    required this.description,
     required this.categoryID,
     required this.startDate,
     required this.endDate,
     required this.status,
     required this.createdBy,
     DateTime? createdAt,
+    this.image = '',
     this.deletedAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
@@ -66,6 +68,7 @@ class Event extends Model {
   }
 
   static Future getMyEvents(userId) async {
+    print("----------------------ENTERED---------------");
     return instance.where('createdBy', isEqualTo: userId).get();
   }
 }
