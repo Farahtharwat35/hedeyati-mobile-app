@@ -1,58 +1,94 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/events/event_bloc.dart';
 import '../bloc/events/event_bloc_events.dart';
 import '../bloc/events/event_bloc_states.dart';
 import '../models/event.dart';
 
-class EventsListPage extends StatelessWidget {
-  final String filter;
+class EventsPage extends StatefulWidget {
+  const EventsPage({super.key});
 
-  const EventsListPage({super.key, required this.filter});
+  @override
+  _EventsPageState createState() => _EventsPageState();
+}
+
+class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
+  late TabController _mainTabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _mainTabController = TabController(length: 2, vsync: this);
+    _mainTabController.addListener(_onTabChanged);
+  }
+
+  @override
+  void dispose() {
+    _mainTabController.removeListener(_onTabChanged);
+    _mainTabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onTabChanged() async {
+    if (_mainTabController.indexIsChanging) {
+      final filter = _mainTabController.index == 0 ? 'My Events' : 'Others Events';
+      context.read<EventBloc>().add(
+        filter == 'My Events' ? LoadMyEvents() : LoadFriendsEvents(),
+      );
+      print("Filter is $filter");
+      print("--------------TAB SWITCHED--------------");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    print("--------------------EventsListPage: Filter is $filter==============");
-
-    // Trigger Bloc event based on the filter
-    final bloc = BlocProvider.of<EventBloc>(context);
-    if (filter == 'My Events') {
-      bloc.add(LoadMyEvents());
-    } else if (filter == 'Others Events') {
-      bloc.add(LoadFriendsEvents());
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(filter),
+        title: const Text('Events'),
+        backgroundColor: Colors.pinkAccent,
       ),
-      body: _buildEventsListView(context),
-    );
-  }
+      body: Column(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            child: TabBar(
+              controller: _mainTabController,
+              tabs: const [
+                Tab(text: 'My Events'),
+                Tab(text: 'Others Events'),
+              ],
+            ),
+          ),
+          Expanded(
+            child: BlocBuilder<EventBloc, EventState>(
+              builder: (context, state) {
+                if (state is EventsLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is EventsError) {
+                  return Center(child: Text('Error: ${state.message}'));
+                } else if (state is MyEventsLoaded || state is FriendsEventsLoaded) {
+                  final events = state is MyEventsLoaded
+                      ? state.events
+                      : (state as FriendsEventsLoaded).events;
 
-  Widget _buildEventsListView(BuildContext context) {
-    return BlocBuilder<EventBloc, EventState>(
-      builder: (context, state) {
-        print("==================STATE IS $state=====================");
-        if (state is EventsLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is EventsError) {
-          return Center(child: Text('Error: ${state.message}'));
-        } else if (state is MyEventsLoaded || state is FriendsEventsLoaded) {
-          final events = state is MyEventsLoaded ? state.events : (state as FriendsEventsLoaded).events;
+                  return events.isEmpty
+                      ? const Center(child: Text('No events found.'))
+                      : ListView.builder(
+                    itemCount: events.length,
+                    itemBuilder: (context, index) {
+                      return _buildEventTile(context, events[index]);
+                    },
+                  );
+                }
 
-          return events.isEmpty
-              ? const Center(child: Text('No events found.'))
-              : ListView.builder(
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              return _buildEventTile(context, events[index]);
-            },
-          );
-        }
-
-        return const Center(child: Text('No events found.'));
-      },
+                return const Center(child: Text('No events found.'));
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
