@@ -21,7 +21,6 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     super.initState();
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
-    setState(() {});
   }
 
   @override
