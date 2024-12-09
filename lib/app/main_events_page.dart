@@ -21,7 +21,6 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     super.initState();
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
-    context.read<EventBloc>().add(LoadMyEvents());
     setState(() {});
   }
 
@@ -61,16 +60,25 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
           Expanded(
             child: BlocBuilder<EventBloc, EventState>(
               builder: (context, state) {
-                if (state is EventsLoading || state is EventInitial) {
+                if (state is EventInitial) {
+                  // Trigger the event to load the events
+                  _mainTabController.index == 0
+                      ? context.read<EventBloc>().add(LoadMyEvents())
+                      : context.read<EventBloc>().add(LoadFriendsEvents());
+                }
+                if (state is EventsLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is EventsError) {
                   return Center(child: Text('Error: ${state.message}'));
-                } else {
-                  final events = state is MyEventsLoaded
-                      ? state.events
-                      : (state as FriendsEventsLoaded).events;
+                } else if (state is MyEventsLoaded) {
+                  final events = state.events;
+                  return _buildEventsCard(context, events);
+                } else if (state is FriendsEventsLoaded) {
+                  final events = state.events;
                   return _buildEventsCard(context, events);
                 }
+                // Handle any other states (just in case)
+                return const SizedBox.shrink(); // Empty widget if the state doesn't match
               },
             ),
           ),
@@ -78,6 +86,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
       ),
     );
   }
+
   Widget _buildEventsCard(BuildContext context, List<Event> events) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
