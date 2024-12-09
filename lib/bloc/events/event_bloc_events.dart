@@ -6,7 +6,6 @@ abstract class Event_E extends Equatable {
   List<Object?> get props => [];
 }
 
-
 class LoadMyEvents extends Event_E {}
 
 class LoadFriendsEvents extends Event_E {}

@@ -7,11 +7,9 @@ part 'friendship_status.g.dart';
 @JsonSerializable()
 // FriendshipStatus Class
 class FriendshipStatus extends Model {
-  final int? id;
   final String status;
 
   FriendshipStatus({
-    this.id,
     required this.status,
   });
 
@@ -27,4 +25,6 @@ class FriendshipStatus extends Model {
 
   @override
   CollectionReference<FriendshipStatus> getReference() => instance;
+
+  static FriendshipStatus dummy() => FriendshipStatus(status: '');
 }

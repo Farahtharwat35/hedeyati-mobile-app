@@ -8,9 +8,8 @@ part of 'event_category.dart';
 
 EventCategory _$EventCategoryFromJson(Map<String, dynamic> json) =>
     EventCategory(
-      id: (json['id'] as num?)?.toInt(),
       name: json['name'] as String,
-    );
+    )..id = json['id'] as String;
 
 Map<String, dynamic> _$EventCategoryToJson(EventCategory instance) =>
     <String, dynamic>{

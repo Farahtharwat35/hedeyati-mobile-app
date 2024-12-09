@@ -4,6 +4,7 @@ import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/helpers/userCredentials.dart';
 import 'package:hedeyati/models/event.dart';
 import 'package:hedeyati/app/app_theme.dart';
+import 'package:provider/provider.dart';
 import '../bloc/events/event_bloc_events.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import 'package:hedeyati/app/reusable_components/date_picker_field_widget.dart';
@@ -94,7 +95,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                   : () async {
                                 if (_formKey.currentState!.validate()) {
                                   final event = Event(
-                                    firestoreID: '', // Firestore generates this ID
                                     firestoreUserID: userFirestoreID!,
                                     name: _nameController.text,
                                     description: _descriptionController.text,
@@ -106,7 +106,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                     createdAt: DateTime.now(),
                                   );
 
-                                  BlocProvider.of<EventBloc>(context).add(AddEvent(event));
+                                  Provider.of<EventBloc>(context).add(AddEvent(event));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('Event added successfully!')),
                                   );

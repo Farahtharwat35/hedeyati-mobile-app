@@ -7,14 +7,15 @@ part of 'friendship.dart';
 // **************************************************************************
 
 Friendship _$FriendshipFromJson(Map<String, dynamic> json) => Friendship(
-      userID: (json['userID'] as num).toInt(),
-      friendID: (json['friendID'] as num).toInt(),
+      requesterID: json['requesterID'] as String,
+      recieverID: json['recieverID'] as String,
       friendshipStatus: (json['friendshipStatus'] as num).toInt(),
-    );
+    )..id = json['id'] as String;
 
 Map<String, dynamic> _$FriendshipToJson(Friendship instance) =>
     <String, dynamic>{
-      'userID': instance.userID,
-      'friendID': instance.friendID,
+      'id': instance.id,
+      'requesterID': instance.requesterID,
+      'recieverID': instance.recieverID,
       'friendshipStatus': instance.friendshipStatus,
     };

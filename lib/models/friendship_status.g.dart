@@ -8,9 +8,8 @@ part of 'friendship_status.dart';
 
 FriendshipStatus _$FriendshipStatusFromJson(Map<String, dynamic> json) =>
     FriendshipStatus(
-      id: (json['id'] as num?)?.toInt(),
       status: json['status'] as String,
-    );
+    )..id = json['id'] as String;
 
 Map<String, dynamic> _$FriendshipStatusToJson(FriendshipStatus instance) =>
     <String, dynamic>{

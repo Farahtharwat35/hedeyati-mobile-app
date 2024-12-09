@@ -7,8 +7,6 @@ part 'event.g.dart';
 @JsonSerializable()
 // Event Class
 class Event extends Model {
-  final int? id;
-  final String firestoreID;
   final String firestoreUserID;
   final String image;
   final String name;
@@ -22,8 +20,6 @@ class Event extends Model {
   final DateTime? deletedAt;
 
   Event({
-    this.id,
-    required this.firestoreID,
     required this.firestoreUserID,
     required this.name,
     required this.description,
@@ -51,24 +47,15 @@ class Event extends Model {
   @override
   CollectionReference<Event> getReference() => instance;
 
-  static Future<dynamic> addEvent(Event event) async {
-    await instance.add(event);
-  }
-
-  static Future<dynamic> updateEvent(String id, Event event) async {
-    await instance.doc(id).update(event.toJson());
-  }
-
-  static Future<dynamic> deleteEvent(String id) async {
-    await instance.doc(id).delete();
-  }
-
-  static Future getFriendsEvents(userId) async {
-    return instance.where('createdBy', isNotEqualTo: userId).get();
-  }
-
-  static Future getMyEvents(userId) async {
-    print("----------------------ENTERED---------------");
-    return instance.where('createdBy', isEqualTo: userId).get();
-  }
+  static Event dummy() => Event(
+      firestoreUserID: '',
+      name: '',
+      description: '',
+      categoryID: 0,
+      startDate: DateTime.now(),
+      endDate: DateTime.now(),
+      status: 0,
+      createdBy: '',
+      createdAt: DateTime.now(),
+    );
 }

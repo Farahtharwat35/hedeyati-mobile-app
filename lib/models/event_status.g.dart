@@ -7,9 +7,8 @@ part of 'event_status.dart';
 // **************************************************************************
 
 EventStatus _$EventStatusFromJson(Map<String, dynamic> json) => EventStatus(
-      id: (json['id'] as num?)?.toInt(),
       status: json['status'] as String,
-    );
+    )..id = json['id'] as String;
 
 Map<String, dynamic> _$EventStatusToJson(EventStatus instance) =>
     <String, dynamic>{

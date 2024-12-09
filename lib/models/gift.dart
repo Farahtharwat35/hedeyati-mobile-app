@@ -8,10 +8,7 @@ part 'gift.g.dart';
 @JsonSerializable()
 // Gift Class
 class Gift extends Model{
-  final int? id;
-  final String firestoreID;
   final String firestoreUserID;
-  final int userID;
   final String description;
   final String? photoUrl;
   final bool isPledged;
@@ -24,10 +21,7 @@ class Gift extends Model{
   final DateTime updatedAt;
 
   Gift({
-    this.id,
-    this.firestoreID = '',
     this.firestoreUserID = '',
-    required this.userID,
     required this.description,
     this.photoUrl,
     this.isPledged = false,
@@ -42,8 +36,7 @@ class Gift extends Model{
         updatedAt = updatedAt ?? DateTime.now();
 
   Gift copyWith({
-    int? id,
-    String? firestoreID,
+    String? id,
     String? firestoreUserID,
     int? userID,
     String? description,
@@ -58,10 +51,7 @@ class Gift extends Model{
     DateTime? updatedAt,
   }) {
     return Gift(
-      id: id ?? this.id,
-      firestoreID: firestoreID ?? this.firestoreID,
       firestoreUserID: firestoreUserID ?? this.firestoreUserID,
-      userID: userID ?? this.userID,
       description: description ?? this.description,
       photoUrl: photoUrl ?? this.photoUrl,
       isPledged: isPledged ?? this.isPledged,
@@ -81,11 +71,11 @@ class Gift extends Model{
   }
 
   static Future<void> updateGiftInFirestore(Gift gift) async {
-    await Gift.instance.doc(gift.firestoreID).update(gift);
+    await Gift.instance.doc(gift.id).update(gift);
   }
 
   static Future<void> deleteGiftFromFirestore(Gift gift) async {
-    await Gift.instance.doc(gift.firestoreID).delete();
+    await Gift.instance.doc(gift.id).delete();
   }
 
   factory Gift.fromJson(Map<String, dynamic> json) => _$GiftFromJson(json);
@@ -99,4 +89,6 @@ class Gift extends Model{
 
   @override
   CollectionReference<Gift> getReference() => instance;
+
+  static Gift dummy() => Gift(description: '', price: 0, categoryID: 0);
 }

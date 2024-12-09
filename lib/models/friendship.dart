@@ -7,13 +7,13 @@ part 'friendship.g.dart';
 @JsonSerializable()
 // Friendship Class
 class Friendship extends Model {
-  final int userID;
-  final int friendID;
+  final String requesterID;
+  final String recieverID;
   final int friendshipStatus;
 
   Friendship({
-    required this.userID,
-    required this.friendID,
+    required this.requesterID,
+    required this.recieverID,
     required this.friendshipStatus,
   });
 
@@ -30,9 +30,11 @@ class Friendship extends Model {
   @override
   CollectionReference<Friendship> getReference() => instance;
 
-  // Get friends by user ID and return a stream with Friendship converter
-  static Stream<QuerySnapshot<Friendship>> getFriendsByUserId(int userId) {
+
+  static Stream<QuerySnapshot<Friendship>> getFriendsByUserId(String userId) {
     return instance.where('userID', isEqualTo: userId).snapshots();
   }
+
+  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatus: 0);
 
 }

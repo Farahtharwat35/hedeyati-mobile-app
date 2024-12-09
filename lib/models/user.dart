@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
-
 part 'user.g.dart';
 
 @JsonSerializable()
 class User extends Model {
-  final int id;
   String name;
   String email;
   String password;
@@ -15,7 +13,6 @@ class User extends Model {
   bool isFriend;
 
   User({
-    required this.id,
     required this.name,
     required this.email,
     required this.password,
@@ -35,4 +32,6 @@ class User extends Model {
 
   @override
   CollectionReference<User> getReference() => instance;
+
+  static User dummy() => User(name: '', email: '', password: '', avatar: '', phone: '');
 }

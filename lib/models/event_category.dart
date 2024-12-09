@@ -7,11 +7,9 @@ part 'event_category.g.dart';
 @JsonSerializable()
 // EventCategory Class
 class EventCategory extends Model {
-  final int? id;
   final String name;
 
   EventCategory({
-    this.id,
     required this.name,
   });
 
@@ -28,5 +26,7 @@ class EventCategory extends Model {
 
   @override
   CollectionReference<EventCategory> getReference() => instance;
+
+  static EventCategory dummy() =>  EventCategory(name: '');
 
 }

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/events/event_bloc.dart';
-import '../bloc/events/event_bloc_events.dart';
-import '../bloc/events/event_bloc_states.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/event.dart';
 import '../app/app_theme.dart';
+import '../bloc/events/event_bloc.dart';
+import '../bloc/events/event_bloc_events.dart';
+import 'package:async_builder/async_builder.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -15,12 +16,16 @@ class EventsPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
   late TabController _mainTabController;
+  late Stream<QuerySnapshot> currentStream;
 
   @override
   void initState() {
     super.initState();
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
+
+    // Initialize the first stream
+    currentStream = _getStreamForTab(0);
   }
 
   @override
@@ -30,12 +35,19 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> _onTabChanged() async {
+  void _onTabChanged() {
     if (_mainTabController.indexIsChanging) {
-      final filter = _mainTabController.index == 0 ? 'My Events' : 'Others Events';
-      context.read<EventBloc>().add(
-        filter == 'My Events' ? LoadMyEvents() : LoadFriendsEvents(),
-      );
+      currentStream = _getStreamForTab(_mainTabController.index);
+      setState(() {});
+    }
+  }
+
+  Future<Stream<QuerySnapshot>> _getStreamForTab(int tabIndex) async {
+    final eventBloc = context.read<EventBloc>();
+    if (tabIndex == 0) {
+      return eventBloc.add(await LoadMyEvents());
+    } else {
+      return eventBloc.add(await LoadFriendsEvents()) as Stream<QuerySnapshot>;
     }
   }
 
@@ -57,28 +69,19 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
             ),
           ),
           Expanded(
-            child: BlocBuilder<EventBloc, EventState>(
-              builder: (context, state) {
-                if (state is EventInitial) {
-                  // Trigger the event to load the events
-                  _mainTabController.index == 0
-                      ? context.read<EventBloc>().add(LoadMyEvents())
-                      : context.read<EventBloc>().add(LoadFriendsEvents());
+            child: AsyncBuilder<QuerySnapshot>(
+              stream: currentStream,
+              waiting: (context) => const Center(child: CircularProgressIndicator()),
+              builder: (context, data) {
+                if (data == null || data.docs.isEmpty) {
+                  return const Center(child: Text('No events found.'));
                 }
-                if (state is EventsLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is EventsError) {
-                  return Center(child: Text('Error: ${state.message}'));
-                } else if (state is MyEventsLoaded) {
-                  final events = state.events;
-                  return _buildEventsCard(context, events);
-                } else if (state is FriendsEventsLoaded) {
-                  final events = state.events;
-                  return _buildEventsCard(context, events);
-                }
-                // Handle any other states (just in case)
-                return const SizedBox.shrink(); // Empty widget if the state doesn't match
+                final events = data.docs
+                    .map((doc) => Event.fromJson(doc.data() as Map<String, dynamic>))
+                    .toList();
+                return _buildEventsCard(context, events);
               },
+              error: (context, error, stackTrace) => Center(child: Text('Error: $error')),
             ),
           ),
         ],
@@ -90,7 +93,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
-        color: Colors.pink[50], // Light pink background color.
+        color: Colors.pink[50],
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -101,20 +104,13 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: _mainTabController.index ==0 ?  Text(
-                  'My Events',
-                  style: myTheme.textTheme.headlineMedium, // Use `myTheme` for the title.
-                ) : Text(
-                  'My Friends Events',
-                  style: myTheme.textTheme.headlineMedium, // Use `myTheme` for the title.
+                child: Text(
+                  _mainTabController.index == 0 ? 'My Events' : 'My Friends Events',
+                  style: myTheme.textTheme.headlineMedium,
                 ),
               ),
               const SizedBox(height: 16),
-              // Check if the events list is empty, and show appropriate widget
-              if (events.isEmpty)
-              const Center(child: Text('No events found.'))
-              else
-                ...events.map((event) => _buildEventTile(context, event)).toList(),
+              ...events.map((event) => _buildEventTile(context, event)).toList(),
             ],
           ),
         ),
@@ -138,7 +134,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  event.description,
+                  event.name,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,

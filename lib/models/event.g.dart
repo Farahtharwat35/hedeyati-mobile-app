@@ -7,8 +7,6 @@ part of 'event.dart';
 // **************************************************************************
 
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
-      id: (json['id'] as num?)?.toInt(),
-      firestoreID: json['firestoreID'] as String,
       firestoreUserID: json['firestoreUserID'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
@@ -24,11 +22,10 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       deletedAt: json['deletedAt'] == null
           ? null
           : DateTime.parse(json['deletedAt'] as String),
-    );
+    )..id = json['id'] as String;
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'id': instance.id,
-      'firestoreID': instance.firestoreID,
       'firestoreUserID': instance.firestoreUserID,
       'image': instance.image,
       'name': instance.name,
