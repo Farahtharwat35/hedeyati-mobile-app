@@ -5,6 +5,7 @@ import '../bloc/events/event_bloc.dart';
 import '../bloc/generic_crud_events.dart';
 import '../models/event.dart';
 import '../app/app_theme.dart';
+import '../app/reusable_components/build_card.dart';
 
 
 class EventsPage extends StatefulWidget {
@@ -68,47 +69,27 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                 return Center(child: Text('Error: $error'),);
                 },
               builder: (context, events) {
-                return _buildEventsCard(context, events ?? []);
+                List<Widget> content = [];
+                content.add(Center(
+                  child: _mainTabController.index ==0 ?  Text(
+                    'My Events',
+                    style: myTheme.textTheme.headlineMedium,
+                  ) : Text(
+                    'My Friends Events',
+                    style: myTheme.textTheme.headlineMedium,
+                  ),
+                ));
+                content.add(const SizedBox(height: 16));
+                if (events==null || events.isEmpty) {
+                content.add(const Center(child: Text('No events found.')));
+                } else {
+                content.addAll(events.map((event) => _buildEventTile(context, event)).toList());
+                }
+                return buildCard(context, content);
               },
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildEventsCard(BuildContext context, List<Event> events) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Card(
-        color: Colors.pink[50], // Light pink background color.
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: _mainTabController.index ==0 ?  Text(
-                  'My Events',
-                  style: myTheme.textTheme.headlineMedium, // Use `myTheme` for the title.
-                ) : Text(
-                  'My Friends Events',
-                  style: myTheme.textTheme.headlineMedium, // Use `myTheme` for the title.
-                ),
-              ),
-              const SizedBox(height: 16),
-              // Check if the events list is empty, and show appropriate widget
-              if (events.isEmpty)
-                const Center(child: Text('No events found.'))
-              else
-                ...events.map((event) => _buildEventTile(context, event)).toList(),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -138,7 +119,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                   ),
                 ),
                 Text(
-                  "${event.startDate.day}/${event.startDate.month}/${event.startDate.year}",
+                  "${event.eventDate.day}/${event.eventDate.month}/${event.eventDate.year}",
                   style: const TextStyle(color: Colors.grey),
                 ),
               ],

@@ -13,7 +13,6 @@ class _AddFriendPageState extends State<AddFriendPage> {
     final String friendName = _usernameController.text.trim();
 
     if (friendName.isNotEmpty) {
-      // Display a confirmation dialog
       showDialog(
         context: context,
         builder: (context) {

@@ -11,8 +11,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       name: json['name'] as String,
       description: json['description'] as String,
       categoryID: (json['categoryID'] as num).toInt(),
-      startDate: DateTime.parse(json['startDate'] as String),
-      endDate: DateTime.parse(json['endDate'] as String),
+      eventDate: DateTime.parse(json['eventDate'] as String),
       status: (json['status'] as num).toInt(),
       createdBy: json['createdBy'] as String,
       createdAt: json['createdAt'] == null
@@ -22,17 +21,19 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       deletedAt: json['deletedAt'] == null
           ? null
           : DateTime.parse(json['deletedAt'] as String),
-    )..id = json['id'] as String;
+    )
+      ..id = json['id'] as String
+      ..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'id': instance.id,
+      'isDeleted': instance.isDeleted,
       'firestoreUserID': instance.firestoreUserID,
       'image': instance.image,
       'name': instance.name,
       'description': instance.description,
       'categoryID': instance.categoryID,
-      'startDate': instance.startDate.toIso8601String(),
-      'endDate': instance.endDate.toIso8601String(),
+      'eventDate': instance.eventDate.toIso8601String(),
       'status': instance.status,
       'createdBy': instance.createdBy,
       'createdAt': instance.createdAt.toIso8601String(),

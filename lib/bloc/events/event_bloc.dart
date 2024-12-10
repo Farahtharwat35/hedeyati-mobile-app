@@ -26,4 +26,6 @@ class EventBloc extends ModelBloc<Event> {
     ]).map((snapshot) => snapshot.docs.map((doc) => doc.data() as Event).toList());
   }
 
+  static EventBloc get(context) => BlocProvider.of(context);
+
 }
