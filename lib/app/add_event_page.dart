@@ -105,7 +105,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                     createdAt: DateTime.now(),
                                   );
 
-                                  Provider.of<EventBloc>(context).add(AddEvent(event));
+                                  //Provider.of<EventBloc>(context).add(AddEvent(event));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('Event added successfully!')),
                                   );

@@ -1,30 +1,62 @@
+import 'package:equatable/equatable.dart';
+
 import '../models/model.dart';
 
-abstract class ModelStates {
-  List<Model> models;
-  ModelStates({required this.models});
+abstract class ModelStates extends Equatable {
+  final List<Model>? models ;
+  const  ModelStates({this.models});
+
+  @override
+  List<Object?> get props => [models];
 }
 class ModelInitState extends ModelStates {
-  ModelInitState() : super(models: []);
+  const ModelInitState() : super();
 }
+
 class ModelChangeState extends ModelStates {
-  ModelChangeState(List<Model> models) : super(models: models);
+  const ModelChangeState(List<Model> models) : super();
 }
+
 class ModelLoadingState extends ModelStates {
-  ModelLoadingState() : super(models: []);
+  const ModelLoadingState() : super();
 }
 class ModelAddedState extends ModelStates {
-  Model addedModel;
-  ModelAddedState(this.addedModel) : super(models: []);
+  final Model addedModel;
+  const ModelAddedState(this.addedModel) : super();
+
+  @override
+  List<Object?> get props => [addedModel];
 }
-class ModelErrorState extends ModelStates {
-  ModelErrorState() : super(models: []);
-}
+
 class ModelUpdatedState extends ModelStates {
-  Model updatedModel;
-  ModelUpdatedState(this.updatedModel) : super(models: []);
+  final Model updatedModel;
+  const ModelUpdatedState(this.updatedModel) : super();
+
+  @override
+  List<Object?> get props => [updatedModel];
 }
 class ModelDeletedState extends ModelStates {
-  Model deletedModel;
-  ModelDeletedState(this.deletedModel) : super(models:[]);
+  final Model deletedModel;
+  const ModelDeletedState(this.deletedModel) : super();
+
+  @override
+  List<Object?> get props => [deletedModel];
+}
+
+class ModelSuccessState extends ModelStates {
+  final String message;
+
+  const ModelSuccessState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class ModelErrorState extends ModelStates {
+  final String message;
+
+  const ModelErrorState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
 }

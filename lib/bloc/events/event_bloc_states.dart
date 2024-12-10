@@ -1,55 +1,28 @@
-import 'package:equatable/equatable.dart';
 import 'package:hedeyati/models/event.dart';
+import '../generic_states.dart';
 
 
-abstract class EventState extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
-
-class EventInitial extends EventState {}
-
-class EventsLoading extends EventState {}
-
-class MyEventsLoaded extends EventState {
+class MyEventsLoaded extends ModelStates {
   final List<Event> events;
 
-  MyEventsLoaded({required this.events});
+  const MyEventsLoaded({required this.events});
 
   @override
   List<Object?> get props => [events];
 }
 
-class FriendsEventsLoaded extends EventState {
+class FriendsEventsLoaded extends ModelStates {
   final List<Event> events;
 
-  FriendsEventsLoaded({required this.events});
+  const FriendsEventsLoaded({required this.events});
 
   @override
   List<Object?> get props => [events];
 }
 
-class EventActionSuccess extends EventState {
-  final String message;
-
-  EventActionSuccess({required this.message});
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class EventsError extends EventState {
-  final String message;
-
-  EventsError({required this.message});
-
-  @override
-  List<Object?> get props => [message];
-}
-
-class EventStreamLoaded extends EventState {
+class EventStreamLoaded extends ModelStates {
   final Stream<List<Event>> eventStream;
-  EventStreamLoaded(this.eventStream);
+  const EventStreamLoaded({required this.eventStream});
 
   @override
   List<Object?> get props => [eventStream];

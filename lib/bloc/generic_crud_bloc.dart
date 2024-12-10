@@ -27,7 +27,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       await _CRUD.add(event.model as GenericModel);
       emit(ModelAddedState(event.model));
     } catch (e) {
-      emit(ModelErrorState());
+      emit(ModelErrorState(message: 'Failed to add model: $e'));
     }
   }
 
@@ -38,7 +38,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       emit(ModelChangeState(models));
       return models;
     } catch (e) {
-      emit(ModelErrorState());
+      emit(ModelErrorState(message: 'Failed to load models: $e'));
       return [];
     }
   }
@@ -49,7 +49,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       await _CRUD.update(event.updatedModel as GenericModel);
       emit(ModelUpdatedState(event.updatedModel));
     } catch (e) {
-      emit(ModelErrorState());
+      emit(ModelErrorState(message: 'Failed to update model: $e'));
     }
   }
 
@@ -59,7 +59,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       await _CRUD.delete(event.deletedModel as GenericModel);
       emit(ModelDeletedState(event.deletedModel));
     } catch (e) {
-      emit(ModelErrorState());
+      emit(ModelErrorState(message: 'Failed to delete model: $e'));
     }
   }
 }

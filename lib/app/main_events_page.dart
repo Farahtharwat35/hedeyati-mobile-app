@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:async_builder/async_builder.dart';
 import '../bloc/events/event_bloc.dart';
 import '../bloc/events/event_bloc_events.dart';
+import '../bloc/generic_crud_events.dart';
+import '../bloc/generic_states.dart';
 import '../models/event.dart';
 import '../app/app_theme.dart';
 
@@ -16,14 +18,16 @@ class EventsPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
   late TabController _mainTabController;
-  late Stream<List<Event>> _currentStream;
+  late List<Stream<List<Event>>> _eventStreams;
+  late EventBloc _eventBloc;
 
   @override
   void initState() {
     super.initState();
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
-    _updateStream();
+    _eventBloc = BlocProvider.of<EventBloc>(context);
+    _eventStreams = [_eventBloc.myEventsStream, _eventBloc.friendsEventsStream];
   }
 
   @override
@@ -35,23 +39,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
 
   void _onTabChanged() {
     if (_mainTabController.indexIsChanging) {
-      print("---------------------- MAIN TAB CONTROLLER INDEX: ${_mainTabController.index} ----------------------");
-      _updateStream();
-    }
-  }
-
-  void _updateStream() {
-    final eventBloc = BlocProvider.of<EventBloc>(context);
-    if (_mainTabController.index == 0) {
-      eventBloc.add(LoadMyEvents());
-      _currentStream = eventBloc.myEventsStream;
       setState(() {});
-      print("=======================Events Stream: $_currentStream ======================");
-    } else {
-      eventBloc.add(LoadFriendsEvents());
-      _currentStream = eventBloc.friendsEventsStream;
-      setState(() {});
-      print("======================= !!!!!!!!!!!!!!!!! Friends Events Stream: $_currentStream ======================");
     }
   }
 
@@ -74,7 +62,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
           ),
           Expanded(
             child: AsyncBuilder<List<Event>>(
-              stream: _currentStream,
+              stream: _eventStreams[_mainTabController.index],
               waiting: (context) => const Center(child: CircularProgressIndicator()),
               error: (context, error, stack) {
                 debugPrint('Error: $error');
@@ -190,7 +178,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
-                BlocProvider.of<EventBloc>(context).add(DeleteEvent(event));
+                _eventBloc.add(DeleteModel(event));
               },
               child: const Text('Delete'),
             ),
