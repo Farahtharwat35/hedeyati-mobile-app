@@ -62,28 +62,35 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
           Expanded(
             child: AsyncBuilder<List<Event>>(
               stream: _eventStreams[_mainTabController.index],
-              waiting: (context) => const Center(child: CircularProgressIndicator()),
+              waiting: (context) =>
+                  const Center(child: CircularProgressIndicator()),
               error: (context, error, stack) {
                 debugPrint('Error: $error');
                 debugPrint('Stack Trace: $stack');
-                return Center(child: Text('Error: $error'),);
-                },
+                return Center(
+                  child: Text('Error: $error'),
+                );
+              },
               builder: (context, events) {
                 List<Widget> content = [];
                 content.add(Center(
-                  child: _mainTabController.index ==0 ?  Text(
-                    'My Events',
-                    style: myTheme.textTheme.headlineMedium,
-                  ) : Text(
-                    'My Friends Events',
-                    style: myTheme.textTheme.headlineMedium,
-                  ),
+                  child: _mainTabController.index == 0
+                      ? Text(
+                          'My Events',
+                          style: myTheme.textTheme.headlineMedium,
+                        )
+                      : Text(
+                          'My Friends Events',
+                          style: myTheme.textTheme.headlineMedium,
+                        ),
                 ));
                 content.add(const SizedBox(height: 16));
-                if (events==null || events.isEmpty) {
-                content.add(const Center(child: Text('No events found.')));
+                if (events == null || events.isEmpty) {
+                  content.add(const Center(child: Text('No events found.')));
                 } else {
-                content.addAll(events.map((event) => _buildEventTile(context, event)).toList());
+                  content.addAll(events
+                      .map((event) => _buildEventTile(context, event))
+                      .toList());
                 }
                 return buildCard(context, content);
               },
@@ -95,36 +102,27 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
   }
 
   Widget _buildEventTile(BuildContext context, Event event) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(event.image?.isNotEmpty == true
+            ? event.image
+            : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
+        radius: 25,
+      ),
+      title: Text(
+        event.name,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
+      ),
+      subtitle: Text(
+        "${event.eventDate.day}/${event.eventDate.month}/${event.eventDate.year}",
+        style: const TextStyle(color: Colors.grey),
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(event.image?.isNotEmpty == true
-                ? event.image
-                : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
-            radius: 25,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event.name,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                Text(
-                  "${event.eventDate.day}/${event.eventDate.month}/${event.eventDate.year}",
-                  style: const TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-          ),
           IconButton(
             icon: const Icon(Icons.edit, color: Colors.pinkAccent),
             onPressed: () {
@@ -139,8 +137,12 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
           ),
         ],
       ),
+      onTap: () {
+        // Handle tile tap if needed
+      },
     );
   }
+
 
   void _confirmDelete(BuildContext context, Event event) {
     showDialog(
@@ -148,7 +150,8 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
       builder: (context) {
         return AlertDialog(
           title: const Text('Confirm Delete'),
-          content: Text('Are you sure you want to delete the event "${event.name}"?'),
+          content: Text(
+              'Are you sure you want to delete the event "${event.name}"?'),
           backgroundColor: Colors.pink[50],
           actions: [
             TextButton(
