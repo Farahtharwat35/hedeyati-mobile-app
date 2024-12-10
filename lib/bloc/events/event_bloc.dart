@@ -10,8 +10,6 @@ import '../generic_states.dart';
 
 class EventBloc extends ModelBloc<Event> {
   EventBloc() : super(model: Event.dummy()) {
-    on<LoadFriendsEvents>(_onLoadFriendsEvents);
-    on<LoadMyEvents>(_onLoadMyEvents);
     _initializeStreams();
   }
 
@@ -28,21 +26,4 @@ class EventBloc extends ModelBloc<Event> {
     ]).map((snapshot) => snapshot.docs.map((doc) => doc.data() as Event).toList());
   }
 
-  Future<void> _onLoadMyEvents(LoadMyEvents event, Emitter<ModelStates> emit) async {
-    emit(ModelLoadingState());
-    try {
-      emit(EventStreamLoaded(eventStream: myEventsStream));
-    } catch (e) {
-      emit(ModelErrorState(message: 'Failed to load My Events: $e'));
-    }
-  }
-
-  Future<void> _onLoadFriendsEvents(LoadFriendsEvents event, Emitter<ModelStates> emit) async {
-    emit(ModelLoadingState());
-    try {
-      emit(EventStreamLoaded(eventStream: friendsEventsStream));
-    } catch (e) {
-      emit(ModelErrorState(message: 'Failed to load Friends Events: $e'));
-    }
-  }
 }

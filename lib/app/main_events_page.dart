@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:async_builder/async_builder.dart';
 import '../bloc/events/event_bloc.dart';
-import '../bloc/events/event_bloc_events.dart';
 import '../bloc/generic_crud_events.dart';
-import '../bloc/generic_states.dart';
 import '../models/event.dart';
 import '../app/app_theme.dart';
 
@@ -133,7 +131,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  event.description,
+                  event.name,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -169,7 +167,8 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
       builder: (context) {
         return AlertDialog(
           title: const Text('Confirm Delete'),
-          content: Text('Are you sure you want to delete the event "${event.description}"?'),
+          content: Text('Are you sure you want to delete the event "${event.name}"?'),
+          backgroundColor: Colors.pink[50],
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),

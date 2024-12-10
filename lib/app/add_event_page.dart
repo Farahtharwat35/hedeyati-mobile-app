@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
+import 'package:hedeyati/bloc/generic_crud_events.dart';
 import 'package:hedeyati/helpers/userCredentials.dart';
 import 'package:hedeyati/models/event.dart';
 import 'package:hedeyati/app/app_theme.dart';
@@ -23,6 +25,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
   String? userFirestoreID;
+  late final EventBloc _eventBloc;
 
   @override
   void initState() {
@@ -105,7 +108,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                     createdAt: DateTime.now(),
                                   );
 
-                                  //Provider.of<EventBloc>(context).add(AddEvent(event));
+                                  _eventBloc.add(AddModel(event));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text('Event added successfully!')),
                                   );
