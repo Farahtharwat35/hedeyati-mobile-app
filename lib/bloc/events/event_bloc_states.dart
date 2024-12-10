@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:hedeyati/models/event.dart';
 
+
 abstract class EventState extends Equatable {
   @override
   List<Object?> get props => [];
@@ -45,3 +46,12 @@ class EventsError extends EventState {
   @override
   List<Object?> get props => [message];
 }
+
+class EventStreamLoaded extends EventState {
+  final Stream<List<Event>> eventStream;
+  EventStreamLoaded(this.eventStream);
+
+  @override
+  List<Object?> get props => [eventStream];
+}
+

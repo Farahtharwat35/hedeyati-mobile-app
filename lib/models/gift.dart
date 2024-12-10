@@ -83,7 +83,7 @@ class Gift extends Model{
   Map<String, dynamic> toJson() => _$GiftToJson(this);
 
   static get instance => FirebaseFirestore.instance.collection('Gift').withConverter<Gift>(
-    fromFirestore: (snapshot, _) => Gift.fromJson(snapshot.data()!),
+    fromFirestore: (snapshot, _) => Gift.fromJson({...snapshot.data()! , 'id': snapshot.id}),
     toFirestore: (gift, _) => _$GiftToJson(gift),
   );
 

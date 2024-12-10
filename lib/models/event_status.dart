@@ -19,7 +19,7 @@ class EventStatus extends Model {
   Map<String, dynamic> toJson() => _$EventStatusToJson(this);
 
   static get instance => FirebaseFirestore.instance.collection('EventStatus').withConverter<EventStatus>(
-    fromFirestore: (snapshot, _) => EventStatus.fromJson(snapshot.data()!),
+    fromFirestore: (snapshot, _) => EventStatus.fromJson({...snapshot.data()! , 'id': snapshot.id}),
     toFirestore: (eventStatus, _) => _$EventStatusToJson(eventStatus),
   );
 

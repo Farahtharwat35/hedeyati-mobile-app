@@ -20,7 +20,7 @@ class EventCategory extends Model {
 
 
   static get instance => FirebaseFirestore.instance.collection('EventCategory').withConverter<EventCategory>(
-    fromFirestore: (snapshot, _) => EventCategory.fromJson(snapshot.data()!),
+    fromFirestore: (snapshot, _) => EventCategory.fromJson({...snapshot.data()! , 'id': snapshot.id}),
     toFirestore: (eventCategory, _) => _$EventCategoryToJson(eventCategory),
   );
 

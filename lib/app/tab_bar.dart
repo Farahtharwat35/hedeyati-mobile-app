@@ -22,7 +22,7 @@ class MyTabBar extends StatelessWidget {
             const HomePage(),
             BlocProvider(
               create: (_) => EventBloc(),
-              child: const EventsPage(),
+              child: EventsPage(),
             ),
             const NotificationPage(),
           ],

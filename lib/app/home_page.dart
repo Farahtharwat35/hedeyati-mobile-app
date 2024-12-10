@@ -45,8 +45,8 @@ class _HomePageState extends State<HomePage> {
             onTap: () {
               Navigator.push(context, MaterialPageRoute(
                   builder: (context) => Provider<EventBloc>(
-                create: (_) => EventBloc(),
-                child: CreateEventPage(),
+                  create: (_) => EventBloc(),
+                  child: CreateEventPage(),
               ),));
             },
           ),

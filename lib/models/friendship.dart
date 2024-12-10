@@ -23,7 +23,7 @@ class Friendship extends Model {
   Map<String, dynamic> toJson() => _$FriendshipToJson(this);
 
    static get instance => FirebaseFirestore.instance.collection('Friendships').withConverter<Friendship>(
-    fromFirestore: (snapshot, _) => Friendship.fromJson(snapshot.data()!),
+    fromFirestore: (snapshot, _) => Friendship.fromJson({...snapshot.data()! , 'id': snapshot.id}),
     toFirestore: (friendship, _) => _$FriendshipToJson(friendship),
   );
 

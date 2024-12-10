@@ -26,7 +26,7 @@ class User extends Model {
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   static get instance => FirebaseFirestore.instance.collection('Users').withConverter<User>(
-    fromFirestore: (snapshot, _) => User.fromJson(snapshot.data()!),
+    fromFirestore: (snapshot, _) => User.fromJson({...snapshot.data()! , 'id': snapshot.id}),
     toFirestore: (user, _) => _$UserToJson(user),
   );
 

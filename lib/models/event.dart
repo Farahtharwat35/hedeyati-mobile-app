@@ -34,15 +34,28 @@ class Event extends Model {
   }) : createdAt = createdAt ?? DateTime.now();
 
 
-  factory Event.fromJson(Map<String, dynamic> json) =>
-      _$EventFromJson(json);
+  // factory Event.fromJson(Map<String, dynamic> json) =>
+  //     _$EventFromJson(json);
 
   Map<String, dynamic> toJson() => _$EventToJson(this);
 
   static get instance => FirebaseFirestore.instance.collection('Events').withConverter<Event>(
-    fromFirestore: (snapshot, _) => Event.fromJson(snapshot.data()!),
+    fromFirestore: (snapshot, _) => Event.fromJson({...snapshot.data()! , 'id': snapshot.id}),
     toFirestore: (event, _) => _$EventToJson(event),
   );
+
+  factory Event.fromJson(Map<String, dynamic> json) {
+    try {
+      print('Parsing Event JSON: $json'); // Log the entire JSON first
+      return _$EventFromJson(json);
+    } catch (e, stack) {
+      print('Error while parsing Event JSON: $e');
+      print('Stack Trace: $stack');
+      print('Problematic JSON: $json'); // Identify which JSON caused the problem
+      rethrow; // Re-throw the error after logging
+    }
+  }
+
 
   @override
   CollectionReference<Event> getReference() => instance;

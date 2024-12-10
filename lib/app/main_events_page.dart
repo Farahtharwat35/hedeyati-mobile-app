@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/event.dart';
-import '../app/app_theme.dart';
+import 'package:async_builder/async_builder.dart';
 import '../bloc/events/event_bloc.dart';
 import '../bloc/events/event_bloc_events.dart';
-import 'package:async_builder/async_builder.dart';
+import '../models/event.dart';
+import '../app/app_theme.dart';
+
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -16,16 +16,14 @@ class EventsPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
   late TabController _mainTabController;
-  late Stream<QuerySnapshot> currentStream;
+  late Stream<List<Event>> _currentStream;
 
   @override
   void initState() {
     super.initState();
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
-
-    // Initialize the first stream
-    currentStream = _getStreamForTab(0);
+    _updateStream();
   }
 
   @override
@@ -37,17 +35,23 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
 
   void _onTabChanged() {
     if (_mainTabController.indexIsChanging) {
-      currentStream = _getStreamForTab(_mainTabController.index);
-      setState(() {});
+      print("---------------------- MAIN TAB CONTROLLER INDEX: ${_mainTabController.index} ----------------------");
+      _updateStream();
     }
   }
 
-  Future<Stream<QuerySnapshot>> _getStreamForTab(int tabIndex) async {
-    final eventBloc = context.read<EventBloc>();
-    if (tabIndex == 0) {
-      return eventBloc.add(await LoadMyEvents());
+  void _updateStream() {
+    final eventBloc = BlocProvider.of<EventBloc>(context);
+    if (_mainTabController.index == 0) {
+      eventBloc.add(LoadMyEvents());
+      _currentStream = eventBloc.myEventsStream;
+      setState(() {});
+      print("=======================Events Stream: $_currentStream ======================");
     } else {
-      return eventBloc.add(await LoadFriendsEvents()) as Stream<QuerySnapshot>;
+      eventBloc.add(LoadFriendsEvents());
+      _currentStream = eventBloc.friendsEventsStream;
+      setState(() {});
+      print("======================= !!!!!!!!!!!!!!!!! Friends Events Stream: $_currentStream ======================");
     }
   }
 
@@ -69,19 +73,17 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
             ),
           ),
           Expanded(
-            child: AsyncBuilder<QuerySnapshot>(
-              stream: currentStream,
+            child: AsyncBuilder<List<Event>>(
+              stream: _currentStream,
               waiting: (context) => const Center(child: CircularProgressIndicator()),
-              builder: (context, data) {
-                if (data == null || data.docs.isEmpty) {
-                  return const Center(child: Text('No events found.'));
-                }
-                final events = data.docs
-                    .map((doc) => Event.fromJson(doc.data() as Map<String, dynamic>))
-                    .toList();
-                return _buildEventsCard(context, events);
+              error: (context, error, stack) {
+                debugPrint('Error: $error');
+                debugPrint('Stack Trace: $stack');
+                return Center(child: Text('Error: $error'),);
+                },
+              builder: (context, events) {
+                return _buildEventsCard(context, events ?? []);
               },
-              error: (context, error, stackTrace) => Center(child: Text('Error: $error')),
             ),
           ),
         ],
@@ -93,7 +95,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
-        color: Colors.pink[50],
+        color: Colors.pink[50], // Light pink background color.
         elevation: 4,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
@@ -104,13 +106,20 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: Text(
-                  _mainTabController.index == 0 ? 'My Events' : 'My Friends Events',
-                  style: myTheme.textTheme.headlineMedium,
+                child: _mainTabController.index ==0 ?  Text(
+                  'My Events',
+                  style: myTheme.textTheme.headlineMedium, // Use `myTheme` for the title.
+                ) : Text(
+                  'My Friends Events',
+                  style: myTheme.textTheme.headlineMedium, // Use `myTheme` for the title.
                 ),
               ),
               const SizedBox(height: 16),
-              ...events.map((event) => _buildEventTile(context, event)).toList(),
+              // Check if the events list is empty, and show appropriate widget
+              if (events.isEmpty)
+                const Center(child: Text('No events found.'))
+              else
+                ...events.map((event) => _buildEventTile(context, event)).toList(),
             ],
           ),
         ),
@@ -125,7 +134,9 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CircleAvatar(
-            backgroundImage: NetworkImage(event.image),
+            backgroundImage: NetworkImage(event.image?.isNotEmpty == true
+                ? event.image
+                : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
             radius: 25,
           ),
           const SizedBox(width: 16),
@@ -134,7 +145,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  event.name,
+                  event.description,
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
