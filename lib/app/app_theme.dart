@@ -24,5 +24,4 @@ final ThemeData myTheme = ThemeData(
   listTileTheme: const ListTileThemeData(
     selectedTileColor: Colors.pinkAccent,
   ),
-
 );

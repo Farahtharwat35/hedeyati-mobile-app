@@ -7,8 +7,9 @@ part 'gift.g.dart';
 
 @JsonSerializable()
 // Gift Class
-class Gift extends Model{
+class Gift extends Model {
   final String firestoreUserID;
+  final String eventID;
   final String description;
   final String? photoUrl;
   final bool isPledged;
@@ -22,6 +23,7 @@ class Gift extends Model{
 
   Gift({
     this.firestoreUserID = '',
+    required this.eventID,
     required this.description,
     this.photoUrl,
     this.isPledged = false,
@@ -38,7 +40,7 @@ class Gift extends Model{
   Gift copyWith({
     String? id,
     String? firestoreUserID,
-    int? userID,
+    String? eventID,
     String? description,
     String? photoUrl,
     bool? isPledged,
@@ -52,6 +54,7 @@ class Gift extends Model{
   }) {
     return Gift(
       firestoreUserID: firestoreUserID ?? this.firestoreUserID,
+      eventID: eventID ?? this.eventID,
       description: description ?? this.description,
       photoUrl: photoUrl ?? this.photoUrl,
       isPledged: isPledged ?? this.isPledged,
@@ -59,23 +62,10 @@ class Gift extends Model{
       pledgedDate: pledgedDate ?? this.pledgedDate,
       price: price ?? this.price,
       categoryID: categoryID ?? this.categoryID,
-      storesLocationRecommendation:
-      storesLocationRecommendation ?? this.storesLocationRecommendation,
+      storesLocationRecommendation: storesLocationRecommendation ?? this.storesLocationRecommendation,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
-  }
-
-  static Future<void> addGiftToFirestore(Gift gift) async {
-    await Gift.instance.add(gift);
-  }
-
-  static Future<void> updateGiftInFirestore(Gift gift) async {
-    await Gift.instance.doc(gift.id).update(gift);
-  }
-
-  static Future<void> deleteGiftFromFirestore(Gift gift) async {
-    await Gift.instance.doc(gift.id).delete();
   }
 
   factory Gift.fromJson(Map<String, dynamic> json) => _$GiftFromJson(json);
@@ -83,12 +73,23 @@ class Gift extends Model{
   Map<String, dynamic> toJson() => _$GiftToJson(this);
 
   static get instance => FirebaseFirestore.instance.collection('Gift').withConverter<Gift>(
-    fromFirestore: (snapshot, _) => Gift.fromJson({...snapshot.data()! , 'id': snapshot.id}),
-    toFirestore: (gift, _) => _$GiftToJson(gift),
+    fromFirestore: (snapshot, _) => Gift.fromJson({
+      ...snapshot.data()!,
+      'id': snapshot.id,
+    }),
+    toFirestore: (gift, _) => gift.toJson(),
+  );
+
+  static Gift dummy() => Gift(
+    firestoreUserID: 'dummy-user',
+    eventID: 'dummy-event',
+    description: 'Dummy gift description',
+    price: 0.0,
+    categoryID: 0,
+    createdAt: DateTime.now(),
+    updatedAt: DateTime.now(),
   );
 
   @override
   CollectionReference<Gift> getReference() => instance;
-
-  static Gift dummy() => Gift(description: '', price: 0, categoryID: 0);
 }

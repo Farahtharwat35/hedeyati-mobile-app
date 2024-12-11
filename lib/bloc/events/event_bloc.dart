@@ -1,12 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hedeyati/bloc/events/event_bloc_events.dart';
-import 'package:hedeyati/bloc/events/event_bloc_states.dart';
 import '../../database/firestore/crud.dart';
 import '../../helpers/query_arguments.dart';
 import '../../models/event.dart';
-import '../generic_crud_bloc.dart';
-import '../generic_states.dart';
+import '../generic_bloc/generic_crud_bloc.dart';
 
 class EventBloc extends ModelBloc<Event> {
   EventBloc() : super(model: Event.dummy()) {

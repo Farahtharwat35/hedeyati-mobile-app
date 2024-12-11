@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:hedeyati/models/event.dart';
+import '../../helpers/query_arguments.dart';
+import '../../models/model.dart';
 
-import '../helpers/query_arguments.dart';
-import '../models/model.dart';
 
 abstract class GenericCRUDEvents extends Equatable {
   @override

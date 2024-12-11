@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
+import '../../models/model.dart';
 
-import '../models/model.dart';
 
 abstract class ModelStates extends Equatable {
   final List<Model>? models ;

@@ -1,5 +1,5 @@
 import 'package:hedeyati/models/event.dart';
-import '../generic_states.dart';
+import '../bloc/generic_bloc/generic_states.dart';
 
 
 class MyEventsLoaded extends ModelStates {

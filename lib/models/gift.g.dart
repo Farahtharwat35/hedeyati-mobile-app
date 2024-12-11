@@ -8,6 +8,7 @@ part of 'gift.dart';
 
 Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
       firestoreUserID: json['firestoreUserID'] as String? ?? '',
+      eventID: json['eventID'] as String,
       description: json['description'] as String,
       photoUrl: json['photoUrl'] as String?,
       isPledged: json['isPledged'] as bool? ?? false,
@@ -33,6 +34,7 @@ Map<String, dynamic> _$GiftToJson(Gift instance) => <String, dynamic>{
       'id': instance.id,
       'isDeleted': instance.isDeleted,
       'firestoreUserID': instance.firestoreUserID,
+      'eventID': instance.eventID,
       'description': instance.description,
       'photoUrl': instance.photoUrl,
       'isPledged': instance.isPledged,

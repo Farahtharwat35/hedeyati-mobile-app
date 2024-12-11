@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/database/firestore/crud.dart';
-import '../models/event_category.dart';
-import '../models/model.dart';
-import '../bloc/generic_states.dart';
-import 'generic_crud_events.dart';
+import '../../models/event_category.dart';
+import '../../models/model.dart';
+import '../generic_bloc/generic_crud_events.dart';
+import '../generic_bloc/generic_states.dart';
 
 class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, ModelStates> {
   late GenericModel model;
