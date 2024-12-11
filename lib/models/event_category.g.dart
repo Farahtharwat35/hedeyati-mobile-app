@@ -10,7 +10,7 @@ EventCategory _$EventCategoryFromJson(Map<String, dynamic> json) =>
     EventCategory(
       name: json['name'] as String,
     )
-      ..id = json['id'] as String
+      ..id = json['id'] as String?
       ..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$EventCategoryToJson(EventCategory instance) =>

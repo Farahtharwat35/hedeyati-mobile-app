@@ -1,41 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
-import 'package:hedeyati/helpers/userCredentials.dart';
 import 'package:hedeyati/models/event.dart';
 import 'package:hedeyati/app/app_theme.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import 'package:hedeyati/app/reusable_components/date_picker_field_widget.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
+import 'package:intl/intl.dart';
 
-class CreateEventPage extends StatefulWidget {
-  const CreateEventPage({Key? key}) : super(key: key);
+class EditEvent extends StatefulWidget {
+  final Event event;
+  final EventBloc eventBloc;
+
+  const EditEvent({Key? key, required this.event, required this.eventBloc}) : super(key: key);
 
   @override
-  State<CreateEventPage> createState() => _CreateEventPageState();
+  State<EditEvent> createState() => _EditEventPageState();
 }
 
-class _CreateEventPageState extends State<CreateEventPage> {
+class _EditEventPageState extends State<EditEvent> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _categoryIDController = TextEditingController();
-  final TextEditingController _eventDateController = TextEditingController();
-
-
-  String? userFirestoreID;
+  late TextEditingController _nameController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _categoryIDController;
+  late TextEditingController _eventDateController;
 
   @override
   void initState() {
     super.initState();
-    _loadUserCredientials();
+    _initializeControllers();
   }
 
-  Future<void> _loadUserCredientials() async {
-    final credentials = await UserCredentials.getCredentials();
-    setState(() {
-      userFirestoreID = credentials;
-    });
+  void _initializeControllers() {
+    _nameController = TextEditingController(text: widget.event.name);
+    _descriptionController = TextEditingController(text: widget.event.description);
+    _categoryIDController = TextEditingController(text: widget.event.categoryID.toString());
+    _eventDateController = TextEditingController(text: widget.event.eventDate.toIso8601String());
   }
 
   @override
@@ -45,12 +45,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
       home: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: const Text('Create Event', textAlign: TextAlign.center),
+          title: const Text('Edit Event', textAlign: TextAlign.center),
           titleTextStyle: Theme.of(context).textTheme.headlineMedium,
           backgroundColor: Theme.of(context).colorScheme.primary,
-          centerTitle: true, // Center the title
+          centerTitle: true,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -62,7 +62,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
               elevation: 8,
               shadowColor: Colors.black.withOpacity(0.8),
-              color: Color(0xFFF1F1F1),
+              color: const Color(0xFFF1F1F1),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -79,7 +79,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                           buildTextField(_nameController, 'Event Name', Icons.event),
                           buildTextField(_descriptionController, 'Description', Icons.description),
                           buildTextField(_categoryIDController, 'Category ID', Icons.category),
-                          buildDatePickerField(_eventDateController, 'Event Date', context),
+                          buildDatePickerField(TextEditingController(
+                            text: DateFormat("dd/MM/yyyy").format(DateTime.parse(_eventDateController.text))), 'Event Date', context),
                           const SizedBox(height: 20),
                           Center(
                             child: ElevatedButton(
@@ -89,47 +90,29 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                 backgroundColor: Theme.of(context).colorScheme.primary,
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               ),
-                              onPressed: userFirestoreID == null
-                                  ? null
-                                  : () async {
+                              onPressed: () {
                                 if (_formKey.currentState!.validate()) {
-                                  final event = Event(
-                                    image: '',
-                                    firestoreUserID: userFirestoreID!,
+                                  final updatedEvent = widget.event.copyWith(
+                                    id: widget.event.id,
                                     name: _nameController.text,
                                     description: _descriptionController.text,
                                     categoryID: int.parse(_categoryIDController.text),
                                     eventDate: DateTime.parse(_eventDateController.text),
-                                    status: 1,
-                                    createdBy: userFirestoreID!,
-                                    createdAt: DateTime.now(),
                                   );
-                                  EventBloc.get(context).add(AddModel(event));
-                                  if (EventBloc.get(context).state is ModelAddedState) {
+                                  widget.eventBloc.add(UpdateModel(updatedEvent));
+                                  if (widget.eventBloc.state is ModelUpdatedState) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Event added successfully!',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-                                        ),
-                                        backgroundColor: Colors.pinkAccent,
-                                      ),
+                                      const SnackBar(content: Text('Event updated successfully!' , style: TextStyle(fontWeight: FontWeight.bold , fontStyle: FontStyle.italic)), backgroundColor: Colors.pinkAccent),
                                     );
-                                  } else {
+                                  }
+                                  else{
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Failed to add event',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
+                                      const SnackBar(content: Text('Failed to update event' , style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)), backgroundColor: Colors.red),
                                     );
                                   }
                                   Navigator.pop(context);
-                                }
-                              },
-                              child: const Text('Create Event', style: TextStyle(fontSize: 18)),
+                              }},
+                              child: const Text('Update Event', style: TextStyle(fontSize: 18)),
                             ),
                           ),
                         ],
@@ -154,16 +137,16 @@ class _CreateEventPageState extends State<CreateEventPage> {
     super.dispose();
   }
 
-  _header() {
+  Widget _header() {
     return Padding(
-      padding: const EdgeInsets.only(top: 50, left: 20, right: 20), // Adjust padding as needed
+      padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                "Event",
+                "Edit Event",
                 style: TextStyle(
                   fontSize: 45,
                   fontWeight: FontWeight.bold,
@@ -172,7 +155,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 ),
               ),
               const SizedBox(width: 10),
-              Icon(Icons.event, color: Colors.pinkAccent, size: 40),
+              const Icon(Icons.edit, color: Colors.pinkAccent, size: 40),
             ],
           ),
         ],

@@ -11,7 +11,7 @@ Friendship _$FriendshipFromJson(Map<String, dynamic> json) => Friendship(
       recieverID: json['recieverID'] as String,
       friendshipStatus: (json['friendshipStatus'] as num).toInt(),
     )
-      ..id = json['id'] as String
+      ..id = json['id'] as String?
       ..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$FriendshipToJson(Friendship instance) =>

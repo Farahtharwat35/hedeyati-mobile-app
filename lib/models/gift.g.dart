@@ -27,7 +27,7 @@ Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
           ? null
           : DateTime.parse(json['updatedAt'] as String),
     )
-      ..id = json['id'] as String
+      ..id = json['id'] as String?
       ..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$GiftToJson(Gift instance) => <String, dynamic>{

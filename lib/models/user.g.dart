@@ -14,7 +14,7 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       phone: json['phone'] as String,
       isFriend: json['isFriend'] as bool? ?? false,
     )
-      ..id = json['id'] as String
+      ..id = json['id'] as String?
       ..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{

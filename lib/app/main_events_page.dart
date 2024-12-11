@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:async_builder/async_builder.dart';
 import '../bloc/events/event_bloc.dart';
-import '../bloc/generic_bloc/generic_crud_events.dart';
 import '../models/event.dart';
 import '../app/app_theme.dart';
 import '../app/reusable_components/build_card.dart';
+import 'edit_event_page.dart';
 import 'event_details_page.dart';
 
 
@@ -87,11 +87,15 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                 ));
                 content.add(const SizedBox(height: 16));
                 final filteredEvents = events?.where((event) => !event.isDeleted).toList();
+                for (int i=0 ; i<filteredEvents!.length ; i++){
+                  print("---------------------FILTERED EVENTS---------------------");
+                  print(filteredEvents[i].toJson());
+                }
                 if (filteredEvents == null || filteredEvents.isEmpty) {
                 content.add(const Center(child: Text('No events found.')));
                 } else {
                 content.addAll(
-                filteredEvents.map((event) => _buildEventTile(context, event, eventBloc)).toList(),
+                filteredEvents.map((event) => _buildEventTile(context,event,eventBloc)).toList(),
                 );
                 }
                 return buildCard(context, content);
@@ -106,7 +110,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
   Widget _buildEventTile(BuildContext context, Event event , EventBloc eventBloc) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: NetworkImage(event.image.isNotEmpty == true
+        backgroundImage: NetworkImage( event.image.isNotEmpty
             ? event.image
             : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
         radius: 25,
@@ -128,7 +132,12 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
           IconButton(
             icon: const Icon(Icons.edit, color: Colors.pinkAccent),
             onPressed: () {
-              // Navigate to the Edit Event page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditEvent(event: event , eventBloc: eventBloc),
+                ),
+              );
             },
           ),
           IconButton(
