@@ -21,6 +21,7 @@ void confirmDelete(BuildContext context, ModelBloc bloc, Model model ,Text messa
             onPressed: () {
               Navigator.pop(context);
               bloc.add(DeleteModel(model));
+              Navigator.of(context).pop();
             },
             child: const Text('Delete'),
           ),

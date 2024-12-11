@@ -59,7 +59,6 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
               TextButton(
                 onPressed: () {
                   return confirmDelete(context, eventBloc as ModelBloc , event as Model, Text('Are you sure you want to delete the event "${event.name}"?'));
-                  // Navigator.of(context).pop();
                 },
                 child: const Text(
                   'Delete',
