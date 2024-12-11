@@ -37,7 +37,7 @@ class UpdateModel extends GenericCRUDEvents {
 }
 
 class DeleteModel extends GenericCRUDEvents {
-  final Event deletedModel;
+  final Model deletedModel;
 
   DeleteModel(this.deletedModel);
 

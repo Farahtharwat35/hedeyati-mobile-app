@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hedeyati/app/reusable_components/delete_dialog.dart';
+import 'package:hedeyati/bloc/generic_bloc/generic_crud_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:hedeyati/app/reusable_components/card_for_details.dart';
 import '../bloc/events/event_bloc.dart';
 import '../bloc/generic_bloc/generic_crud_events.dart';
 import '../models/event.dart';
+import '../models/model.dart';
 
 void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
   showDialog(
@@ -55,7 +58,7 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
             children: [
               TextButton(
                 onPressed: () {
-                  return _confirmDelete(context, event, eventBloc);
+                  return confirmDelete(context, eventBloc as ModelBloc , event as Model, Text('Are you sure you want to delete the event "${event.name}"?'));
                   // Navigator.of(context).pop();
                 },
                 child: const Text(
@@ -72,29 +75,3 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
   );
 }
 
-void _confirmDelete(BuildContext context, Event event , EventBloc eventBloc) {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: Text(
-            'Are you sure you want to delete the event "${event.name}"?'),
-        backgroundColor: Colors.pink[50],
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              eventBloc.add(DeleteModel(event));
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      );
-    },
-  );
-}
