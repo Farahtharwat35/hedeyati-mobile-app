@@ -5,6 +5,7 @@ import 'package:hedeyati/models/event_category.dart';
 import 'package:hedeyati/models/friendship.dart' ;
 import 'package:hedeyati/models/gift.dart' ;
 import '../../helpers/query_arguments.dart';
+import '../../models/gift_category.dart';
 import '../../models/model.dart';
 
 class CRUD<GenericModel extends Model> {
@@ -70,4 +71,5 @@ CRUD<Event> eventCRUD = CRUD<Event>(model: Event.dummy());
 CRUD<User> userCRUD = CRUD<User>(model: User.dummy());
 CRUD<Friendship> friendshipCRUD = CRUD<Friendship>(model: Friendship.dummy());
 CRUD<Gift> giftCRUD = CRUD<Gift>(model: Gift.dummy());
-CRUD<EventCategory> eventTypeCRUD = CRUD<EventCategory>(model: EventCategory.dummy());
+CRUD<EventCategory> eventCategoryCRUD = CRUD<EventCategory>(model: EventCategory.dummy());
+CRUD<GiftCategory> giftCategoryCRUD = CRUD<GiftCategory>(model: GiftCategory.dummy());

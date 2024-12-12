@@ -9,6 +9,7 @@ part 'gift.g.dart';
 class Gift extends Model {
   @override
   String? id;
+  final String name;
   final String? firestoreUserID;
   final String eventID;
   final String description;
@@ -17,13 +18,14 @@ class Gift extends Model {
   final int? pledgedBy;
   final DateTime? pledgedDate;
   final double price;
-  final int categoryID;
+  final String categoryID;
   final String? storesLocationRecommendation;
 
   Gift({
     this.id,
     this.firestoreUserID,
     required this.eventID,
+    required this.name,
     required this.description,
     this.photoUrl,
     this.isPledged = false,
@@ -40,12 +42,13 @@ class Gift extends Model {
     required String? id,
     String? eventID,
     String? description,
+    String? name,
     String? photoUrl,
     bool? isPledged,
     int? pledgedBy,
     DateTime? pledgedDate,
     double? price,
-    int? categoryID,
+    String? categoryID,
     String? storesLocationRecommendation,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -54,13 +57,14 @@ class Gift extends Model {
       id: this.id,
       firestoreUserID: firestoreUserID,
       eventID: eventID ?? this.eventID,
+      name: name ?? this.name,
       description: description ?? this.description,
       photoUrl: photoUrl ?? this.photoUrl,
       isPledged: isPledged ?? this.isPledged,
       pledgedBy: pledgedBy ?? this.pledgedBy,
       pledgedDate: pledgedDate ?? this.pledgedDate,
       price: price ?? this.price,
-      categoryID: categoryID ?? this.categoryID,
+      categoryID: this.categoryID,
       storesLocationRecommendation: storesLocationRecommendation ?? this.storesLocationRecommendation,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -69,6 +73,7 @@ class Gift extends Model {
 
   factory Gift.fromJson(Map<String, dynamic> json) => _$GiftFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$GiftToJson(this);
 
   static get instance => FirebaseFirestore.instance.collection('Gift').withConverter<Gift>(
@@ -83,9 +88,10 @@ class Gift extends Model {
   static Gift dummy() => Gift(
     firestoreUserID: 'dummy-user',
     eventID: 'dummy-event',
+    name: 'Dummy Gift',
     description: 'Dummy gift description',
     price: 0.0,
-    categoryID: 0,
+    categoryID: 'dummy-category',
     createdAt: DateTime.now(),
     updatedAt: DateTime.now(),
   );

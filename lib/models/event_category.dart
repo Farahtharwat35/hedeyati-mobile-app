@@ -18,6 +18,7 @@ class EventCategory extends Model {
   factory EventCategory.fromJson(Map<String, dynamic> json) =>
       _$EventCategoryFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$EventCategoryToJson(this);
 
   static get instance {

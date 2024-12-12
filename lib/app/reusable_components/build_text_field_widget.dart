@@ -11,9 +11,8 @@ Widget buildTextField({required TextEditingController controller, required Map<S
       obscureText: args['obscureText'] ?? false,
       maxLength: args['maxLength'] ?? null,
       maxLines: args['maxLines'] ?? 1,
-      expands: args['expands'] ?? false,
       readOnly: args['readOnly'] ?? false,
-      decoration: textFormFieldDecoration(args),
+      decoration: fieldDecorator(args),
       validator : emptyValidator == true ? textFormFieldEmptyValidator(args): null,
     ),
   );

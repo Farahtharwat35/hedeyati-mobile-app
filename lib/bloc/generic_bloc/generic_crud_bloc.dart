@@ -18,7 +18,6 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
     on<DeleteModel>(delete);
   }
 
-
   static ModelBloc of(context) => BlocProvider.of(context);
 
   Future<void> addModel(AddModel event, Emitter<ModelStates> emit) async {

@@ -76,8 +76,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          buildTextField(controller: _nameController, args: {'labelText': 'Event Name', 'prefixIcon': Icons.event , 'maxLength': 30}),
-                          buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description , 'maxLines': 3 , 'expands': true , 'hintText': 'Enter a description (Optional)'} , emptyValidator: false),
+                          buildTextField(controller: _nameController, args: {'labelText': 'Event Name', 'prefixIcon': Icons.event , 'maxLength': 10}),
+                          buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description , 'maxLines': 3 , 'hintText': 'Enter a description (Optional)'} , emptyValidator: false),
                           buildTextField(controller: _categoryIDController, args: {'labelText': 'Category ID', 'prefixIcon': Icons.category , 'keyboardType': TextInputType.number}),
                           buildDatePickerField(_eventDateController, 'Event Date', context),
                           const SizedBox(height: 20),

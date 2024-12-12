@@ -20,7 +20,6 @@ class LoadModel extends GenericCRUDEvents {
 
 class AddModel extends GenericCRUDEvents {
   final Model model;
-
   AddModel(this.model);
 
   @override

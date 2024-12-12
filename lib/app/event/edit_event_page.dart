@@ -78,7 +78,7 @@ class _EditEventPageState extends State<EditEvent> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           buildTextField(controller: _nameController, args: {'labelText': 'Event Name', 'prefixIcon': Icons.event}),
-                          buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description, 'maxLines': 3 , 'expands': true,}, emptyValidator: false),
+                          buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description, 'maxLines': 3}, emptyValidator: false),
                           buildTextField(controller: _categoryIDController, args: {'labelText': 'Category ID', 'prefixIcon': Icons.category} , emptyValidator: false),
                           buildDatePickerField(TextEditingController(
                             text: DateFormat("dd/MM/yyyy").format(DateTime.parse(_eventDateController.text))), 'Event Date', context),

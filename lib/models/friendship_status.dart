@@ -18,6 +18,7 @@ class FriendshipStatus extends Model {
   factory FriendshipStatus.fromJson(Map<String, dynamic> json) =>
       _$FriendshipStatusFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$FriendshipStatusToJson(this);
 
   static get instance => FirebaseFirestore.instance.collection('FriendshipStatus').withConverter<FriendshipStatus>(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:intl/intl.dart';
 
 Widget buildDatePickerField(TextEditingController controller, String label, BuildContext context) {
@@ -21,7 +22,7 @@ Widget buildDatePickerField(TextEditingController controller, String label, Buil
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(Icons.calendar_today),
+        prefixIcon: Icon(Icons.calendar_today, color: myTheme.primaryColor),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when focused

@@ -10,19 +10,23 @@ class EventBloc extends ModelBloc<Event> {
     _initializeStreams();
   }
 
-  late final Stream<List<Event>> myEventsStream;
-  late final Stream<List<Event>> friendsEventsStream;
+  late final Stream<List<Event>> _myEventsStream;
+  late final Stream<List<Event>> _friendsEventsStream;
 
   void _initializeStreams() {
-    myEventsStream = eventCRUD.getSnapshotsWhere([
+    _myEventsStream = eventCRUD.getSnapshotsWhere([
       {'firestoreUserID': QueryArg(isEqualTo: FirebaseAuth.instance.currentUser!.uid)},
+      {'isDeleted': QueryArg(isEqualTo: false)}
     ]).map((snapshot) => snapshot.docs.map((doc) => doc.data() as Event).toList());
 
-    friendsEventsStream = eventCRUD.getSnapshotsWhere([
+    _friendsEventsStream = eventCRUD.getSnapshotsWhere([
       {'firestoreUserID': QueryArg(isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)},
+      {'isDeleted': QueryArg(isEqualTo: false)}
     ]).map((snapshot) => snapshot.docs.map((doc) => doc.data() as Event).toList());
   }
 
   static EventBloc get(context) => BlocProvider.of(context);
+  Stream<List<Event>> get myEventsStream => _myEventsStream;
+  Stream<List<Event>> get friendsEventsStream => _friendsEventsStream;
 
 }

@@ -26,6 +26,7 @@ class User extends Model {
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$UserToJson(this);
 
   static get instance => FirebaseFirestore.instance.collection('Users').withConverter<User>(

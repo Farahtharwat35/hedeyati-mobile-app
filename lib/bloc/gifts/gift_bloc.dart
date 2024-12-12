@@ -7,17 +7,19 @@ import '../../models/event.dart';
 import '../generic_bloc/generic_crud_bloc.dart';
 
 class GiftBloc extends ModelBloc<Gift> {
-  GiftBloc({required Event event}) : super(model: Gift.dummy()) {
-    _initializeStreams(event);
+  GiftBloc({Event? event}) : super(model: Gift.dummy()) {
+    _initializeStreams(event: event);
   }
 
   late final Stream<List<Gift>> giftsStream;
 
-  void _initializeStreams(Event event) {
-    giftsStream = giftCRUD.getSnapshotsWhere([
-      {'eventID': QueryArg(isEqualTo: event.id)},
-    ]).map((snapshot) => snapshot.docs.map((doc) => doc.data() as Gift).toList());
+  void _initializeStreams({Event? event}) {
+    List<Map<String, QueryArg>> queryArgs = event != null ? [{'eventID' : QueryArg(isEqualTo: event.id)}] : [{}];
+
+    giftsStream = giftCRUD.getSnapshotsWhere(queryArgs)
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data() as Gift).toList());
   }
+
 
   static GiftBloc get(context) => BlocProvider.of(context);
 

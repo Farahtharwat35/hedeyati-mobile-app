@@ -27,7 +27,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     super.initState();
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
-    eventBloc = BlocProvider.of<EventBloc>(context);
+    eventBloc = EventBloc.get(context);
     _eventStreams = [eventBloc.myEventsStream, eventBloc.friendsEventsStream];
   }
 
@@ -88,10 +88,6 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                 ));
                 content.add(const SizedBox(height: 16));
                 final filteredEvents = events?.where((event) => !event.isDeleted).toList();
-                for (int i=0 ; i<filteredEvents!.length ; i++){
-                  print("---------------------FILTERED EVENTS---------------------");
-                  print(filteredEvents[i].toJson());
-                }
                 if (filteredEvents == null || filteredEvents.isEmpty) {
                 content.add(const Center(child: Text('No events found.')));
                 } else {

@@ -67,6 +67,7 @@ class Event extends Model {
     }
   }
 
+  @override
   Map<String, dynamic> toJson() {
     final json = _$EventToJson(this);
     log('Converting Event to JSON: $json');

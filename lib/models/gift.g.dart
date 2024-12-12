@@ -10,6 +10,7 @@ Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
       id: json['id'] as String?,
       firestoreUserID: json['firestoreUserID'] as String?,
       eventID: json['eventID'] as String,
+      name: json['name'] as String,
       description: json['description'] as String,
       photoUrl: json['photoUrl'] as String?,
       isPledged: json['isPledged'] as bool? ?? false,
@@ -18,7 +19,7 @@ Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
           ? null
           : DateTime.parse(json['pledgedDate'] as String),
       price: (json['price'] as num).toDouble(),
-      categoryID: (json['categoryID'] as num).toInt(),
+      categoryID: json['categoryID'] as String,
       storesLocationRecommendation:
           json['storesLocationRecommendation'] as String?,
       createdAt: json['createdAt'] == null
@@ -39,6 +40,7 @@ Map<String, dynamic> _$GiftToJson(Gift instance) => <String, dynamic>{
       'deletedAt': instance.deletedAt?.toIso8601String(),
       'isDeleted': instance.isDeleted,
       'id': instance.id,
+      'name': instance.name,
       'firestoreUserID': instance.firestoreUserID,
       'eventID': instance.eventID,
       'description': instance.description,

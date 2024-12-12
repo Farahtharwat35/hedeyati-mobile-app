@@ -20,6 +20,7 @@ class EventStatus extends Model {
   factory EventStatus.fromJson(Map<String, dynamic> json) =>
       _$EventStatusFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$EventStatusToJson(this);
 
   static get instance {

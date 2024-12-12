@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hedeyati/app/reusable_components/app_theme.dart';
 
-InputDecoration textFormFieldDecoration(Map<String,dynamic> args){
+InputDecoration fieldDecorator(Map<String,dynamic> args){
   return InputDecoration(
-    prefixIcon: args['prefixIcon'],
+    prefixIcon: args['prefixIcon'] != null ? Icon(args['prefixIcon'], color: myTheme.primaryColor) : null,
     labelText: args['labelText'] ?? args['hintText'],
     hintText: args['hintText'] ?? args['labelText'],
     border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
