@@ -10,6 +10,8 @@ class FriendshipStatus extends Model {
   final String status;
 
   FriendshipStatus({
+    @override
+    String? id,
     required this.status,
   });
 
@@ -27,4 +29,19 @@ class FriendshipStatus extends Model {
   CollectionReference<FriendshipStatus> getReference() => instance;
 
   static FriendshipStatus dummy() => FriendshipStatus(status: '');
+
+  @override
+  String toString() {
+    return 'FriendshipStatus{id: $id, status: $status}';
+  }
+
+  FriendshipStatus copyWith({
+    required String? id,
+    String? status,
+  }) {
+    return FriendshipStatus(
+      id: id ?? this.id,
+      status: status ?? this.status,
+    );
+  }
 }

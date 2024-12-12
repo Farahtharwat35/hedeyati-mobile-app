@@ -7,11 +7,14 @@ part 'friendship.g.dart';
 @JsonSerializable()
 // Friendship Class
 class Friendship extends Model {
+  @override
+  String? id;
   final String requesterID;
   final String recieverID;
   final int friendshipStatus;
 
   Friendship({
+    this.id,
     required this.requesterID,
     required this.recieverID,
     required this.friendshipStatus,
@@ -37,4 +40,22 @@ class Friendship extends Model {
 
   static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatus: 0);
 
+  Friendship copyWith({
+    required String? id,
+    String? requesterID,
+    String? recieverID,
+    int? friendshipStatus,
+  }) {
+    return Friendship(
+      id: id ?? this.id,
+      requesterID: requesterID ?? this.requesterID,
+      recieverID: recieverID ?? this.recieverID,
+      friendshipStatus: friendshipStatus ?? this.friendshipStatus,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'Friendship{id: $id, requesterID: $requesterID, recieverID: $recieverID, friendshipStatus: $friendshipStatus}';
+  }
 }

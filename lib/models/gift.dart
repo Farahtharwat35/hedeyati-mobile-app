@@ -8,6 +8,8 @@ part 'gift.g.dart';
 @JsonSerializable()
 // Gift Class
 class Gift extends Model {
+  @override
+  String? id;
   final String firestoreUserID;
   final String eventID;
   final String description;
@@ -22,6 +24,7 @@ class Gift extends Model {
   final DateTime updatedAt;
 
   Gift({
+    this.id,
     this.firestoreUserID = '',
     required this.eventID,
     required this.description,
@@ -38,7 +41,7 @@ class Gift extends Model {
         updatedAt = updatedAt ?? DateTime.now();
 
   Gift copyWith({
-    String? id,
+    required String? id,
     String? firestoreUserID,
     String? eventID,
     String? description,
@@ -53,6 +56,7 @@ class Gift extends Model {
     DateTime? updatedAt,
   }) {
     return Gift(
+      id: id ?? this.id,
       firestoreUserID: firestoreUserID ?? this.firestoreUserID,
       eventID: eventID ?? this.eventID,
       description: description ?? this.description,
@@ -92,4 +96,10 @@ class Gift extends Model {
 
   @override
   CollectionReference<Gift> getReference() => instance;
+
+  @override
+  String toString() {
+    return 'Gift{id: $id, firestoreUserID: $firestoreUserID, eventID: $eventID, description: $description, photoUrl: $photoUrl, isPledged: $isPledged, pledgedBy: $pledgedBy, pledgedDate: $pledgedDate, price: $price, categoryID: $categoryID, storesLocationRecommendation: $storesLocationRecommendation, createdAt: $createdAt, updatedAt: $updatedAt}';
+  }
+
 }

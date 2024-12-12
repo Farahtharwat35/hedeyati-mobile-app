@@ -21,8 +21,8 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
           CircleAvatar(
             radius: 80,
             backgroundImage: NetworkImage(
-              event.image!.isNotEmpty
-                  ? event.image!
+              event.image.isNotEmpty
+                  ? event.image
                   : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0',
             ),
           ),
