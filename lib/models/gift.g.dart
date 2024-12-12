@@ -7,6 +7,7 @@ part of 'gift.dart';
 // **************************************************************************
 
 Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
+      id: json['id'] as String?,
       firestoreUserID: json['firestoreUserID'] as String? ?? '',
       eventID: json['eventID'] as String,
       description: json['description'] as String,
@@ -27,12 +28,17 @@ Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
           ? null
           : DateTime.parse(json['updatedAt'] as String),
     )
-      ..id = json['id'] as String?
+      ..deletedAt = json['deletedAt'] == null
+          ? null
+          : DateTime.parse(json['deletedAt'] as String)
       ..isDeleted = json['isDeleted'] as bool;
 
 Map<String, dynamic> _$GiftToJson(Gift instance) => <String, dynamic>{
-      'id': instance.id,
+      'createdAt': instance.createdAt?.toIso8601String(),
+      'updatedAt': instance.updatedAt?.toIso8601String(),
+      'deletedAt': instance.deletedAt?.toIso8601String(),
       'isDeleted': instance.isDeleted,
+      'id': instance.id,
       'firestoreUserID': instance.firestoreUserID,
       'eventID': instance.eventID,
       'description': instance.description,
@@ -43,6 +49,4 @@ Map<String, dynamic> _$GiftToJson(Gift instance) => <String, dynamic>{
       'price': instance.price,
       'categoryID': instance.categoryID,
       'storesLocationRecommendation': instance.storesLocationRecommendation,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
     };

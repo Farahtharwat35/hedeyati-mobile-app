@@ -16,9 +16,6 @@ class Event extends Model {
   final int categoryID;
   final DateTime eventDate;
   final int status;
-  final String createdBy;
-  final DateTime createdAt;
-  final DateTime? deletedAt;
 
   Event({
     this.id,
@@ -28,11 +25,8 @@ class Event extends Model {
     required this.categoryID,
     required this.eventDate,
     required this.status,
-    required this.createdBy,
-    DateTime? createdAt,
-    required this.image,
-    this.deletedAt,
-  }) : createdAt = createdAt ?? DateTime.now();
+    required this.image
+  });
 
   factory Event.fromJson(Map<String, dynamic> json) {
     log('Parsing Event JSON: $json');
@@ -94,8 +88,6 @@ class Event extends Model {
       categoryID: 0,
       eventDate: DateTime.now(),
       status: 0,
-      createdBy: '',
-      createdAt: DateTime.now(),
     );
   }
 
@@ -111,6 +103,7 @@ class Event extends Model {
     String? createdBy,
     DateTime? createdAt,
     DateTime? deletedAt,
+    DateTime? updatedAt,
   }) {
     log('Creating copy of Event with id: $id');
     return Event(
@@ -122,14 +115,11 @@ class Event extends Model {
       categoryID: categoryID ?? this.categoryID,
       eventDate: eventDate ?? this.eventDate,
       status: status ?? this.status,
-      createdBy: createdBy ?? this.createdBy,
-      createdAt: createdAt ?? this.createdAt,
-      deletedAt: deletedAt ?? this.deletedAt,
     );
   }
 
   @override
   String toString() {
-    return 'Event{firestoreUserID: $firestoreUserID, image: $image, name: $name, description: $description, categoryID: $categoryID, eventDate: $eventDate, status: $status, createdBy: $createdBy, createdAt: $createdAt, deletedAt: $deletedAt}';
+    return 'Event{firestoreUserID: $firestoreUserID, image: $image, name: $name, description: $description, categoryID: $categoryID, eventDate: $eventDate, status: $status, createdAt: $createdAt, deletedAt: $deletedAt}';
   }
 }

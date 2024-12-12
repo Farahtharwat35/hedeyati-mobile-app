@@ -98,6 +98,7 @@ class _EditEventPageState extends State<EditEvent> {
                                     description: _descriptionController.text,
                                     categoryID: int.parse(_categoryIDController.text),
                                     eventDate: DateTime.parse(_eventDateController.text),
+                                    updatedAt: DateTime.now(),
                                   );
                                   widget.eventBloc.add(UpdateModel(updatedEvent));
                                   if (widget.eventBloc.state is ModelUpdatedState) {

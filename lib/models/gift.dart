@@ -18,8 +18,6 @@ class Gift extends Model {
   final double price;
   final int categoryID;
   final String? storesLocationRecommendation;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
   Gift({
     this.id,
@@ -35,8 +33,7 @@ class Gift extends Model {
     this.storesLocationRecommendation,
     DateTime? createdAt,
     DateTime? updatedAt,
-  })  : createdAt = createdAt ?? DateTime.now(),
-        updatedAt = updatedAt ?? DateTime.now();
+  }) ;
 
   Gift copyWith({
     required String? id,

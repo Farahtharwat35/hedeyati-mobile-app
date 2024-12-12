@@ -101,8 +101,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                     categoryID: int.parse(_categoryIDController.text),
                                     eventDate: DateTime.parse(_eventDateController.text),
                                     status: 1,
-                                    createdBy: userFirestoreID!,
-                                    createdAt: DateTime.now(),
                                   );
                                   EventBloc.get(context).add(AddModel(event));
                                   if (EventBloc.get(context).state is ModelAddedState) {

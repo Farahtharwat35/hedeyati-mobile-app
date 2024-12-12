@@ -52,15 +52,17 @@ class CRUD<GenericModel extends Model> {
   }
 
   Future<void> add(GenericModel model) async {
+    model.createdAt = DateTime.now();
     await model.getReference().add(model);
   }
 
   Future<void> update(GenericModel model) {
+    model.updatedAt = DateTime.now();
     return model.getReference().doc(model.id).update(model.toJson());
   }
 
   Future<void> delete(GenericModel model) {
-    return model.getReference().doc(model.id).update({'isDeleted': true});
+    return model.getReference().doc(model.id).update({'isDeleted': true , 'deletedAt': DateTime.now()});
   }
 }
 
