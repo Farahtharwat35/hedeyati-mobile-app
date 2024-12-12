@@ -8,7 +8,7 @@ part of 'event.dart';
 
 Event _$EventFromJson(Map<String, dynamic> json) => Event(
       id: json['id'] as String?,
-      firestoreUserID: json['firestoreUserID'] as String,
+      firestoreUserID: json['firestoreUserID'] as String?,
       name: json['name'] as String,
       description: json['description'] as String,
       categoryID: (json['categoryID'] as num).toInt(),

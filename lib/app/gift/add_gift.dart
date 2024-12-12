@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
-import 'package:hedeyati/helpers/userCredentials.dart';
 import 'package:hedeyati/models/gift.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
-import 'package:hedeyati/app/reusable_components/date_picker_field_widget.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
-
 import '../../bloc/gifts/gift_bloc.dart';
 
-class AddGiftPage extends StatefulWidget {
-  const AddGiftPage({Key? key}) : super(key: key);
+class AddGift extends StatefulWidget {
+  const AddGift({super.key});
 
   @override
-  State<AddGiftPage> createState() => _AddGiftPageState();
+  State<AddGift> createState() => _AddGiftPage();
 }
 
-class _AddGiftPageState extends State<AddGiftPage> {
+class _AddGiftPage extends State<AddGift> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
