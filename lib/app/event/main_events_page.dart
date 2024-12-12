@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:async_builder/async_builder.dart';
-import '../bloc/events/event_bloc.dart';
-import '../models/event.dart';
-import '../app/app_theme.dart';
-import '../app/reusable_components/build_card.dart';
+import '../../bloc/events/event_bloc.dart';
+import '../../models/event.dart';
+import '../reusable_components/app_theme.dart';
+import '../reusable_components/build_card.dart';
 import 'edit_event_page.dart';
 import 'event_details_page.dart';
+
 
 
 class EventsPage extends StatefulWidget {

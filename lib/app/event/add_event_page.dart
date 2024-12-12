@@ -3,7 +3,7 @@ import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/helpers/userCredentials.dart';
 import 'package:hedeyati/models/event.dart';
-import 'package:hedeyati/app/app_theme.dart';
+import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import 'package:hedeyati/app/reusable_components/date_picker_field_widget.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';

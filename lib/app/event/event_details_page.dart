@@ -3,9 +3,9 @@ import 'package:hedeyati/app/reusable_components/delete_dialog.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:hedeyati/app/reusable_components/card_for_details.dart';
-import '../bloc/events/event_bloc.dart';
-import '../models/event.dart';
-import '../models/model.dart';
+import '../../bloc/events/event_bloc.dart';
+import '../../models/event.dart';
+import '../../models/model.dart';
 
 void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
   showDialog(

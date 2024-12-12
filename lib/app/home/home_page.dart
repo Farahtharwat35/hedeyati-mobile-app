@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:hedeyati/app/app_theme.dart';
-import 'package:hedeyati/app/home_page_body.dart';
-import '../app/add_friend.dart';
-import '../app/search_bar.dart';
-import '../bloc/events/event_bloc.dart';
-import 'add_event_page.dart';
+import 'package:hedeyati/app/reusable_components/app_theme.dart';
+import 'package:hedeyati/app/home/home_page_body.dart';
+import '../friends/add_friend.dart';
+import '../home/search_bar.dart';
+import '../../bloc/events/event_bloc.dart';
+import '../event/add_event_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
