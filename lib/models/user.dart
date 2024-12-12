@@ -48,7 +48,7 @@ class User extends Model {
     bool? isFriend,
   }) {
     return User(
-      id: id ?? this.id,
+      id: this.id,
       name: name ?? this.name,
       email: email ?? this.email,
       password: password ?? this.password,

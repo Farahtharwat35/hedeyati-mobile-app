@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'model.dart';
 part 'gift.g.dart';
@@ -8,7 +9,7 @@ part 'gift.g.dart';
 class Gift extends Model {
   @override
   String? id;
-  final String firestoreUserID;
+  final String? firestoreUserID;
   final String eventID;
   final String description;
   final String? photoUrl;
@@ -21,7 +22,7 @@ class Gift extends Model {
 
   Gift({
     this.id,
-    this.firestoreUserID = '',
+    this.firestoreUserID,
     required this.eventID,
     required this.description,
     this.photoUrl,
@@ -37,7 +38,6 @@ class Gift extends Model {
 
   Gift copyWith({
     required String? id,
-    String? firestoreUserID,
     String? eventID,
     String? description,
     String? photoUrl,
@@ -51,8 +51,8 @@ class Gift extends Model {
     DateTime? updatedAt,
   }) {
     return Gift(
-      id: id ?? this.id,
-      firestoreUserID: firestoreUserID ?? this.firestoreUserID,
+      id: this.id,
+      firestoreUserID: firestoreUserID,
       eventID: eventID ?? this.eventID,
       description: description ?? this.description,
       photoUrl: photoUrl ?? this.photoUrl,
@@ -75,6 +75,7 @@ class Gift extends Model {
     fromFirestore: (snapshot, _) => Gift.fromJson({
       ...snapshot.data()!,
       'id': snapshot.id,
+      'firestoreUserID': FirebaseAuth.instance.currentUser!.uid,
     }),
     toFirestore: (gift, _) => gift.toJson(),
   );

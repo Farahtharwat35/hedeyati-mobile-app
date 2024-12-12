@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
 
@@ -9,7 +10,7 @@ part 'event.g.dart';
 class Event extends Model {
   @override
   String? id;
-  final String firestoreUserID;
+  final String? firestoreUserID;
   final String image;
   final String name;
   final String description;
@@ -19,7 +20,7 @@ class Event extends Model {
 
   Event({
     this.id,
-    required this.firestoreUserID,
+    this.firestoreUserID,
     required this.name,
     required this.description,
     required this.categoryID,
@@ -27,6 +28,33 @@ class Event extends Model {
     required this.status,
     required this.image
   });
+
+  Event copyWith({
+    required String? id,
+    String? image,
+    String? name,
+    String? description,
+    int? categoryID,
+    DateTime? eventDate,
+    int? status,
+    String? createdBy,
+    DateTime? createdAt,
+    DateTime? deletedAt,
+    DateTime? updatedAt,
+  }) {
+    log('Creating copy of Event with id: $id');
+    return Event(
+      id: this.id,
+      firestoreUserID: firestoreUserID,
+      image: image ?? this.image,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      categoryID: categoryID ?? this.categoryID,
+      eventDate: eventDate ?? this.eventDate,
+      status: status ?? this.status,
+    );
+  }
+
 
   factory Event.fromJson(Map<String, dynamic> json) {
     log('Parsing Event JSON: $json');
@@ -54,7 +82,7 @@ class Event extends Model {
           final data = snapshot.data();
           if (data != null) {
             log('Event Data from Firestore: $data');
-            return Event.fromJson({...data, 'id': snapshot.id});
+            return Event.fromJson({...data, 'id': snapshot.id , 'firestoreUserID': FirebaseAuth.instance.currentUser!.uid});
           } else {
             log('No data found for document ID: ${snapshot.id}');
             throw Exception('No data found in Firestore document');
@@ -88,33 +116,6 @@ class Event extends Model {
       categoryID: 0,
       eventDate: DateTime.now(),
       status: 0,
-    );
-  }
-
-  Event copyWith({
-    required String? id,
-    String? firestoreUserID,
-    String? image,
-    String? name,
-    String? description,
-    int? categoryID,
-    DateTime? eventDate,
-    int? status,
-    String? createdBy,
-    DateTime? createdAt,
-    DateTime? deletedAt,
-    DateTime? updatedAt,
-  }) {
-    log('Creating copy of Event with id: $id');
-    return Event(
-      id: this.id,
-      firestoreUserID: firestoreUserID ?? this.firestoreUserID,
-      image: image ?? this.image,
-      name: name ?? this.name,
-      description: description ?? this.description,
-      categoryID: categoryID ?? this.categoryID,
-      eventDate: eventDate ?? this.eventDate,
-      status: status ?? this.status,
     );
   }
 

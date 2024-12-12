@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/models/event.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
-import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
+import 'package:hedeyati/app/reusable_components/text_form_field_decoration.dart';
 import 'package:hedeyati/app/reusable_components/date_picker_field_widget.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
 import 'package:intl/intl.dart';
@@ -76,9 +77,9 @@ class _EditEventPageState extends State<EditEvent> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          buildTextField(_nameController, 'Event Name', Icons.event),
-                          buildTextField(_descriptionController, 'Description', Icons.description),
-                          buildTextField(_categoryIDController, 'Category ID', Icons.category),
+                          buildTextField(controller: _nameController, args: {'labelText': 'Event Name', 'prefixIcon': Icons.event}),
+                          buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description, 'maxLines': 3 , 'expands': true,}, emptyValidator: false),
+                          buildTextField(controller: _categoryIDController, args: {'labelText': 'Category ID', 'prefixIcon': Icons.category} , emptyValidator: false),
                           buildDatePickerField(TextEditingController(
                             text: DateFormat("dd/MM/yyyy").format(DateTime.parse(_eventDateController.text))), 'Event Date', context),
                           const SizedBox(height: 20),

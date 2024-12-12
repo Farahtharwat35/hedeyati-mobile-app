@@ -1,29 +1,20 @@
 import 'package:flutter/material.dart';
+import 'text_form_field_decoration.dart';
 
-Widget buildTextField(TextEditingController controller, String label, IconData icon) {
+Widget buildTextField({required TextEditingController controller, required Map<String, dynamic> args,bool emptyValidator=true}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 10.0),
     child: TextFormField(
       controller: controller,
-      decoration: InputDecoration(
-        labelText: label,
-        prefixIcon: Icon(icon),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when focused
-          borderRadius: BorderRadius.circular(16),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when enabled
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter $label';
-        }
-        return null;
-      },
+      autofocus: true,
+      keyboardType: args['keyboardType'] ?? TextInputType.text,
+      obscureText: args['obscureText'] ?? false,
+      maxLength: args['maxLength'] ?? null,
+      maxLines: args['maxLines'] ?? 1,
+      expands: args['expands'] ?? false,
+      readOnly: args['readOnly'] ?? false,
+      decoration: textFormFieldDecoration(args),
+      validator : emptyValidator == true ? textFormFieldEmptyValidator(args): null,
     ),
   );
 }
