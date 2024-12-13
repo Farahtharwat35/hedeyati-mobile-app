@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
 
+import '../helpers/timestampToDateTimeConverter.dart';
+
 part 'event_status.g.dart';
 
 @JsonSerializable()

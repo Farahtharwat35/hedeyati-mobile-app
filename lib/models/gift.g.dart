@@ -32,7 +32,8 @@ Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
       ..deletedAt = json['deletedAt'] == null
           ? null
           : DateTime.parse(json['deletedAt'] as String)
-      ..isDeleted = json['isDeleted'] as bool;
+      ..isDeleted = json['isDeleted'] as bool
+      ..categoryName = json['categoryName'] as String?;
 
 Map<String, dynamic> _$GiftToJson(Gift instance) => <String, dynamic>{
       'createdAt': instance.createdAt?.toIso8601String(),
@@ -51,4 +52,5 @@ Map<String, dynamic> _$GiftToJson(Gift instance) => <String, dynamic>{
       'price': instance.price,
       'categoryID': instance.categoryID,
       'storesLocationRecommendation': instance.storesLocationRecommendation,
+      'categoryName': instance.categoryName,
     };

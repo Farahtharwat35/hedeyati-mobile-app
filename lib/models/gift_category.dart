@@ -1,10 +1,12 @@
 
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hedeyati/helpers/timestamp_stringConverter.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
 
 import '../database/sqlite_connection_factory.dart';
+import '../helpers/timestampToDateTimeConverter.dart';
 
 
 part 'gift_category.g.dart';
@@ -22,7 +24,6 @@ class GiftCategory extends Model {
 
 
   factory GiftCategory.fromJson(Map<String, dynamic> json) {
-    log('Parsing GiftCategory JSON: $json');
     try {
       return _$GiftCategoryFromJson(json);
     } catch (e, stack) {
@@ -50,7 +51,7 @@ class GiftCategory extends Model {
           log('Fetching GiftCategory from Firestore: ${snapshot.id}');
           final data = snapshot.data();
           if (data != null) {
-            log('GiftCategory Data: $data');
+            log('GiftCategory Data: $data ${data['createdAt'].runtimeType}');
             return GiftCategory.fromJson({...data, 'id': snapshot.id});
           } else {
             log('No data found for GiftCategory document ID: ${snapshot.id}');

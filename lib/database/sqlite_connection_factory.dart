@@ -6,7 +6,7 @@ import 'package:synchronized/synchronized.dart';
 import 'package:hedeyati/database/sqlite_migration_factory.dart';
 
 class SqliteConnectionFactory {
-  static const _version = 1;
+  static const _version = 2;
   static const _databaseName = 'Hedeyaty.db';
 
   static SqliteConnectionFactory? _instance;
@@ -45,8 +45,8 @@ class SqliteConnectionFactory {
     return _db!;
   }
 
-  void closeConnection() {
-    _db!.close();
+  Future<void> closeConnection() async {
+    await _db!.close();
     _db = null;
   }
 
@@ -65,7 +65,8 @@ class SqliteConnectionFactory {
     batch.commit();
   }
 
-  Future<void> _onUpgrade(Database db, int version, int oldVersion) async {
+  Future<void> _onUpgrade(Database db,int oldVersion ,int version) async {
+    print('Upgrading database from $oldVersion to $version...');
     final batch = db.batch();
 
     final migrations = SqliteMigrationFactory().getUpgradeMigration(oldVersion);
@@ -73,8 +74,28 @@ class SqliteConnectionFactory {
       migration.update(batch);
     }
 
-    batch.commit();
+    await batch.commit();
+    print('Database upgrade completed.');
   }
 
-  Future<void> _onDowngrade(Database db, int version, int oldVersion) async {}
+  Future<void> _onDowngrade(Database db, int version, int oldVersion) async {
+    print('Downgrading database from $oldVersion to $version...');
+    final batch = db.batch();
+
+    final migrations = SqliteMigrationFactory().getUpgradeMigration(oldVersion);
+    for (var migration in migrations.reversed) {
+      migration.update(batch);
+    }
+
+    await batch.commit();
+    print('Database downgrade completed.');
+  }
+
+
+  Future<void> deleteDatabaseFile() async {
+    var databasePath = await getDatabasesPath();
+    var databasePathFinal = join(databasePath, 'Hedeyaty.db');
+    await deleteDatabase(databasePathFinal);
+    print('Database deleted');
+  }
 }

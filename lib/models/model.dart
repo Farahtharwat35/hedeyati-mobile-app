@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../helpers/timestampToDateTimeConverter.dart';
+
 abstract class Model {
   // Map<String,dynamic>? getSortableAttributes();
   // Map<String,dynamic>? getFilterableAttributes();

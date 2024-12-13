@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
 
+import '../helpers/timestampToDateTimeConverter.dart';
+
 part 'event.g.dart';
 @JsonSerializable()
 // Event Class

@@ -4,6 +4,7 @@ import 'package:hedeyati/app/login-signup/login_page.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
+import 'app/home/tab_bar.dart';
 import 'bloc/bloc_observer.dart';
 import 'firebase_options.dart';
 
@@ -25,7 +26,7 @@ class Hedeyati extends StatelessWidget {
     return MaterialApp(
       title: 'Hedeyati',
       theme: myTheme,
-      home: LoginPage(),
+      home: MyTabBar(),
     );
   }
 }

@@ -1,10 +1,9 @@
 import 'package:sqflite/sqflite.dart';
 import 'migration.dart';
 
-class MigrationV1 implements Migration {
+class MigrationV2 implements Migration {
   @override
   void create(Batch batch) {
-
 
     print('Deleting old tables...');
 
@@ -18,18 +17,18 @@ class MigrationV1 implements Migration {
     batch.execute('DROP TABLE IF EXISTS EventStatus;');
     batch.execute('DROP TABLE IF EXISTS FriendshipStatus;');
 
-    print('Creating database schema for version 1...');
+    print('Creating database schema for version 2...');
     batch.execute('''
       CREATE TABLE GiftCategory (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id TEXT UNIQUE,
         name TEXT NOT NULL,
-        firebase_id TEXT NOT NULL,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL,
-        deleted_at TEXT,
-        is_deleted INTEGER NOT NULL
+        createdAt TEXT NOT NULL,
+        updatedAt TEXT,
+        deletedAt TEXT,
+        isDeleted INTEGER NOT NULL
       );
-    ''');
+     ''');
+
   }
 
   @override
