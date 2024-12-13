@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
 
+import '../database/sqlite_connection_factory.dart';
+
 
 part 'gift_category.g.dart';
 
@@ -89,4 +91,18 @@ class GiftCategory extends Model {
     );
   }
 
+  static getCategoryNameById(String id) async {
+    final db = await SqliteConnectionFactory().openConnection();
+    final List<Map<String, dynamic>> result = await db.query(
+      'gift_categories',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first['name'] as String;
+    } else {
+      throw Exception('Category not found for id: $id');
+    }
+  }
 }

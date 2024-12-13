@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/models/gift.dart';
-import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
 import '../../bloc/gifts/gift_bloc.dart';
@@ -25,6 +24,8 @@ class _AddGiftPage extends State<AddGift> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _storesLocationRecommendationController = TextEditingController();
+
   late GiftCategoryBloc giftCategoryBloc;
   late EventBloc eventBloc;
   late GiftBloc giftBloc;
@@ -130,6 +131,13 @@ class _AddGiftPage extends State<AddGift> {
                                   'labelText': 'Estimated Price (in \$)',
                                   'prefixIcon': Icons.attach_money,
                                   'keyboardType': TextInputType.number,
+                                },
+                              ),
+                              buildTextField(
+                                controller: _storesLocationRecommendationController,
+                                args: {
+                                  'labelText': 'Recommended Stores',
+                                  'prefixIcon': Icons.shopping_bag_outlined,
                                 },
                               ),
                               const SizedBox(height: 20),

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:async_builder/async_builder.dart';
 import '../../bloc/events/event_bloc.dart';
 import '../../models/event.dart';
+import '../gift/gifts_list_page.dart';
 import '../reusable_components/app_theme.dart';
 import '../reusable_components/build_card.dart';
 import 'edit_event_page.dart';
@@ -147,7 +148,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
         ],
       ),
       onTap: () {
-       // Navigator.push (context, MaterialPageRoute(builder: (context) => EventDetails(event: event)),);
+       Navigator.push (context, MaterialPageRoute(builder: (context) => GiftListPage(eventID: event.id)));
       },
     );
   }

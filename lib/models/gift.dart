@@ -20,6 +20,7 @@ class Gift extends Model {
   final double price;
   final String categoryID;
   final String? storesLocationRecommendation;
+  String? categoryName;
 
   Gift({
     this.id,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/app/login-signup/login_page.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
 import 'bloc/bloc_observer.dart';
 import 'firebase_options.dart';
 
