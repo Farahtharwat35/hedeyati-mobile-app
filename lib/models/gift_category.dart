@@ -24,6 +24,7 @@ class GiftCategory extends Model {
 
 
   factory GiftCategory.fromJson(Map<String, dynamic> json) {
+    log('Parsing GiftCategory JSON: $json');
     try {
       return _$GiftCategoryFromJson(json);
     } catch (e, stack) {

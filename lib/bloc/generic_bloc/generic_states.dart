@@ -20,6 +20,17 @@ class ModelChangeState extends ModelStates {
 class ModelLoadingState extends ModelStates {
   const ModelLoadingState() : super();
 }
+
+class ModelLoadedState extends ModelStates {
+
+  final List<Model> models;
+
+  const ModelLoadedState(this.models) : super();
+
+  @override
+  List<Object?> get props => [models];
+}
+
 class ModelAddedState extends ModelStates {
   final Model addedModel;
   const ModelAddedState(this.addedModel) : super();

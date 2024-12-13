@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hedeyati/database/sqlite_connection_factory.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'crud/sqflite_crud_service_class.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var dbInstance = await SqliteConnectionFactory();
@@ -15,6 +17,7 @@ void main() async {
     await checkTableExistence(db);
     await getTableSchema(db, 'GiftCategory');
     await getTableData(db, 'GiftCategory');
+    SqliteDatabaseCRUD.getAll('GiftCategory');
   } catch (e) {
     print('Error: $e');
   }

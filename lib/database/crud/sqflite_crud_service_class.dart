@@ -1,5 +1,5 @@
 import 'dart:async';
-import '../../helpers/timestamp_stringConverter.dart';
+import '../../helpers/dataMapper.dart';
 import '../sqlite_connection_factory.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -48,9 +48,14 @@ class SqliteDatabaseCRUD {
     print('=================Batch Altering $table Completed==============================');
   }
 
-  static Future<List<Map<String, Object?>>> getWhere(String table, {String? where, List<Object?>? whereArgs}) async {
+  static Future<List<Map<String, Object?>>> getWhere(String table, String id, {String? where, List<Object?>? whereArgs}) async {
     final db = await SqliteConnectionFactory().openConnection();
     return db.query(table, where: where, whereArgs: whereArgs);
+  }
+
+  static Future<List<Map<String, Object?>>> getAll(String table) async {
+    final db = await SqliteConnectionFactory().openConnection();
+    return dbResultTypesConverter(await db.query(table) , [{'isDeleted': 'bool'}]);
   }
 
 }
