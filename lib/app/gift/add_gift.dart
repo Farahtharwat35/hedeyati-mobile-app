@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/models/gift.dart';
-import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
 import '../../bloc/gift_category/gift_category_events.dart';
 import '../../bloc/gifts/gift_bloc.dart';
@@ -12,13 +11,7 @@ import '../../bloc/events/event_bloc.dart';
 import '../../models/event.dart';
 import '../../models/gift_category.dart';
 import '../reusable_components/text_form_field_decoration.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
-import 'package:hedeyati/bloc/gift_category/gift_category_events.dart';
-import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
-import 'package:hedeyati/models/gift_category.dart';
-import '../reusable_components/text_form_field_decoration.dart';
+import '../reusable_components/build_text_field_widget.dart';
 
 class AddGift extends StatefulWidget {
   const AddGift({super.key});
@@ -29,20 +22,24 @@ class AddGift extends StatefulWidget {
 
 class _AddGiftPage extends State<AddGift> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _storesLocationRecommendationController = TextEditingController();
 
   late GiftCategoryBloc giftCategoryBloc;
+  late EventBloc eventBloc;
+  late GiftBloc giftBloc;
 
   late String? selectedCategoryId = null;
+  late String? selectedEventId = null;
 
   @override
   void initState() {
     super.initState();
     giftCategoryBloc = GiftCategoryBloc.get(context);
-    giftCategoryBloc.add(GetAllGiftCategoriesEvent());
+    eventBloc = EventBloc.get(context);
+    giftBloc = GiftBloc.get(context);
   }
 
   @override
@@ -59,16 +56,43 @@ class _AddGiftPage extends State<AddGift> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: BlocBuilder<GiftCategoryBloc, ModelStates>(
+      body: BlocBuilder<GiftBloc, ModelStates>(
         builder: (context, state) {
-          if (state is ModelLoadingState) {
+          if (giftBloc.state is ModelLoadingState) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is ModelErrorState) {
-            return const Center(child: Text('Error loading categories'));
-          } else if (state is ModelLoadedState) {
-            final giftCategories = state.models;
-
-            return SingleChildScrollView(
+          }
+          if (giftBloc.state is ModelAddedState) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Gift added successfully!',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic),
+                  ),
+                  backgroundColor: Colors.pinkAccent,
+                ),
+              );
+              Navigator.pop(context);
+            });
+          } else if (giftBloc.state is ModelErrorState) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    'Failed to add gift',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic),
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            });
+          }
+          return Center(
+            child: SingleChildScrollView(
               child: Card(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16.0),
@@ -118,7 +142,23 @@ class _AddGiftPage extends State<AddGift> {
                               },
                             ),
                             const SizedBox(height: 20),
-                            _buildCategoryDropdown(giftCategories as List<GiftCategory>), // Pass categories to the dropdown
+                            BlocBuilder<GiftCategoryBloc, ModelStates>(
+                              builder: (context, state) {
+                                giftCategoryBloc.add(GetAllGiftCategoriesEvent());
+                                if (state is ModelLoadingState) {
+                                  return const Center(
+                                      child: CircularProgressIndicator());
+                                } else if (state is ModelLoadedState) {
+                                  final categories = state.models as List<GiftCategory>;
+                                  return _buildCategoryDropdown(categories);
+                                } else {
+                                  return const Center(
+                                      child: Text('Failed to load categories'));
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            _buildEventDropdown(),
                             const SizedBox(height: 20),
                             Center(
                               child: ElevatedButton(
@@ -132,11 +172,19 @@ class _AddGiftPage extends State<AddGift> {
                                   foregroundColor:
                                   Theme.of(context).colorScheme.onPrimary,
                                 ),
-                                onPressed: () {
+                                onPressed: () async {
                                   if (_formKey.currentState!.validate() &&
-                                      selectedCategoryId != null) {
-                                    // Add the gift with the selected category
-                                    // GiftBloc.get(context).add(AddGiftEvent(...));
+                                      selectedCategoryId != null &&
+                                      selectedEventId != null) {
+                                    final gift = Gift(
+                                      eventID: selectedEventId!,
+                                      name: _nameController.text,
+                                      description:
+                                      _descriptionController.text,
+                                      price: double.parse(_priceController.text),
+                                      categoryID: selectedCategoryId!,
+                                    );
+                                    GiftBloc.get(context).add(AddModel(gift));
                                   }
                                 },
                                 child: const Text('Add Gift',
@@ -150,23 +198,21 @@ class _AddGiftPage extends State<AddGift> {
                   ),
                 ),
               ),
-            );
-          }
-
-          return const Center(child: Text('No categories available'));
+            ),
+          );
         },
       ),
     );
   }
 
-  Widget _buildCategoryDropdown(List<GiftCategory> giftCategories) {
+  Widget _buildCategoryDropdown(List<GiftCategory> categories) {
     return DropdownButtonFormField<String>(
       decoration: fieldDecorator({
         'labelText': 'Select Category',
         'prefixIcon': Icons.category,
       }),
       value: selectedCategoryId,
-      items: giftCategories.map((category) {
+      items: categories.map((category) {
         return DropdownMenuItem(
           value: category.id,
           child: Text(category.name),
@@ -174,11 +220,55 @@ class _AddGiftPage extends State<AddGift> {
       }).toList(),
       onChanged: (value) {
         setState(() {
-          selectedCategoryId = value;
+          selectedCategoryId = value!;
         });
       },
-      validator: (value) => value == null ? 'Please select a category' : null,
+      validator: (value) =>
+      value == null ? 'Please select a category' : null,
     );
+  }
+
+  Widget _buildEventDropdown() {
+    return AsyncBuilder<List<Event>>(
+      stream: eventBloc.myEventsStream,
+      waiting: (context) => const Center(child: CircularProgressIndicator()),
+      error: (context, error, stack) {
+        debugPrint('Error: $error');
+        debugPrint('Stack Trace: $stack');
+        return Center(
+          child: Text('Error: $error'),
+        );
+      },
+      builder: (context, events) {
+        return DropdownButtonFormField<String>(
+          decoration: fieldDecorator({
+            'labelText': 'Select Event',
+            'prefixIcon': Icons.event,
+          }),
+          value: selectedEventId,
+          items: events?.map((event) {
+            return DropdownMenuItem(
+              value: event.id,
+              child: Text(event.name),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              selectedEventId = value!;
+            });
+          },
+          validator: (value) =>
+          value == null ? 'Please select an event' : null,
+        );
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    _priceController.dispose();
+    super.dispose();
   }
 
   Widget _header() {
