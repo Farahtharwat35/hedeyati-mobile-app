@@ -166,10 +166,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                   create: (_) => GiftCategoryBloc(),
                 ),
               ],
-              child: BlocProvider.value(
-                value: eventBloc,
-                child: GiftListPage(event: event , eventBloc: eventBloc),
-              ),
+              child: GiftListPage(event: event , eventBloc: EventBloc()),
             ),
           ),
         );

@@ -17,10 +17,10 @@ import '../reusable_components/text_form_field_decoration.dart';
 class EditGift extends StatefulWidget {
   final Gift gift;
   final GiftCategoryBloc giftCategoryBloc;
-  final EventBloc eventBloc;
   final GiftBloc giftBloc;
+  final EventBloc eventBloc;
 
-  const EditGift({super.key, required this.giftCategoryBloc ,required this.eventBloc,required this.giftBloc, required this.gift});
+  const EditGift({super.key, required this.giftCategoryBloc ,required this.giftBloc, required this.gift , required this.eventBloc});
 
   @override
   State<EditGift> createState() => _EditGiftPage();
@@ -32,6 +32,7 @@ class _EditGiftPage extends State<EditGift> {
   late TextEditingController _priceController;
   late TextEditingController _nameController;
   late TextEditingController _storesLocationRecommendationController;
+
 
   late String? selectedCategoryId;
   late String? selectedEventId;
