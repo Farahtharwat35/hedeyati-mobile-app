@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:async_builder/async_builder.dart';
+import 'package:provider/provider.dart';
 import '../../bloc/events/event_bloc.dart';
+import '../../bloc/gift_category/gift_category_bloc.dart';
+import '../../bloc/gifts/gift_bloc.dart';
 import '../../models/event.dart';
 import '../gift/gifts_list_page.dart';
 import '../reusable_components/app_theme.dart';
 import '../reusable_components/build_card.dart';
 import 'edit_event_page.dart';
 import 'event_details_page.dart';
-
-
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -28,7 +29,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     super.initState();
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
-    eventBloc = EventBloc.get(context);
+    eventBloc = context.read<EventBloc>();
     _eventStreams = [eventBloc.myEventsStream, eventBloc.friendsEventsStream];
   }
 
@@ -88,13 +89,17 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                         ),
                 ));
                 content.add(const SizedBox(height: 16));
-                final filteredEvents = events?.where((event) => !event.isDeleted).toList();
+                final filteredEvents =
+                    events?.where((event) => !event.isDeleted).toList();
                 if (filteredEvents == null || filteredEvents.isEmpty) {
-                content.add(const Center(child: Text('No events found.')));
+                  content.add(const Center(child: Text('No events found.')));
                 } else {
-                content.addAll(
-                filteredEvents.map((event) => _buildEventTile(context,event,eventBloc)).toList(),
-                );
+                  content.addAll(
+                    filteredEvents
+                        .map((event) =>
+                            _buildEventTile(context, event, eventBloc))
+                        .toList(),
+                  );
                 }
                 return buildCard(context, content);
               },
@@ -105,10 +110,11 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildEventTile(BuildContext context, Event event , EventBloc eventBloc) {
+  Widget _buildEventTile(
+      BuildContext context, Event event, EventBloc eventBloc) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundImage: NetworkImage( event.image.isNotEmpty
+        backgroundImage: NetworkImage(event.image.isNotEmpty
             ? event.image
             : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
         radius: 25,
@@ -133,14 +139,14 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EditEvent(event: event , eventBloc: eventBloc),
+                  builder: (context) =>
+                      EditEvent(event: event, eventBloc: eventBloc),
                 ),
               );
             },
           ),
           IconButton(
-            icon: const Icon(Icons.remove_red_eye, // Eye icon
-              color: Colors.pinkAccent),
+            icon: const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
             onPressed: () {
               showEventDetails(context, event, eventBloc);
             },
@@ -148,7 +154,25 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
         ],
       ),
       onTap: () {
-       Navigator.push (context, MaterialPageRoute(builder: (context) => GiftListPage(eventID: event.id)));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MultiBlocProvider(
+              providers: [
+                Provider<GiftBloc>(
+                  create: (_) => GiftBloc(eventID: event.id),
+                ),
+                Provider<GiftCategoryBloc>(
+                  create: (_) => GiftCategoryBloc(),
+                ),
+              ],
+              child: BlocProvider.value(
+                value: eventBloc,
+                child: GiftListPage(event: event , eventBloc: eventBloc),
+              ),
+            ),
+          ),
+        );
       },
     );
   }

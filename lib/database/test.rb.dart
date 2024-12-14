@@ -17,7 +17,7 @@ void main() async {
     await checkTableExistence(db);
     await getTableSchema(db, 'GiftCategory');
     await getTableData(db, 'GiftCategory');
-    SqliteDatabaseCRUD.getAll('GiftCategory');
+    await SqliteDatabaseCRUD.getAll('GiftCategory');
   } catch (e) {
     print('Error: $e');
   }

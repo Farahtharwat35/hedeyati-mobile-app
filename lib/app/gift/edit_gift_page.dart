@@ -1,46 +1,53 @@
 import 'package:async_builder/async_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
-import 'package:hedeyati/models/gift.dart';
+
+import '../../bloc/events/event_bloc.dart';
+import '../../bloc/generic_bloc/generic_crud_events.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
+import '../../bloc/gift_category/gift_category_bloc.dart';
 import '../../bloc/gift_category/gift_category_events.dart';
 import '../../bloc/gifts/gift_bloc.dart';
-import '../../bloc/gift_category/gift_category_bloc.dart';
-import '../../bloc/events/event_bloc.dart';
 import '../../models/event.dart';
+import '../../models/gift.dart';
 import '../../models/gift_category.dart';
-import '../reusable_components/text_form_field_decoration.dart';
 import '../reusable_components/build_text_field_widget.dart';
+import '../reusable_components/text_form_field_decoration.dart';
 
-class AddGift extends StatefulWidget {
-  const AddGift({super.key});
+class EditGift extends StatefulWidget {
+  final Gift gift;
+  final GiftCategoryBloc giftCategoryBloc;
+  final EventBloc eventBloc;
+  final GiftBloc giftBloc;
+
+  const EditGift({super.key, required this.giftCategoryBloc ,required this.eventBloc,required this.giftBloc, required this.gift});
 
   @override
-  State<AddGift> createState() => _AddGiftPage();
+  State<EditGift> createState() => _EditGiftPage();
 }
 
-class _AddGiftPage extends State<AddGift> {
+class _EditGiftPage extends State<EditGift> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _storesLocationRecommendationController = TextEditingController();
+  late TextEditingController _descriptionController;
+  late TextEditingController _priceController;
+  late TextEditingController _nameController;
+  late TextEditingController _storesLocationRecommendationController;
 
-  late GiftCategoryBloc giftCategoryBloc;
-  late EventBloc eventBloc;
-  late GiftBloc giftBloc;
-
-  late String? selectedCategoryId = null;
-  late String? selectedEventId = null;
+  late String? selectedCategoryId;
+  late String? selectedEventId;
 
   @override
   void initState() {
     super.initState();
-    giftCategoryBloc = GiftCategoryBloc.get(context);
-    eventBloc = EventBloc.get(context);
-    giftBloc = GiftBloc.get(context);
-    giftCategoryBloc.add(GetAllGiftCategoriesEvent());
+    _nameController = TextEditingController(text: widget.gift.name);
+    _descriptionController = TextEditingController(text: widget.gift.description);
+    _priceController = TextEditingController(text: widget.gift.price.toString());
+    _storesLocationRecommendationController =
+        TextEditingController(text: widget.gift.storesLocationRecommendation);
+
+    selectedCategoryId = widget.gift.categoryID;
+    selectedEventId = widget.gift.eventID;
+    widget.giftCategoryBloc.add(GetAllGiftCategoriesEvent());
   }
 
   @override
@@ -48,7 +55,7 @@ class _AddGiftPage extends State<AddGift> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Add Gift', textAlign: TextAlign.center),
+        title: const Text('Edit Gift', textAlign: TextAlign.center),
         titleTextStyle: Theme.of(context).textTheme.headlineMedium,
         backgroundColor: Theme.of(context).colorScheme.primary,
         centerTitle: true,
@@ -59,15 +66,15 @@ class _AddGiftPage extends State<AddGift> {
       ),
       body: BlocBuilder<GiftBloc, ModelStates>(
         builder: (context, state) {
-          if (giftBloc.state is ModelLoadingState) {
+          if (widget.giftBloc.state is ModelLoadingState) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (giftBloc.state is ModelAddedState) {
+          if (widget.giftBloc.state is ModelUpdatedState) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
-                    'Gift added successfully!',
+                    'Gift updated successfully!',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic),
@@ -77,12 +84,12 @@ class _AddGiftPage extends State<AddGift> {
               );
               Navigator.pop(context);
             });
-          } else if (giftBloc.state is ModelErrorState) {
+          } else if (widget.giftBloc.state is ModelErrorState) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
-                    'Failed to add gift',
+                    'Failed to update gift',
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontStyle: FontStyle.italic),
@@ -176,7 +183,8 @@ class _AddGiftPage extends State<AddGift> {
                                   if (_formKey.currentState!.validate() &&
                                       selectedCategoryId != null &&
                                       selectedEventId != null) {
-                                    final gift = Gift(
+                                    final updatedGift = widget.gift.copyWith(
+                                      id: widget.gift.id,
                                       eventID: selectedEventId!,
                                       name: _nameController.text,
                                       description:
@@ -184,10 +192,10 @@ class _AddGiftPage extends State<AddGift> {
                                       price: double.parse(_priceController.text),
                                       categoryID: selectedCategoryId!,
                                     );
-                                    GiftBloc.get(context).add(AddModel(gift));
+                                    GiftBloc.get(context).add(UpdateModel(updatedGift));
                                   }
                                 },
-                                child: const Text('Add Gift',
+                                child: const Text('Update Gift',
                                     style: TextStyle(fontSize: 18)),
                               ),
                             ),
@@ -202,10 +210,18 @@ class _AddGiftPage extends State<AddGift> {
           );
         },
       ),
+
     );
   }
 
   Widget _buildCategoryDropdown(List<GiftCategory> categories) {
+    if (!categories.any((category) => category.id == selectedCategoryId)) {
+      selectedCategoryId = null;
+    }
+    // Log category ids for debugging
+    for (var category in categories) {
+      debugPrint('Category ID: ${category.id}, Category Name: ${category.name}');
+    }
     return DropdownButtonFormField<String>(
       decoration: fieldDecorator({
         'labelText': 'Select Category',
@@ -230,7 +246,7 @@ class _AddGiftPage extends State<AddGift> {
 
   Widget _buildEventDropdown() {
     return AsyncBuilder<List<Event>>(
-      stream: eventBloc.myEventsStream,
+      stream: widget.eventBloc.myEventsStream,
       waiting: (context) => const Center(child: CircularProgressIndicator()),
       error: (context, error, stack) {
         debugPrint('Error: $error');
@@ -264,13 +280,6 @@ class _AddGiftPage extends State<AddGift> {
     );
   }
 
-  @override
-  void dispose() {
-    _descriptionController.dispose();
-    _priceController.dispose();
-    super.dispose();
-  }
-
   Widget _header() {
     return Padding(
       padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
@@ -278,7 +287,7 @@ class _AddGiftPage extends State<AddGift> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Gift",
+            "Edit Gift",
             style: TextStyle(
               fontSize: 45,
               fontWeight: FontWeight.bold,

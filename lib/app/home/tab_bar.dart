@@ -15,7 +15,6 @@ class MyTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print("??");
     return DefaultTabController(
       initialIndex: 0,
       length: 3,

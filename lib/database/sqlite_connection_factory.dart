@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_conditional_assignment
 
+import 'dart:developer';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:synchronized/synchronized.dart';
@@ -46,7 +48,13 @@ class SqliteConnectionFactory {
   }
 
   Future<void> closeConnection() async {
-    await _db!.close();
+    log('Closing database connection...');
+    try {
+      await _db!.close();
+    } catch (e) {
+      log('Error closing database connection: $e');
+    }
+    log('Database connection closed.');
     _db = null;
   }
 

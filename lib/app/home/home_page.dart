@@ -56,7 +56,10 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(
                       builder: (context) => Provider<EventBloc>(
                         create: (_) => EventBloc(),
-                        child: CreateEventPage(),
+                        child: BlocProvider.value(
+                          value: BlocProvider.of<EventBloc>(context),
+                          child: const CreateEventPage(),
+                        ),
                       ),
                     ),
                   );

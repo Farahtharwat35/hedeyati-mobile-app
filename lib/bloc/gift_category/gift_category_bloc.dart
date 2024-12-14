@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../database/crud/sqflite_crud_service_class.dart';
 import '../../database/firestore/crud.dart';
+import '../../helpers/dataMapper.dart';
 import '../../models/gift_category.dart';
 import '../generic_bloc/generic_crud_bloc.dart';
 import '../generic_bloc/generic_states.dart';
@@ -47,7 +48,7 @@ class GiftCategoryBloc extends ModelBloc<GiftCategory> {
     try {
       final giftCategory = await SqliteDatabaseCRUD.getWhere('GiftCategory',event.id);
       log('=========Gift Category Name by ID from Local Database: ${giftCategory[0]['name']}=================');
-      emit(GiftCategoryNameFromLocalDatabaseLoadedState());
+      emit(GiftCategoryNameFromLocalDatabaseLoadedState(giftCategory[0]['name'] as String));
       return giftCategory[0]['name'];
     }
     catch (e) {
@@ -60,7 +61,7 @@ class GiftCategoryBloc extends ModelBloc<GiftCategory> {
     emit((ModelLoadingState()));
     log('=========Getting Gift Categories....=================');
     try {
-      final giftCategories = await SqliteDatabaseCRUD.getAll('GiftCategory');
+      final giftCategories = dbResultTypesConverter(await SqliteDatabaseCRUD.getAll('GiftCategory'), [{'isDeleted': 'bool'}]);
       log('=========Gift Categories: $giftCategories=================');
 
       emit((ModelLoadedState(giftCategories.map((e) => GiftCategory.fromJson(e)).toList())));

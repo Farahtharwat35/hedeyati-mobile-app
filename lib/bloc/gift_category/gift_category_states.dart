@@ -10,7 +10,10 @@ abstract class GiftCategoryState extends ModelStates {
 class GiftCategoryToLocalDatabaseLoadedState extends GiftCategoryState {}
 
 class GiftCategoryNameFromLocalDatabaseLoadedState extends GiftCategoryState {
-  GiftCategoryNameFromLocalDatabaseLoadedState();
+  GiftCategoryNameFromLocalDatabaseLoadedState(this.categoryName);
+
+  final String categoryName;
+
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [categoryName];
 }

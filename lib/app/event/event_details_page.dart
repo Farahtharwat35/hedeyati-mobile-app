@@ -30,8 +30,14 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
           // Event Description
           Center(
             child: Text(
-              event.description.isNotEmpty ? event.description : 'No description for this event',
-              style: const TextStyle(fontSize: 16, color: Colors.white70 , fontWeight: FontWeight.bold , fontStyle: FontStyle.italic),
+              event.description.isNotEmpty
+                  ? event.description
+                  : 'No description for this event',
+              style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -41,14 +47,22 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
           Center(
             child: Text(
               'Event Category: Birthday',
-              style: const TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold , fontStyle: FontStyle.italic),
+              style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic),
             ),
           ),
           const SizedBox(height: 16),
           Center(
             child: Text(
               'On: ${DateFormat("dd/MM/yyyy").format(event.eventDate)}',
-              style: const TextStyle(fontSize: 16, color: Colors.white70, fontWeight: FontWeight.bold , fontStyle: FontStyle.italic),
+              style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic),
             ),
           ),
           const SizedBox(height: 16),
@@ -57,11 +71,20 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
             children: [
               TextButton(
                 onPressed: () {
-                  return confirmDelete(context, eventBloc as ModelBloc , event as Model, Text('Are you sure you want to delete the event "${event.name}"?'));
+                  return confirmDelete(
+                      context,
+                      eventBloc as ModelBloc,
+                      event as Model,
+                      Text(
+                          'Are you sure you want to delete the event "${event.name}"?'));
                 },
                 child: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.white , fontWeight: FontWeight.bold , fontStyle: FontStyle.italic, fontSize: 17),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                      fontSize: 17),
                 ),
               ),
               const Icon(Icons.delete, color: Colors.white),
@@ -72,4 +95,3 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
     },
   );
 }
-

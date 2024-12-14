@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 import '../../helpers/dataMapper.dart';
 import '../sqlite_connection_factory.dart';
 import 'package:sqflite/sqflite.dart';
@@ -27,7 +28,7 @@ class SqliteDatabaseCRUD {
   }
 
   static Future<void> batchAlterModel(String table, AlterType alterType ,List<Map<String,Object?>> values, {String? where,List<Object?>? whereArgs,ConflictAlgorithm? conflictAlgorithm}) async {
-    print('=================Batch Altering $table==============================');
+    log('=================Batch Altering $table==============================');
     final db = await SqliteConnectionFactory().openConnection();
     final batch = db.batch();
     for (var value in values) {
@@ -45,7 +46,7 @@ class SqliteDatabaseCRUD {
       }
     }
     await batch.commit(noResult: true);
-    print('=================Batch Altering $table Completed==============================');
+    log('=================Batch Altering $table Completed==============================');
   }
 
   static Future<List<Map<String, Object?>>> getWhere(String table, String id, {String? where, List<Object?>? whereArgs}) async {
@@ -55,7 +56,7 @@ class SqliteDatabaseCRUD {
 
   static Future<List<Map<String, Object?>>> getAll(String table) async {
     final db = await SqliteConnectionFactory().openConnection();
-    return dbResultTypesConverter(await db.query(table) , [{'isDeleted': 'bool'}]);
+    return await db.query(table);
   }
 
 }

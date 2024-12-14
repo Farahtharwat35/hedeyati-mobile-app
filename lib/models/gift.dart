@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:json_annotation/json_annotation.dart';
-import '../helpers/timestampToDateTimeConverter.dart';
 import 'model.dart';
 part 'gift.g.dart';
 
@@ -16,12 +15,11 @@ class Gift extends Model {
   final String description;
   final String? photoUrl;
   final bool isPledged;
-  final int? pledgedBy;
+  final String? pledgedBy;
   final DateTime? pledgedDate;
   final double price;
   final String categoryID;
   final String? storesLocationRecommendation;
-  String? categoryName;
 
   Gift({
     this.id,
@@ -47,7 +45,7 @@ class Gift extends Model {
     String? name,
     String? photoUrl,
     bool? isPledged,
-    int? pledgedBy,
+    String? pledgedBy,
     DateTime? pledgedDate,
     double? price,
     String? categoryID,

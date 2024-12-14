@@ -1,14 +1,25 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:async_builder/async_builder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hedeyati/app/gift/edit_gift_page.dart';
+import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
+import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
+import 'package:provider/provider.dart';
+import '../../bloc/events/event_bloc.dart';
 import '../../bloc/gifts/gift_bloc.dart';
+import '../../models/event.dart';
 import '../../models/gift.dart';
 import '../../app/reusable_components/app_theme.dart';
 import '../../app/reusable_components/build_card.dart';
+import '../../models/model.dart';
+import 'gift_details_page.dart';
 
 class GiftListPage extends StatefulWidget {
-  final String? eventID;
+  final Model event;
+  final EventBloc eventBloc;
 
-  const GiftListPage({super.key, required this.eventID});
+  const GiftListPage({super.key, required this.event, required this.eventBloc});
 
   @override
   _GiftListPageState createState() => _GiftListPageState();
@@ -17,11 +28,13 @@ class GiftListPage extends StatefulWidget {
 class _GiftListPageState extends State<GiftListPage> {
   late Stream<List<Gift>> _giftStreams;
   late GiftBloc giftBloc;
+  late GiftCategoryBloc giftCategoryBloc;
 
   @override
   void initState() {
     super.initState();
-    giftBloc = GiftBloc(eventID: widget.eventID); // Pass eventID here
+    giftBloc = context.read<GiftBloc>();
+    giftCategoryBloc = context.read<GiftCategoryBloc>();
     _giftStreams = giftBloc.giftsStream;
   }
 
@@ -43,7 +56,8 @@ class _GiftListPageState extends State<GiftListPage> {
           Expanded(
             child: AsyncBuilder<List<Gift>>(
               stream: _giftStreams,
-              waiting: (context) => const Center(child: CircularProgressIndicator()),
+              waiting: (context) =>
+                  const Center(child: CircularProgressIndicator()),
               error: (context, error, stack) {
                 debugPrint('Error: $error');
                 debugPrint('Stack Trace: $stack');
@@ -64,7 +78,10 @@ class _GiftListPageState extends State<GiftListPage> {
                   content.add(const Center(child: Text('No gifts found.')));
                 } else {
                   content.addAll(
-                    gifts.map((gift) => _buildGiftTile(context, gift)).toList(),
+                    gifts
+                        .map((gift) => _buildGiftTile(
+                            context, gift, widget.event as Event))
+                        .toList(),
                   );
                 }
                 return buildCard(context, content);
@@ -76,46 +93,62 @@ class _GiftListPageState extends State<GiftListPage> {
     );
   }
 
-  Widget _buildGiftTile(BuildContext context, Gift gift) {
-    return ListTile(
-      title: Text(
-        gift.name,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
-      ),
-      subtitle: Text(
-        "${gift.price} USD", // You can format price as needed
-        style: const TextStyle(color: Colors.grey),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.pinkAccent),
-            onPressed: () {
-              // Uncomment and navigate to your Edit Gift page
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => EditGift(gift: gift, giftBloc: giftBloc),
-              //   ),
-              // );
-            },
+  Widget _buildGiftTile(BuildContext context, Gift gift, Event event) {
+    return BlocBuilder<GiftCategoryBloc, ModelStates>(
+      builder: (context, state) {
+        return ListTile(
+          title: Text(
+            gift.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
           ),
-          IconButton(
-            icon: const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
-            onPressed: () {
-              // Uncomment this to show gift details
-              // showGiftDetails(context, gift);
-            },
+          subtitle: Text(
+            "${gift.price} USD",
+            style: const TextStyle(color: Colors.grey),
           ),
-        ],
-      ),
-      onTap: () {
-        // Uncomment to navigate to the gift details page
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => GiftDetails(gift: gift)));
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.pinkAccent),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MultiBlocProvider(
+                        providers: [
+                          BlocProvider.value(value: giftBloc),
+                          BlocProvider.value(value: giftCategoryBloc),
+                        ],
+                        child: EditGift(
+                            gift: gift,
+                            giftBloc: giftBloc,
+                            giftCategoryBloc: giftCategoryBloc,
+                            eventBloc: widget.eventBloc),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              IconButton(
+                icon:
+                    const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
+                onPressed: () {
+                  showGiftDetails(
+                    context,
+                    gift,
+                    context.read<GiftBloc>(),
+                    context.read<GiftCategoryBloc>(),
+                    FirebaseAuth.instance.currentUser!.uid,
+                    event.eventDate,
+                  );
+                },
+              ),
+            ],
+          ),
+        );
       },
     );
   }

@@ -10,7 +10,7 @@ abstract class GiftCategoryEvent extends GenericCRUDEvents {
 class LoadGiftCategoriesEventToLocalDatabase extends GiftCategoryEvent {}
 
 class GetGiftCategoryNameByIDFromLocalDatabaseEvent extends GiftCategoryEvent {
-  GetGiftCategoryNameByIDFromLocalDatabaseEvent(this.id);
+  GetGiftCategoryNameByIDFromLocalDatabaseEvent({required this.id});
 
   final String id;
 
