@@ -49,7 +49,7 @@ class SqliteDatabaseCRUD {
     log('=================Batch Altering $table Completed==============================');
   }
 
-  static Future<List<Map<String, Object?>>> getWhere(String table, String id, {String? where, List<Object?>? whereArgs}) async {
+  static Future<List<Map<String, Object?>>> getWhere(String table, {String? where, List<Object?>? whereArgs}) async {
     final db = await SqliteConnectionFactory().openConnection();
     return db.query(table, where: where, whereArgs: whereArgs);
   }

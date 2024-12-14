@@ -46,7 +46,10 @@ class GiftCategoryBloc extends ModelBloc<GiftCategory> {
   Future<Object?> getGiftCategoryNameByIDFromLocalDatabase(GetGiftCategoryNameByIDFromLocalDatabaseEvent event, Emitter<ModelStates> emit) async {
     log('=========Getting Gift Category Name by ID from Local Database....=================');
     try {
-      final giftCategory = await SqliteDatabaseCRUD.getWhere('GiftCategory',event.id);
+      final giftCategory = await SqliteDatabaseCRUD.getWhere('GiftCategory',where: 'id = ?', whereArgs: [event.id]);
+      for (var item in giftCategory) {
+        log('=========Gift Category Name by ID from Local Database: ${item['name']}=================');
+      }
       log('=========Gift Category Name by ID from Local Database: ${giftCategory[0]['name']}=================');
       emit(GiftCategoryNameFromLocalDatabaseLoadedState(giftCategory[0]['name'] as String));
       return giftCategory[0]['name'];

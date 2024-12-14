@@ -19,6 +19,7 @@ void showGiftDetails(
     String userId,
     DateTime dueDate,
     ) {
+  print('========================= ID ${gift.categoryID} =========================');
   showDialog(
     context: context,
     barrierDismissible: true,

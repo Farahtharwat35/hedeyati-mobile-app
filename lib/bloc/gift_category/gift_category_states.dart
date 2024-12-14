@@ -1,6 +1,5 @@
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
 
-import '../../models/gift_category.dart';
 
 abstract class GiftCategoryState extends ModelStates {
   @override
@@ -17,3 +16,4 @@ class GiftCategoryNameFromLocalDatabaseLoadedState extends GiftCategoryState {
   @override
   List<Object?> get props => [categoryName];
 }
+

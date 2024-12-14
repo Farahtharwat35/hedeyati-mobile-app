@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hedeyati/database/sqlite_connection_factory.dart';
 import 'package:sqflite/sqflite.dart';
 
-import 'crud/sqflite_crud_service_class.dart';
+import 'sqflite_crud_service_class.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
