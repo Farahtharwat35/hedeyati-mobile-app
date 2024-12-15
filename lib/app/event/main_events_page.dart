@@ -30,7 +30,6 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
     eventBloc = context.read<EventBloc>();
-    _eventStreams = [eventBloc.myEventsStream, eventBloc.friendsEventsStream];
   }
 
   @override
@@ -64,45 +63,60 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
             ),
           ),
           Expanded(
-            child: AsyncBuilder<List<Event>>(
-              stream: _eventStreams[_mainTabController.index],
-              waiting: (context) =>
+            child: AsyncBuilder(
+              future : eventBloc.initializeStreams(),
+                waiting: (context) =>
                   const Center(child: CircularProgressIndicator()),
-              error: (context, error, stack) {
-                debugPrint('Error: $error');
-                debugPrint('Stack Trace: $stack');
-                return Center(
-                  child: Text('Error: $error'),
-                );
-              },
-              builder: (context, events) {
-                List<Widget> content = [];
-                content.add(Center(
-                  child: _mainTabController.index == 0
-                      ? Text(
-                          'My Events',
-                          style: myTheme.textTheme.headlineMedium,
-                        )
-                      : Text(
-                          'My Friends Events',
-                          style: myTheme.textTheme.headlineMedium,
-                        ),
-                ));
-                content.add(const SizedBox(height: 16));
-                final filteredEvents =
-                    events?.where((event) => !event.isDeleted).toList();
-                if (filteredEvents == null || filteredEvents.isEmpty) {
-                  content.add(const Center(child: Text('No events found.')));
-                } else {
-                  content.addAll(
-                    filteredEvents
-                        .map((event) =>
-                            _buildEventTile(context, event, eventBloc))
-                        .toList(),
+                error: (context, error, stack) {
+                  debugPrint('Error: $error');
+                  debugPrint('Stack Trace: $stack');
+                  return Center(
+                    child: Text('Error: $error'),
                   );
-                }
-                return buildCard(context, content);
-              },
+                },
+                builder: (context,snapshot){
+                  _eventStreams = [eventBloc.myEventsStream, eventBloc.friendsEventsStream];
+                return AsyncBuilder<List<Event>>(
+                  stream: _eventStreams[_mainTabController.index],
+                  waiting: (context) =>
+                      const Center(child: CircularProgressIndicator()),
+                  error: (context, error, stack) {
+                    debugPrint('Error: $error');
+                    debugPrint('Stack Trace: $stack');
+                    return Center(
+                      child: Text('Error: $error'),
+                    );
+                  },
+                  builder: (context, events) {
+                    List<Widget> content = [];
+                    content.add(Center(
+                      child: _mainTabController.index == 0
+                          ? Text(
+                              'My Events',
+                              style: myTheme.textTheme.headlineMedium,
+                            )
+                          : Text(
+                              'My Friends Events',
+                              style: myTheme.textTheme.headlineMedium,
+                            ),
+                    ));
+                    content.add(const SizedBox(height: 16));
+                    final filteredEvents =
+                        events?.where((event) => !event.isDeleted).toList();
+                    if (filteredEvents == null || filteredEvents.isEmpty) {
+                      content.add(const Center(child: Text('No events found.')));
+                    } else {
+                      content.addAll(
+                        filteredEvents
+                            .map((event) =>
+                                _buildEventTile(context, event, eventBloc))
+                            .toList(),
+                      );
+                    }
+                    return buildCard(context, content);
+                  },
+                );
+              }
             ),
           ),
         ],

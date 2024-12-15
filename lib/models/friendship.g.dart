@@ -10,8 +10,9 @@ Friendship _$FriendshipFromJson(Map<String, dynamic> json) => Friendship(
       id: json['id'] as String?,
       requesterID: json['requesterID'] as String,
       recieverID: json['recieverID'] as String,
-      friendshipStatusID:
-          json['friendshipStatusID'] as String? ?? 'b4tGWqKLoKXA2Kru2Xk8',
+      friendshipStatusID: $enumDecodeNullable(
+              _$FriendshipStatusEnumMap, json['friendshipStatusID']) ??
+          FriendshipStatus.pending,
       members:
           (json['members'] as List<dynamic>).map((e) => e as String).toList(),
     )
@@ -35,6 +36,14 @@ Map<String, dynamic> _$FriendshipToJson(Friendship instance) =>
       'id': instance.id,
       'requesterID': instance.requesterID,
       'recieverID': instance.recieverID,
-      'friendshipStatusID': instance.friendshipStatusID,
+      'friendshipStatusID':
+          _$FriendshipStatusEnumMap[instance.friendshipStatusID],
       'members': instance.members,
     };
+
+const _$FriendshipStatusEnumMap = {
+  FriendshipStatus.pending: 'pending',
+  FriendshipStatus.accepted: 'accepted',
+  FriendshipStatus.rejected: 'rejected',
+  FriendshipStatus.blocked: 'blocked',
+};

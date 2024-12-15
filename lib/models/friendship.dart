@@ -6,6 +6,14 @@ import '../helpers/timestampToDateTimeConverter.dart';
 
 part 'friendship.g.dart';
 
+
+enum FriendshipStatus {
+  pending,
+  accepted,
+  rejected,
+  blocked,
+}
+
 @JsonSerializable()
 // Friendship Class
 class Friendship extends Model {
@@ -13,7 +21,7 @@ class Friendship extends Model {
   String? id;
   final String requesterID;
   final String recieverID;
-  String? friendshipStatusID;
+  FriendshipStatus? friendshipStatusID;
   // This was created as firestore does not support OR/And queries
   final List<String> members;
 
@@ -21,7 +29,7 @@ class Friendship extends Model {
     this.id,
     required this.requesterID,
     required this.recieverID,
-    this.friendshipStatusID = 'b4tGWqKLoKXA2Kru2Xk8',
+    this.friendshipStatusID = FriendshipStatus.pending,
     required this.members,
   });
 
@@ -44,7 +52,7 @@ class Friendship extends Model {
     return instance.where('userID', isEqualTo: userId).snapshots();
   }
 
-  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatusID: '', members: []);
+  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatusID: FriendshipStatus.pending , members: []);
 
   Friendship copyWith({
     required String? id,
@@ -57,7 +65,7 @@ class Friendship extends Model {
       requesterID: requesterID ?? this.requesterID,
       recieverID: recieverID ?? this.recieverID,
       members: members,
-      friendshipStatusID: friendshipStatus ?? friendshipStatusID,
+      friendshipStatusID: friendshipStatusID,
     );
   }
 

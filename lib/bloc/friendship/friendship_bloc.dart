@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
+import 'package:hedeyati/database/firestore/friendship_crud.dart';
 import 'package:hedeyati/models/friendship.dart';
 import '../../database/firestore/crud.dart';
 import '../../helpers/query_arguments.dart';
@@ -21,7 +22,7 @@ class FriendshipBloc extends ModelBloc<Friendship> {
   void _initializeStreams({required String userID}) {
     List<Map<String, QueryArg>> queryArgs = [{'members' : QueryArg(arrayContains: userID)}];
 
-    friendshipStream = friendshipCRUD.getSnapshotsWhere(queryArgs)
+    friendshipStream = FriendshipCRUD().getSnapshotsWhere(queryArgs)
         .map((snapshot) => snapshot.docs.map((doc) => doc.data() as Friendship).toList());
   }
 
@@ -32,10 +33,10 @@ class FriendshipBloc extends ModelBloc<Friendship> {
       log('***********You can not add yourself as a friend***********');
       emit(ModelErrorState(message: Response(success: false, message:'You can not add yourself as a friend')));
     }
-    List<Friendship> friends = await getMyFriends();
+    List<Friendship> friends = await FriendshipCRUD().getMyFriends();
     if (friends.isEmpty) {
     try {
-      friendshipCRUD.add(addFriend.friendship);
+      FriendshipCRUD().add(addFriend.friendship);
       log('***********Friendship added successfully***********');
       emit(ModelAddedState(addFriend.friendship));
     } catch (e) {
@@ -49,15 +50,11 @@ class FriendshipBloc extends ModelBloc<Friendship> {
   }
 
   Future<void> getFriendships(GetMyFriends myFriends , Emitter emit) async{
-    List<Friendship> friendships = await getMyFriends();
+    List<Friendship> friendships = await FriendshipCRUD().getMyFriends();
     if (friendships.isEmpty) {
       emit(ModelEmptyState());
       return;
     }
-  }
-
-  Future<List<Friendship>> getMyFriends() async {
-    return await friendshipCRUD.getWhere([{'members' : QueryArg(arrayContains: FirebaseAuth.instance.currentUser!.uid)}]);
   }
 
   static FriendshipBloc get(context) => BlocProvider.of(context);

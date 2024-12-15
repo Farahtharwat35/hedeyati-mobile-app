@@ -75,7 +75,6 @@ class CRUD<GenericModel extends Model> {
 
 CRUD<Event> eventCRUD = CRUD<Event>(model: Event.dummy());
 CRUD<User> userCRUD = CRUD<User>(model: User.dummy());
-CRUD<Friendship> friendshipCRUD = CRUD<Friendship>(model: Friendship.dummy());
 CRUD<Gift> giftCRUD = CRUD<Gift>(model: Gift.dummy());
 CRUD<EventCategory> eventCategoryCRUD = CRUD<EventCategory>(model: EventCategory.dummy());
 CRUD<GiftCategory> giftCategoryCRUD = CRUD<GiftCategory>(model: GiftCategory.dummy());
