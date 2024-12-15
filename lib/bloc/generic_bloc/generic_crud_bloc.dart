@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/database/firestore/crud.dart';
+import 'package:hedeyati/helpers/response.dart';
 import '../../models/event_category.dart';
 import '../../models/model.dart';
 import '../generic_bloc/generic_crud_events.dart';
@@ -26,7 +27,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       await _CRUD.add(event.model as GenericModel);
       emit(ModelAddedState(event.model));
     } catch (e) {
-      emit(ModelErrorState(message: 'Failed to add model: $e'));
+      emit(ModelErrorState(message: Response(success: false, message: 'Failed to add model: $e')));
     }
   }
 
@@ -37,7 +38,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       emit(ModelChangeState(models));
       return models;
     } catch (e) {
-      emit(ModelErrorState(message: 'Failed to load models: $e'));
+      emit(ModelErrorState(message: Response(success: false, message: 'Failed to add model: $e')));
       return [];
     }
   }
@@ -48,7 +49,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       await _CRUD.update(event.updatedModel as GenericModel);
       emit(ModelUpdatedState(event.updatedModel));
     } catch (e) {
-      emit(ModelErrorState(message: 'Failed to update model: $e'));
+      emit(ModelErrorState(message: Response(success: false, message: 'Failed to add model: $e')));
     }
   }
 
@@ -58,7 +59,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       await _CRUD.delete(event.deletedModel as GenericModel);
       emit(ModelDeletedState(event.deletedModel));
     } catch (e) {
-      emit(ModelErrorState(message: 'Failed to delete model: $e'));
+      emit(ModelErrorState(message: Response(success: false, message: 'Failed to add model: $e')));
     }
   }
 }

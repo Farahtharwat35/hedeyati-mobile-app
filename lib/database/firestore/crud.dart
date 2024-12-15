@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hedeyati/helpers/id_generator.dart';
 import 'package:hedeyati/models/user.dart' ;
 import 'package:hedeyati/models/event.dart' ;
 import 'package:hedeyati/models/event_category.dart';
@@ -54,7 +55,8 @@ class CRUD<GenericModel extends Model> {
 
   Future<void> add(GenericModel model) async {
     model.createdAt = DateTime.now();
-    await model.getReference().add(model);
+    model.id = uuIDGenerator();
+    await model.getReference().doc(model.id).set(model);
   }
 
   Future<void> update(GenericModel model) {

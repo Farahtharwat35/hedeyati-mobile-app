@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../helpers/response.dart';
 import '../../models/model.dart';
 
 
@@ -55,7 +56,7 @@ class ModelDeletedState extends ModelStates {
 }
 
 class ModelSuccessState extends ModelStates {
-  final String message;
+  final Response message;
 
   const ModelSuccessState({required this.message});
 
@@ -64,7 +65,7 @@ class ModelSuccessState extends ModelStates {
 }
 
 class ModelErrorState extends ModelStates {
-  final String message;
+  final Response message;
 
   const ModelErrorState({required this.message});
 

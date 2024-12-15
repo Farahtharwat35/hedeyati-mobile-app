@@ -1,29 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
-
-import '../helpers/timestampToDateTimeConverter.dart';
 part 'user.g.dart';
 
 @JsonSerializable()
 class User extends Model {
   @override
   String? id;
-  String name;
+  String username;
   String email;
   String password;
-  String avatar;
-  String phone;
-  bool isFriend;
+  String? avatar;
+  String phoneNumber;
+
 
   User({
     this.id,
-    required this.name,
+    required this.username,
     required this.email,
     required this.password,
-    required this.avatar,
-    required this.phone,
-    this.isFriend = false,
+    this.avatar,
+    required this.phoneNumber,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -39,7 +36,7 @@ class User extends Model {
   @override
   CollectionReference<User> getReference() => instance;
 
-  static User dummy() => User(name: '', email: '', password: '', avatar: '', phone: '');
+  static User dummy() => User(username: '', email: '', password: '', avatar: '', phoneNumber: '');
 
   User copyWith({
     required String? id,
@@ -47,22 +44,20 @@ class User extends Model {
     String? email,
     String? password,
     String? avatar,
-    String? phone,
-    bool? isFriend,
+    String? phoneNumber,
   }) {
     return User(
       id: this.id,
-      name: name ?? this.name,
+      username: name ?? username,
       email: email ?? this.email,
       password: password ?? this.password,
       avatar: avatar ?? this.avatar,
-      phone: phone ?? this.phone,
-      isFriend: isFriend ?? this.isFriend,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
     );
   }
 
   @override
   String toString() {
-    return 'User{id: $id, name: $name, email: $email, password: $password, avatar: $avatar, phone: $phone}';
+    return 'User{id: $id, username: $username, email: $email, password: $password, avatar: $avatar, phone: $phoneNumber}';
   }
 }

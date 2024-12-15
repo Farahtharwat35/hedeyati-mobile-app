@@ -14,6 +14,8 @@ class Friendship extends Model {
   final String requesterID;
   final String recieverID;
   final int friendshipStatus;
+  // This was created as firestore does not support OR queries
+  final List<String> members = [];
 
   Friendship({
     this.id,

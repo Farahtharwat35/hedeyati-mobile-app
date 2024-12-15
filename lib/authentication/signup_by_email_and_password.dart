@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import '../helpers/response.dart';
+import '../helpers/user_data_uniqueness_validator.dart';
 
 
 class SignUpByEmailAndPassword {

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/app/login-signup/signup_page.dart';
 import 'package:hedeyati/authentication/signin_by_email_and_password.dart';
+import '../../bloc/signUp/signup_bloc.dart';
 import '../home/tab_bar.dart';
 
 class LoginPage extends StatelessWidget {
@@ -163,7 +165,10 @@ class LoginPage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => SignupPage()),
+              MaterialPageRoute(builder: (context) => BlocProvider(
+                create: (context) => SignupBloc(),
+                child: SignupPage(),
+              )),
             );
           },
           child: Text("Sign Up", style: Theme.of(context).textTheme.bodyMedium),
