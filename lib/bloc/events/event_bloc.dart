@@ -13,11 +13,16 @@ class EventBloc extends ModelBloc<Event> {
   late Stream<List<Event>> _friendsEventsStream;
 
   Future<void> initializeStreams() async {
+
     await FriendshipCRUD().getMyFriendsIDs().then((friendsIDs) {
+      if (friendsIDs.isNotEmpty) {
       _friendsEventsStream =  eventCRUD.getSnapshotsWhere([
         {'isDeleted': QueryArg(isEqualTo: false)},
         {'firestoreUserID': QueryArg(whereIn: friendsIDs)}
-      ]).map((snapshot) => snapshot.docs.map((doc) => doc.data() as Event).toList());
+  ]).map((snapshot) => snapshot.docs.map((doc) => doc.data() as Event).toList());}
+      else {
+        _friendsEventsStream = Stream.value([]);
+      }
     });
 
     _myEventsStream = eventCRUD.getSnapshotsWhere([

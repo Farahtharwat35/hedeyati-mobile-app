@@ -14,7 +14,7 @@ class FriendshipCRUD extends CRUD<Friendship> {
   Map<String, dynamic> toJson(Friendship model) => model.toJson();
 
   Future<List<Friendship>> getMyFriends() async {
-    return await getWhere([{'members' : QueryArg(arrayContains: FirebaseAuth.instance.currentUser!.uid)}, {'friendshipStatusID': QueryArg(isEqualTo: FriendshipStatus.accepted)}]);
+    return await getWhere([{'members' : QueryArg(arrayContains: FirebaseAuth.instance.currentUser!.uid)}, {'friendshipStatusID': QueryArg(isEqualTo: FriendshipStatus.accepted.index)}]);
   }
 
   Future<List<String>> getMyFriendsIDs() async {
