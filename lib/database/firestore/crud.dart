@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hedeyati/helpers/id_generator.dart';
 import 'package:hedeyati/models/user.dart' ;
@@ -33,11 +34,14 @@ class CRUD<GenericModel extends Model> {
   getReference() => model.getReference();
 
   Query<Model> getWhereQuery(List<Map<String, QueryArg>> where) {
+    String queryDebugInfo = 'Starting query on collection: ${model.getReference().path}\n';
     dynamic query = model.getReference();
     for (var queryGroup in where) {
       queryGroup.forEach((field, arg) {
+        queryDebugInfo += 'Condition: $field ${arg.argMap()} \n';
         query = Function.apply(query.where, [field], arg.argMap());
       });
+      log('======= Query Executed: $queryDebugInfo');
     }
     return query;
   }
@@ -49,7 +53,7 @@ class CRUD<GenericModel extends Model> {
 
   Stream<QuerySnapshot<Model>> getSnapshotsWhere(
       List<Map<String, QueryArg>> where) {
-    dynamic query =getWhereQuery(where);
+    dynamic query=getWhereQuery(where);
     return query.snapshots();
   }
 

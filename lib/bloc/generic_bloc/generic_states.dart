@@ -72,3 +72,7 @@ class ModelErrorState extends ModelStates {
   @override
   List<Object?> get props => [message];
 }
+
+class ModelEmptyState extends ModelStates {
+  const ModelEmptyState() : super();
+}

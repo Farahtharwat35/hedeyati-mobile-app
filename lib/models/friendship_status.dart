@@ -9,12 +9,12 @@ part 'friendship_status.g.dart';
 @JsonSerializable()
 // FriendshipStatus Class
 class FriendshipStatus extends Model {
-  final String status;
+  final String? status;
 
   FriendshipStatus({
     @override
     String? id,
-    required this.status,
+    this.status = 'Pending',
   });
 
   factory FriendshipStatus.fromJson(Map<String, dynamic> json) =>

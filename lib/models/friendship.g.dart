@@ -10,7 +10,10 @@ Friendship _$FriendshipFromJson(Map<String, dynamic> json) => Friendship(
       id: json['id'] as String?,
       requesterID: json['requesterID'] as String,
       recieverID: json['recieverID'] as String,
-      friendshipStatus: (json['friendshipStatus'] as num).toInt(),
+      friendshipStatusID:
+          json['friendshipStatusID'] as String? ?? 'b4tGWqKLoKXA2Kru2Xk8',
+      members:
+          (json['members'] as List<dynamic>).map((e) => e as String).toList(),
     )
       ..createdAt = json['createdAt'] == null
           ? null
@@ -32,5 +35,6 @@ Map<String, dynamic> _$FriendshipToJson(Friendship instance) =>
       'id': instance.id,
       'requesterID': instance.requesterID,
       'recieverID': instance.recieverID,
-      'friendshipStatus': instance.friendshipStatus,
+      'friendshipStatusID': instance.friendshipStatusID,
+      'members': instance.members,
     };

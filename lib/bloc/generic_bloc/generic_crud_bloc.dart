@@ -1,8 +1,9 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/database/firestore/crud.dart';
 import 'package:hedeyati/helpers/response.dart';
-import '../../models/event_category.dart';
 import '../../models/model.dart';
 import '../generic_bloc/generic_crud_events.dart';
 import '../generic_bloc/generic_states.dart';
@@ -34,10 +35,19 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
   Future<List<Model>> getWhere(LoadModel event, Emitter<ModelStates> emit) async {
     emit(ModelLoadingState());
     try {
+      log('Started fetching from firestore ... : ${event.where}');
       List<Model> models = await _CRUD.getWhere(event.where);
-      emit(ModelChangeState(models));
+      log('Fetched from firestore ... : ${models.length}');
+      if (models.isEmpty) {
+        log('No data found');
+        emit(ModelEmptyState());
+        return [];
+      }
+      log('Data found');
+      emit(ModelLoadedState(models));
       return models;
     } catch (e) {
+      log('Error fetching from firestore ... : $e');
       emit(ModelErrorState(message: Response(success: false, message: 'Failed to add model: $e')));
       return [];
     }
@@ -62,9 +72,4 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
       emit(ModelErrorState(message: Response(success: false, message: 'Failed to add model: $e')));
     }
   }
-}
-
-class CategoryCubit extends ModelBloc<EventCategory> {
-  CategoryCubit({required super.model});
-  static CategoryCubit of(context) => BlocProvider.of(context);
 }

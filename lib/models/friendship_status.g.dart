@@ -9,7 +9,7 @@ part of 'friendship_status.dart';
 FriendshipStatus _$FriendshipStatusFromJson(Map<String, dynamic> json) =>
     FriendshipStatus(
       id: json['id'] as String?,
-      status: json['status'] as String,
+      status: json['status'] as String? ?? 'Pending',
     )
       ..createdAt = json['createdAt'] == null
           ? null

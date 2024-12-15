@@ -13,15 +13,16 @@ class Friendship extends Model {
   String? id;
   final String requesterID;
   final String recieverID;
-  final int friendshipStatus;
-  // This was created as firestore does not support OR queries
-  final List<String> members = [];
+  String? friendshipStatusID;
+  // This was created as firestore does not support OR/And queries
+  final List<String> members;
 
   Friendship({
     this.id,
     required this.requesterID,
     required this.recieverID,
-    required this.friendshipStatus,
+    this.friendshipStatusID = 'b4tGWqKLoKXA2Kru2Xk8',
+    required this.members,
   });
 
   factory Friendship.fromJson(Map<String, dynamic> json) =>
@@ -43,24 +44,25 @@ class Friendship extends Model {
     return instance.where('userID', isEqualTo: userId).snapshots();
   }
 
-  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatus: 0);
+  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatusID: '', members: []);
 
   Friendship copyWith({
     required String? id,
     String? requesterID,
     String? recieverID,
-    int? friendshipStatus,
+    String? friendshipStatus,
   }) {
     return Friendship(
       id: id ?? this.id,
       requesterID: requesterID ?? this.requesterID,
       recieverID: recieverID ?? this.recieverID,
-      friendshipStatus: friendshipStatus ?? this.friendshipStatus,
+      members: members,
+      friendshipStatusID: friendshipStatus ?? friendshipStatusID,
     );
   }
 
   @override
   String toString() {
-    return 'Friendship{id: $id, requesterID: $requesterID, recieverID: $recieverID, friendshipStatus: $friendshipStatus}';
+    return 'Friendship{id: $id, requesterID: $requesterID, recieverID: $recieverID, friendshipStatus: $friendshipStatusID}';
   }
 }
