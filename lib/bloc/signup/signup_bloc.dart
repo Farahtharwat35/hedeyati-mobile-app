@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
@@ -25,6 +27,7 @@ class SignupBloc extends ModelBloc<User.User> {
   Future<void> createUserAccount(CreateUserAccount event, Emitter emit) async {
     bool areValid = await validateCredentialsUniqueness(event.user.username, event.user.phoneNumber);
     if (!areValid) {
+      log('***********Username or Phone number already exists***********');
       emit(UserCredentialsValidated(message: Response(success: false, message: 'Username or Phone number already exists')));
       return;
     }

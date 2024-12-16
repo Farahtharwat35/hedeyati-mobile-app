@@ -25,7 +25,8 @@ class _AddGiftPage extends State<AddGift> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _storesLocationRecommendationController = TextEditingController();
+  final TextEditingController _storesLocationRecommendationController =
+      TextEditingController();
 
   late GiftCategoryBloc giftCategoryBloc;
   late EventBloc eventBloc;
@@ -136,7 +137,8 @@ class _AddGiftPage extends State<AddGift> {
                               },
                             ),
                             buildTextField(
-                              controller: _storesLocationRecommendationController,
+                              controller:
+                                  _storesLocationRecommendationController,
                               args: {
                                 'labelText': 'Recommended Stores',
                                 'prefixIcon': Icons.shopping_bag_outlined,
@@ -149,7 +151,8 @@ class _AddGiftPage extends State<AddGift> {
                                   return const Center(
                                       child: CircularProgressIndicator());
                                 } else if (state is ModelLoadedState) {
-                                  final categories = state.models as List<GiftCategory>;
+                                  final categories =
+                                      state.models as List<GiftCategory>;
                                   return _buildCategoryDropdown(categories);
                                 } else {
                                   return const Center(
@@ -168,9 +171,9 @@ class _AddGiftPage extends State<AddGift> {
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(16)),
                                   backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
+                                      Theme.of(context).colorScheme.primary,
                                   foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
+                                      Theme.of(context).colorScheme.onPrimary,
                                 ),
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate() &&
@@ -179,9 +182,9 @@ class _AddGiftPage extends State<AddGift> {
                                     final gift = Gift(
                                       eventID: selectedEventId!,
                                       name: _nameController.text,
-                                      description:
-                                      _descriptionController.text,
-                                      price: double.parse(_priceController.text),
+                                      description: _descriptionController.text,
+                                      price:
+                                          double.parse(_priceController.text),
                                       categoryID: selectedCategoryId!,
                                     );
                                     GiftBloc.get(context).add(AddModel(gift));
@@ -223,45 +226,57 @@ class _AddGiftPage extends State<AddGift> {
           selectedCategoryId = value!;
         });
       },
-      validator: (value) =>
-      value == null ? 'Please select a category' : null,
+      validator: (value) => value == null ? 'Please select a category' : null,
     );
   }
 
   Widget _buildEventDropdown() {
-    return AsyncBuilder<List<Event>>(
-      stream: eventBloc.myEventsStream,
-      waiting: (context) => const Center(child: CircularProgressIndicator()),
-      error: (context, error, stack) {
-        debugPrint('Error: $error');
-        debugPrint('Stack Trace: $stack');
-        return Center(
-          child: Text('Error: $error'),
-        );
-      },
-      builder: (context, events) {
-        return DropdownButtonFormField<String>(
-          decoration: fieldDecorator({
-            'labelText': 'Select Event',
-            'prefixIcon': Icons.event,
-          }),
-          value: selectedEventId,
-          items: events?.map((event) {
-            return DropdownMenuItem(
-              value: event.id,
-              child: Text(event.name),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              selectedEventId = value!;
-            });
-          },
-          validator: (value) =>
-          value == null ? 'Please select an event' : null,
-        );
-      },
-    );
+    return AsyncBuilder(
+        future: eventBloc.initializeStreams(),
+        waiting: (context) => const Center(child: CircularProgressIndicator()),
+        error: (context, error, stack) {
+          debugPrint('Error: $error');
+          debugPrint('Stack Trace: $stack');
+          return Center(
+            child: Text('Error: $error'),
+          );
+        },
+        builder: (context, snapshot) {
+          return AsyncBuilder<List<Event>>(
+            stream: eventBloc.myEventsStream,
+            waiting: (context) =>
+                const Center(child: CircularProgressIndicator()),
+            error: (context, error, stack) {
+              debugPrint('Error: $error');
+              debugPrint('Stack Trace: $stack');
+              return Center(
+                child: Text('Error: $error'),
+              );
+            },
+            builder: (context, events) {
+              return DropdownButtonFormField<String>(
+                decoration: fieldDecorator({
+                  'labelText': 'Select Event',
+                  'prefixIcon': Icons.event,
+                }),
+                value: selectedEventId,
+                items: events?.map((event) {
+                  return DropdownMenuItem(
+                    value: event.id,
+                    child: Text(event.name),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedEventId = value!;
+                  });
+                },
+                validator: (value) =>
+                    value == null ? 'Please select an event' : null,
+              );
+            },
+          );
+        });
   }
 
   @override

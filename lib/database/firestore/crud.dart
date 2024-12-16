@@ -16,11 +16,15 @@ class CRUD<GenericModel extends Model> {
   CRUD({required this.model});
 
   List<GenericModel> snapshotToModel(QuerySnapshot<Object?>? snapshot) {
-    return snapshot?.docs
+    log('SnapshotToModel method started .......');
+    List<GenericModel> models = snapshot?.docs
         .map((doc) => doc.data() as GenericModel)
         .whereType<GenericModel>()
         .toList() ??
         [];
+    log('********** Models length: ${models.length} **********');
+    return models;
+
   }
 
   Future<GenericModel> get(id) async {
