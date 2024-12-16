@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -7,6 +8,8 @@ import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
 import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
 import 'package:hedeyati/bloc/gift_category/gift_category_events.dart';
 import 'package:hedeyati/bloc/gifts/gift_bloc.dart';
+import 'package:hedeyati/bloc/user/user_bloc.dart';
+import '../../bloc/friendship/friendship_bloc.dart';
 import '../friends/add_friend.dart';
 import '../gift/add_gift.dart';
 import '../home/search_bar.dart';
@@ -43,7 +46,18 @@ class _HomePageState extends State<HomePage> {
                 label: 'Add Friend',
                 onTap: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => AddFriendPage()));
+                      MaterialPageRoute(builder: (context) => MultiBlocProvider(
+                          providers: [
+                            BlocProvider<FriendshipBloc>(
+                              lazy: false,
+                              create: (_) => FriendshipBloc(FirebaseAuth.instance.currentUser!.uid),
+                            ),
+                            BlocProvider<UserBloc>(
+                              lazy: false,
+                              create: (_) => UserBloc(),
+                            ),
+                          ],
+                          child: AddFriendPage())));
                 },
               ),
               SpeedDialChild(
@@ -56,12 +70,9 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(
                       builder: (context) => Provider<EventBloc>(
                         create: (_) => EventBloc(),
-                        child: BlocProvider.value(
-                          value: BlocProvider.of<EventBloc>(context),
-                          child: const CreateEventPage(),
+                        child: const CreateEventPage(),
                         ),
                       ),
-                    ),
                   );
                 },
               ),

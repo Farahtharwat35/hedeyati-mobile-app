@@ -40,9 +40,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: myTheme,
-      home: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text('Create Event', textAlign: TextAlign.center),
@@ -138,9 +136,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   @override

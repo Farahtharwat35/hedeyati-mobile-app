@@ -6,6 +6,14 @@ import '../helpers/timestampToDateTimeConverter.dart';
 
 part 'friendship.g.dart';
 
+
+enum FriendshipStatus {
+  pending,
+  accepted,
+  rejected,
+  blocked,
+}
+
 @JsonSerializable()
 // Friendship Class
 class Friendship extends Model {
@@ -13,16 +21,17 @@ class Friendship extends Model {
   String? id;
   final String requesterID;
   final String recieverID;
-  final int friendshipStatus;
-  // This was created as firestore does not support OR queries
-  final List<String> members = [];
+  int? friendshipStatusID;
+  // This was created as firestore does not support OR/And queries
+  final List<String> members;
 
   Friendship({
     this.id,
     required this.requesterID,
     required this.recieverID,
-    required this.friendshipStatus,
-  });
+    int? friendshipStatusID,
+    required this.members,
+  }):friendshipStatusID = friendshipStatusID ?? FriendshipStatus.pending.index;
 
   factory Friendship.fromJson(Map<String, dynamic> json) =>
       _$FriendshipFromJson(json);
@@ -43,24 +52,25 @@ class Friendship extends Model {
     return instance.where('userID', isEqualTo: userId).snapshots();
   }
 
-  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatus: 0);
+  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatusID: FriendshipStatus.pending.index , members: []);
 
   Friendship copyWith({
     required String? id,
     String? requesterID,
     String? recieverID,
-    int? friendshipStatus,
+    String? friendshipStatus,
   }) {
     return Friendship(
       id: id ?? this.id,
       requesterID: requesterID ?? this.requesterID,
       recieverID: recieverID ?? this.recieverID,
-      friendshipStatus: friendshipStatus ?? this.friendshipStatus,
+      members: members,
+      friendshipStatusID: friendshipStatusID,
     );
   }
 
   @override
   String toString() {
-    return 'Friendship{id: $id, requesterID: $requesterID, recieverID: $recieverID, friendshipStatus: $friendshipStatus}';
+    return 'Friendship{id: $id, requesterID: $requesterID, recieverID: $recieverID, friendshipStatus: $friendshipStatusID}';
   }
 }

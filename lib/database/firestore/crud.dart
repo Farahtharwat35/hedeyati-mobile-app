@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hedeyati/helpers/id_generator.dart';
 import 'package:hedeyati/models/user.dart' ;
@@ -15,11 +16,15 @@ class CRUD<GenericModel extends Model> {
   CRUD({required this.model});
 
   List<GenericModel> snapshotToModel(QuerySnapshot<Object?>? snapshot) {
-    return snapshot?.docs
+    log('SnapshotToModel method started .......');
+    List<GenericModel> models = snapshot?.docs
         .map((doc) => doc.data() as GenericModel)
         .whereType<GenericModel>()
         .toList() ??
         [];
+    log('********** Models length: ${models.length} **********');
+    return models;
+
   }
 
   Future<GenericModel> get(id) async {
@@ -33,11 +38,14 @@ class CRUD<GenericModel extends Model> {
   getReference() => model.getReference();
 
   Query<Model> getWhereQuery(List<Map<String, QueryArg>> where) {
+    String queryDebugInfo = 'Starting query on collection: ${model.getReference().path}\n';
     dynamic query = model.getReference();
     for (var queryGroup in where) {
       queryGroup.forEach((field, arg) {
+        queryDebugInfo += 'Condition: $field ${arg.argMap()} \n';
         query = Function.apply(query.where, [field], arg.argMap());
       });
+      log('======= Query Executed: $queryDebugInfo');
     }
     return query;
   }
@@ -49,13 +57,13 @@ class CRUD<GenericModel extends Model> {
 
   Stream<QuerySnapshot<Model>> getSnapshotsWhere(
       List<Map<String, QueryArg>> where) {
-    dynamic query =getWhereQuery(where);
+    dynamic query=getWhereQuery(where);
     return query.snapshots();
   }
 
-  Future<void> add(GenericModel model) async {
+  Future<void> add({required GenericModel model , bool uuID = true}) async {
     model.createdAt = DateTime.now();
-    model.id = uuIDGenerator();
+    uuID ? model.id = uuIDGenerator() : model.id = model.id;
     await model.getReference().doc(model.id).set(model);
   }
 
@@ -71,7 +79,6 @@ class CRUD<GenericModel extends Model> {
 
 CRUD<Event> eventCRUD = CRUD<Event>(model: Event.dummy());
 CRUD<User> userCRUD = CRUD<User>(model: User.dummy());
-CRUD<Friendship> friendshipCRUD = CRUD<Friendship>(model: Friendship.dummy());
 CRUD<Gift> giftCRUD = CRUD<Gift>(model: Gift.dummy());
 CRUD<Notification.Notification> notificationCRUD = CRUD<Notification.Notification>(model: Notification.Notification.dummy());
 CRUD<EventCategory> eventCategoryCRUD = CRUD<EventCategory>(model: EventCategory.dummy());
