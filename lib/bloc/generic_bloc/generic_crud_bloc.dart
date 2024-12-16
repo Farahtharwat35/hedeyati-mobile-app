@@ -25,7 +25,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
   Future<void> addModel(AddModel event, Emitter<ModelStates> emit) async {
     emit(ModelLoadingState());
     try {
-      await _CRUD.add(event.model as GenericModel);
+      await _CRUD.add(model: event.model as GenericModel);
       emit(ModelAddedState(event.model));
     } catch (e) {
       emit(ModelErrorState(message: Response(success: false, message: 'Failed to add model: $e')));

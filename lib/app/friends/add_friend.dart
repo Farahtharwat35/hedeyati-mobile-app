@@ -105,7 +105,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                   members: [FirebaseAuth.instance.currentUser!.uid, receiverID],
                                 );
                                 context.read<FriendshipBloc>().add(AddFriend(newFriendship));
-                              } else if (userState is ModelErrorState) {
+                              } else if (userState is ModelEmptyState) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
@@ -127,7 +127,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                          'Adding Friend...',
+                                          'Preparing Your Friend Request...',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontStyle: FontStyle.italic,
@@ -140,7 +140,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                          'Friend added successfully!',
+                                          'Friend Request Sent Successfully! Waiting for approval',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontStyle: FontStyle.italic,
@@ -153,7 +153,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
-                                          friendshipState.message?.message ?? 'Error occurred',
+                                          friendshipState.message.message,
                                           style: const TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontStyle: FontStyle.italic,

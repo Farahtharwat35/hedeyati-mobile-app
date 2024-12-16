@@ -57,9 +57,9 @@ class CRUD<GenericModel extends Model> {
     return query.snapshots();
   }
 
-  Future<void> add(GenericModel model) async {
+  Future<void> add({required GenericModel model , bool uuID = true}) async {
     model.createdAt = DateTime.now();
-    model.id = uuIDGenerator();
+    uuID ? model.id = uuIDGenerator() : model.id = model.id;
     await model.getReference().doc(model.id).set(model);
   }
 

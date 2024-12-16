@@ -14,7 +14,7 @@ class EventBloc extends ModelBloc<Event> {
 
   Future<void> initializeStreams() async {
 
-    await FriendshipCRUD().getMyFriendsIDs().then((friendsIDs) {
+    await FriendshipCRUD().getMyFriendsIDs(FirebaseAuth.instance.currentUser!.uid).then((friendsIDs) {
       if (friendsIDs.isNotEmpty) {
       _friendsEventsStream =  eventCRUD.getSnapshotsWhere([
         {'isDeleted': QueryArg(isEqualTo: false)},

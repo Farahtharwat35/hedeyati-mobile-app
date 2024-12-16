@@ -21,7 +21,7 @@ class Friendship extends Model {
   String? id;
   final String requesterID;
   final String recieverID;
-  FriendshipStatus? friendshipStatusID;
+  int? friendshipStatusID;
   // This was created as firestore does not support OR/And queries
   final List<String> members;
 
@@ -29,9 +29,9 @@ class Friendship extends Model {
     this.id,
     required this.requesterID,
     required this.recieverID,
-    this.friendshipStatusID = FriendshipStatus.pending,
+    int? friendshipStatusID,
     required this.members,
-  });
+  }):friendshipStatusID = friendshipStatusID ?? FriendshipStatus.pending.index;
 
   factory Friendship.fromJson(Map<String, dynamic> json) =>
       _$FriendshipFromJson(json);
@@ -52,7 +52,7 @@ class Friendship extends Model {
     return instance.where('userID', isEqualTo: userId).snapshots();
   }
 
-  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatusID: FriendshipStatus.pending , members: []);
+  static Friendship dummy() => Friendship(requesterID: '', recieverID: '', friendshipStatusID: FriendshipStatus.pending.index , members: []);
 
   Friendship copyWith({
     required String? id,

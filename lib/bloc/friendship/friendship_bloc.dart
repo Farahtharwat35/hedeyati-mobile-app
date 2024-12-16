@@ -18,25 +18,33 @@ class FriendshipBloc extends ModelBloc<Friendship> {
   }
 
   late final Stream<List<Friendship>> friendshipStream;
+  final FriendshipCRUD friendshipCRUD = FriendshipCRUD();
 
   void _initializeStreams({required String userID}) {
     List<Map<String, QueryArg>> queryArgs = [{'members' : QueryArg(arrayContains: userID)}];
 
-    friendshipStream = FriendshipCRUD().getSnapshotsWhere(queryArgs)
+    friendshipStream = friendshipCRUD.getSnapshotsWhere(queryArgs)
         .map((snapshot) => snapshot.docs.map((doc) => doc.data() as Friendship).toList());
   }
 
   Future<void> addFriend(AddFriend addFriend , Emitter emit) async{
     emit(ModelLoadingState());
     //  Checking if you are not adding yourself as a friend
-    if (addFriend.friendship.recieverID == FirebaseAuth.instance.currentUser!.uid) {
+    if (addFriend.friendship.recieverID == addFriend.friendship.requesterID) {
       log('***********You can not add yourself as a friend***********');
       emit(ModelErrorState(message: Response(success: false, message:'You can not add yourself as a friend')));
+      return;
     }
-    List<Friendship> friends = await FriendshipCRUD().getMyFriends();
+    List<Friendship> friends = await friendshipCRUD.getMyFriends(addFriend.friendship.requesterID);
     if (friends.isEmpty) {
     try {
-      FriendshipCRUD().add(addFriend.friendship);
+      List<String> pendingFriendRequests = await friendshipCRUD.getMyPendingFriendsIDs(addFriend.friendship.requesterID);
+      if(pendingFriendRequests.contains(addFriend.friendship.recieverID)){
+        log('***********You have already sent a friend request to this user***********');
+        emit(ModelErrorState(message: Response(success: false, message: 'You have already sent a friend request to this user')));
+        return;
+      }
+      friendshipCRUD.add(model:addFriend.friendship);
       log('***********Friendship added successfully***********');
       emit(ModelAddedState(addFriend.friendship));
     } catch (e) {
@@ -50,7 +58,7 @@ class FriendshipBloc extends ModelBloc<Friendship> {
   }
 
   Future<void> getFriendships(GetMyFriends myFriends , Emitter emit) async{
-    List<Friendship> friendships = await FriendshipCRUD().getMyFriends();
+    List<Friendship> friendships = await FriendshipCRUD().getMyFriends(myFriends.userID);
     if (friendships.isEmpty) {
       emit(ModelEmptyState());
       return;
