@@ -1,98 +1,174 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:hedeyati/bloc/notification/notification_bloc.dart';
+import 'package:hedeyati/models/notification.dart' as NotificationModel;
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 
-// Notification model
-class Notification {
-  final String title;
-  final String description;
-  final DateTime date;
-  final String friendName;
-  final String friendAvatar;
+import '../../bloc/generic_bloc/generic_crud_events.dart';
+import '../reusable_components/build_card.dart';
 
-  Notification({
-    required this.title,
-    required this.description,
-    required this.date,
-    required this.friendAvatar,
-    required this.friendName
-  });
-}
-
-// NotificationPage widget
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({super.key});
+  const NotificationPage({Key? key}) : super(key: key);
 
   @override
   _NotificationPageState createState() => _NotificationPageState();
 }
 
-class _NotificationPageState extends State<NotificationPage> {
-  List<Notification> notifications = [];
-
-  void addNotification(String title, String description, String friendAvatar , String friendName) {
-    final newNotification = Notification(
-      title: title,
-      description: friendName + description,
-      date: DateTime.now(),
-      friendName: friendName,
-      friendAvatar: friendAvatar,
-    );
-
-    setState(() {
-      notifications.add(newNotification);
-    });
-  }
+class _NotificationPageState extends State<NotificationPage> with TickerProviderStateMixin {
+  late TabController _tabController;
+  late NotificationBloc notificationBloc;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    notificationBloc = context.read<NotificationBloc>();
+    notificationBloc.initializeStreams();
+  }
 
-    // Create 15 sample notifications
-    for (int i = 1; i <= 15; i++) {
-      Future.delayed(const Duration(seconds: 2), () {
-        addNotification(
-          "Gift Selected",
-          " has selected a gift from your wishlist!",
-          "https://static.vecteezy.com/system/resources/previews/029/784/435/non_2x/two-beautiful-charming-young-women-take-a-selfie-on-the-seashore-lgbtq-plus-couple-or-best-friends-generative-ai-photo.jpg",
-          "Friend $i",
-        );
-      });
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) {
+      final notifications = notificationBloc.currentNotifications; // Ensure this is a List<NotificationModel.Notification>
+      List<NotificationModel.Notification>? selectedTabNotifications;
+
+      if (_tabController.index == 0) {
+        // Friend Requests Tab
+        selectedTabNotifications = notifications
+            .where((notification) =>
+        notification.type == NotificationModel.NotificationType.friendRequest)
+            .toList()
+            .cast<NotificationModel.Notification>();
+      } else if (_tabController.index == 1) {
+        // Other Notifications Tab
+        selectedTabNotifications = notifications
+            .where((notification) =>
+        notification.type == NotificationModel.NotificationType.other)
+            .toList()
+            .cast<NotificationModel.Notification>();
+      }
+
+      // Mark unread notifications as read
+      if (selectedTabNotifications != null) {
+        for (var notification in selectedTabNotifications) {
+          if (!notification.isRead) {
+            notificationBloc.add(UpdateModel(notification.copyWith(isRead: true)));
+          }
+        }
+      }
+
+      setState(() {});
     }
   }
 
 
   @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.fromLTRB(15,0,70,0),
-          child: const Center(child: Text("Activity")),
-        ),
-        titleTextStyle: myTheme.textTheme.headlineMedium,
-        backgroundColor: Colors.white70,
+      body: Column(
+        children: [
+          Container(
+            decoration: const BoxDecoration(color: Colors.white),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Colors.pinkAccent,
+              unselectedLabelColor: Colors.black,
+              indicatorColor: Colors.pinkAccent,
+              tabs: const [
+                Tab(text: "Friend Requests"),
+                Tab(text: "Other Notifications"),
+              ],
+            ),
+          ),
+          Expanded(
+            child: StreamBuilder<List<NotificationModel.Notification>>(
+              stream: notificationBloc.myNotificationsStream,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                final notifications = snapshot.data!;
+                final friendRequests = notifications
+                    .where((notification) => notification.type == NotificationModel.NotificationType.friendRequest)
+                    .toList();
+                final otherNotifications = notifications
+                    .where((notification) => notification.type == NotificationModel.NotificationType.other)
+                    .toList();
+                return TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildNotificationTab(friendRequests, "No friend requests yet!"),
+                    _buildNotificationTab(otherNotifications, "No notifications yet!"),
+                  ],
+                );
+              }
+              return const Center(child: Text('No notifications found!'));
+            },
+            ),
+          ),
+        ],
       ),
-      body: notifications.isEmpty
-          ? Center(child: Text("No notifications yet!", style: myTheme.textTheme.headlineMedium))
-          : ListView.builder(
-        itemCount: notifications.length,
-        itemBuilder: (context, index) {
-          final notification = notifications[index];
-          return ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(notification.friendAvatar),
-              child: notification.friendAvatar.isEmpty
-                  ? Text(notification.title[0])
-                  : null,
-            ),
-            title: Text(notification.title),
-            subtitle: Text(notification.description),
-            trailing: Text(
-              "${notification.date.hour}:${notification.date.minute}",
-              style: const TextStyle(color: Colors.grey),
-            ),
-          );
-        },
+    );
+  }
+
+  Widget _buildNotificationTab(List<NotificationModel.Notification>? notifications, String emptyMessage) {
+    List<Widget> content = [];
+    content.add(Center(
+      child: _tabController.index == 0
+          ? Text(
+        'Friend Requests',
+        style: myTheme.textTheme.headlineMedium,
+      )
+          : Text(
+        'Other Notifications',
+        style: myTheme.textTheme.headlineMedium,
+      ),
+    ));
+    content.add(const SizedBox(height: 16));
+
+    if (notifications == null || notifications.isEmpty) {
+      content.add(Center(
+        child: Text(
+          emptyMessage,
+          style: myTheme.textTheme.bodyLarge,
+        ),
+      ));
+    } else {
+      content.addAll(
+        notifications.map((notification) => _buildNotificationTile(notification)).toList(),
+      );
+    }
+    return buildCard(context, content);
+  }
+
+  Widget _buildNotificationTile(NotificationModel.Notification notification) {
+    return ListTile(
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(notification.initiatorID.isNotEmpty
+            ? notification.initiatorID
+            : 'https://example.com/default-avatar.png'),
+        radius: 25,
+      ),
+      title: Text(
+        notification.title,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        ),
+      ),
+      subtitle: Text(notification.body),
+      trailing: Text(
+        notification.isRead ? "Read" : "Unread",
+        style: TextStyle(color: notification.isRead ? Colors.grey : Colors.pinkAccent),
       ),
     );
   }

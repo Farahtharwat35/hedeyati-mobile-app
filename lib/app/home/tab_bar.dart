@@ -6,6 +6,8 @@ import 'package:hedeyati/app/notification/notifications_page.dart';
 import 'package:hedeyati/app/event/main_events_page.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
+import 'package:hedeyati/bloc/notification/notification_bloc.dart';
+import 'package:hedeyati/bloc/user/user_bloc.dart';
 
 import '../../bloc/gift_category/gift_category_events.dart';
 
@@ -27,7 +29,12 @@ class MyTabBar extends StatelessWidget {
               create: (_) => EventBloc(),
               child: EventsPage(),
             ),
-            const NotificationPage(),
+            MultiBlocProvider
+              ( providers: [
+                BlocProvider(create: (_) => NotificationBloc()..initializeStreams()),
+                BlocProvider(create: (_) => UserBloc()),
+            ],
+                child: const NotificationPage()),
           ],
         ),
       ),

@@ -3,11 +3,11 @@ import 'package:hedeyati/helpers/id_generator.dart';
 import 'package:hedeyati/models/user.dart' ;
 import 'package:hedeyati/models/event.dart' ;
 import 'package:hedeyati/models/event_category.dart';
-import 'package:hedeyati/models/friendship.dart' ;
 import 'package:hedeyati/models/gift.dart' ;
 import '../../helpers/query_arguments.dart';
 import '../../models/gift_category.dart';
 import '../../models/model.dart';
+import '../../models/notification.dart' as Notification;
 
 class CRUD<GenericModel extends Model> {
   GenericModel model;
@@ -73,5 +73,6 @@ CRUD<Event> eventCRUD = CRUD<Event>(model: Event.dummy());
 CRUD<User> userCRUD = CRUD<User>(model: User.dummy());
 CRUD<Friendship> friendshipCRUD = CRUD<Friendship>(model: Friendship.dummy());
 CRUD<Gift> giftCRUD = CRUD<Gift>(model: Gift.dummy());
+CRUD<Notification.Notification> notificationCRUD = CRUD<Notification.Notification>(model: Notification.Notification.dummy());
 CRUD<EventCategory> eventCategoryCRUD = CRUD<EventCategory>(model: EventCategory.dummy());
 CRUD<GiftCategory> giftCategoryCRUD = CRUD<GiftCategory>(model: GiftCategory.dummy());
