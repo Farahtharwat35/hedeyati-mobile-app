@@ -5,11 +5,13 @@ import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
 import 'package:hedeyati/bloc/friendship/friendship_bloc.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
+import 'package:hedeyati/bloc/notification/notification_bloc.dart';
 import 'package:hedeyati/helpers/query_arguments.dart';
 import 'package:hedeyati/models/friendship.dart';
 import 'package:hedeyati/bloc/user/user_bloc.dart';
-
 import '../../bloc/friendship/frienship_events.dart';
+import '../../models/notification.dart' as Notification;
+import '../../models/notification.dart';
 
 class AddFriendPage extends StatefulWidget {
   const AddFriendPage({super.key});
@@ -71,7 +73,8 @@ class _AddFriendPageState extends State<AddFriendPage> {
                           buildTextField(
                             controller: _inputController,
                             args: {
-                              'labelText': 'Enter ${_selectedMethod.toLowerCase()}',
+                              'labelText':
+                                  'Enter ${_selectedMethod.toLowerCase()}',
                               'prefixIcon': _selectedMethod == 'Username'
                                   ? Icons.person
                                   : Icons.phone,
@@ -100,11 +103,17 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                 // User found, proceed to add friendship
                                 String? receiverID = userState.models.first.id;
                                 final newFriendship = Friendship(
-                                  requesterID: FirebaseAuth.instance.currentUser!.uid,
+                                  requesterID:
+                                      FirebaseAuth.instance.currentUser!.uid,
                                   recieverID: receiverID!,
-                                  members: [FirebaseAuth.instance.currentUser!.uid, receiverID],
+                                  members: [
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                    receiverID
+                                  ],
                                 );
-                                context.read<FriendshipBloc>().add(AddFriend(newFriendship));
+                                context
+                                    .read<FriendshipBloc>()
+                                    .add(AddFriend(newFriendship));
                               } else if (userState is ModelEmptyState) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
@@ -149,6 +158,50 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                         backgroundColor: Colors.pinkAccent,
                                       ),
                                     );
+                                    var addedModel = friendshipState.addedModel as Friendship;
+
+                                    // Add the notification and listen for state changes
+                                    NotificationBloc().add(AddModel(Notification.Notification(
+                                      title: 'Friend Request',
+                                      body: 'You have a new friend request',
+                                      type: NotificationType.friendRequest,
+                                      initiatorID: FirebaseAuth.instance.currentUser!.uid,
+                                      receiverID: addedModel.recieverID,
+                                    )));
+
+                                    // Wrap this in a BlocListener to check the notification state
+                                    BlocListener<NotificationBloc, ModelStates>(
+                                      listener: (context, notificationState) {
+                                        if (notificationState is ModelAddedState) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Notification Sent Successfully!',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                              backgroundColor: Colors.pinkAccent,
+                                            ),
+                                          );
+                                        } else if (notificationState is ModelErrorState) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                notificationState.message.message,
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontStyle: FontStyle.italic,
+                                                ),
+                                              ),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                      child: Container(), // Empty container, it's only for state listening
+                                    );
                                   } else if (friendshipState is ModelErrorState) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
@@ -178,14 +231,18 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                       if (_formKey.currentState!.validate()) {
                                         _selectedMethod == 'Username'
                                             ? context.read<UserBloc>().add(LoadModel([
-                                          {'username': QueryArg(isEqualTo: _inputController.text)}
+                                          {
+                                            'username': QueryArg(isEqualTo: _inputController.text)
+                                          }
                                         ]))
                                             : context.read<UserBloc>().add(LoadModel([
-                                          {'phoneNumber': QueryArg(isEqualTo: _inputController.text)}
+                                          {
+                                            'phoneNumber': QueryArg(isEqualTo: _inputController.text)
+                                          }
                                         ]));
                                       }
                                     },
-                                    child: Center(child: const Text('Add Friend', style: TextStyle(fontSize: 18))),
+                                    child: const Center(child: Text('Add Friend', style: TextStyle(fontSize: 18))),
                                   );
                                 },
                               );
@@ -222,10 +279,10 @@ class _AddFriendPageState extends State<AddFriendPage> {
       items: ['Username', 'Phone Number']
           .map(
             (method) => DropdownMenuItem(
-          value: method,
-          child: Text(method),
-        ),
-      )
+              value: method,
+              child: Text(method),
+            ),
+          )
           .toList(),
       onChanged: (value) {
         setState(() {
@@ -254,8 +311,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                 ),
               ),
               const SizedBox(width: 10),
-              const Icon(Icons.group_add,
-                  color: Colors.pinkAccent, size: 40),
+              const Icon(Icons.group_add, color: Colors.pinkAccent, size: 40),
             ],
           ),
         ],

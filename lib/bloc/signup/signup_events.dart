@@ -12,10 +12,12 @@ class ValidateCredentialsUniqueness extends GenericCRUDEvents {
 }
 
 class CreateUserAccount extends GenericCRUDEvents {
-  CreateUserAccount({required this.user});
+  CreateUserAccount({required this.user , required this.password});
 
+  final String password;
   final User user;
 
+
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [user, password];
 }

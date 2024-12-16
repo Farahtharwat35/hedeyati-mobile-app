@@ -31,7 +31,7 @@ class SignupBloc extends ModelBloc<User.User> {
       emit(UserCredentialsValidated(message: Response(success: false, message: 'Username or Phone number already exists')));
       return;
     }
-    Response response = await SignUpByEmailAndPassword.signUp(event.user.email, event.user.password);
+    Response response = await SignUpByEmailAndPassword.signUp(email: event.user.email, password: event.password);
     try {
       if (response.success) {
         try {

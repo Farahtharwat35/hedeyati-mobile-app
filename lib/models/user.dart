@@ -9,7 +9,6 @@ class User extends Model {
   String? id;
   String username;
   String email;
-  String password;
   String? avatar;
   String phoneNumber;
 
@@ -18,7 +17,6 @@ class User extends Model {
     this.id,
     required this.username,
     required this.email,
-    required this.password,
     this.avatar,
     required this.phoneNumber,
   });
@@ -36,7 +34,7 @@ class User extends Model {
   @override
   CollectionReference<User> getReference() => instance;
 
-  static User dummy() => User(username: '', email: '', password: '', avatar: '', phoneNumber: '');
+  static User dummy() => User(username: '', email: '', avatar: '', phoneNumber: '');
 
   User copyWith({
     required String? id,
@@ -50,7 +48,6 @@ class User extends Model {
       id: this.id,
       username: name ?? username,
       email: email ?? this.email,
-      password: password ?? this.password,
       avatar: avatar ?? this.avatar,
       phoneNumber: phoneNumber ?? this.phoneNumber,
     );
@@ -58,6 +55,6 @@ class User extends Model {
 
   @override
   String toString() {
-    return 'User{id: $id, username: $username, email: $email, password: $password, avatar: $avatar, phone: $phoneNumber}';
+    return 'User{id: $id, username: $username, email: $email, avatar: $avatar, phone: $phoneNumber}';
   }
 }

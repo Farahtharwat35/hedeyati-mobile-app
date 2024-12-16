@@ -4,7 +4,7 @@ import '../helpers/user_data_uniqueness_validator.dart';
 
 
 class SignUpByEmailAndPassword {
-  static Future<Response> signUp(String email, String password) async {
+  static Future<Response> signUp({required String email, required String password}) async {
     try {
       final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,

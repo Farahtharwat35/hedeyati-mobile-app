@@ -177,9 +177,8 @@ class SignupPage extends StatelessWidget {
           username: usernameController.text,
           email: emailController.text,
           phoneNumber: phoneNumberController.text,
-          password: passwordController.text,
         );
-        SignupBloc.get(context).add(CreateUserAccount(user:user));
+        SignupBloc.get(context).add(CreateUserAccount(user:user , password: passwordController.text));
       },
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),

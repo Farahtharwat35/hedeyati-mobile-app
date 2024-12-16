@@ -10,12 +10,15 @@ import 'package:hedeyati/bloc/gift_category/gift_category_events.dart';
 import 'package:hedeyati/bloc/gifts/gift_bloc.dart';
 import 'package:hedeyati/bloc/user/user_bloc.dart';
 import '../../bloc/friendship/friendship_bloc.dart';
+import '../../bloc/notification/notification_bloc.dart';
 import '../friends/add_friend.dart';
 import '../gift/add_gift.dart';
 import '../home/search_bar.dart';
 import '../../bloc/events/event_bloc.dart';
 import '../event/add_event_page.dart';
 import 'package:provider/provider.dart';
+
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -55,6 +58,10 @@ class _HomePageState extends State<HomePage> {
                             BlocProvider<UserBloc>(
                               lazy: false,
                               create: (_) => UserBloc(),
+                            ),
+                            BlocProvider<NotificationBloc>(
+                              lazy: false,
+                              create: (_) => NotificationBloc()..initializeStreams(),
                             ),
                           ],
                           child: AddFriendPage())));

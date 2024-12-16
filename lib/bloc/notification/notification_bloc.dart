@@ -9,39 +9,21 @@ import '../../helpers/query_arguments.dart';
 class NotificationBloc extends ModelBloc<NotificationModel.Notification> {
   NotificationBloc() : super(model: NotificationModel.Notification.dummy());
 
-  // Controller to manage the notifications stream
-  final BehaviorSubject<List<NotificationModel.Notification>> _notificationsController =
-  BehaviorSubject<List<NotificationModel.Notification>>.seeded([]);
-
-  // Expose the notifications stream
-  Stream<List<NotificationModel.Notification>> get myNotificationsStream => _notificationsController.stream;
-
-  // Access the latest notifications value
-  List<NotificationModel.Notification> get currentNotifications => _notificationsController.value;
+  late Stream<List<NotificationModel.Notification>> _notificationsStream;
 
   // Method to initialize the notifications stream
   void initializeStreams() {
-    final notificationsStream = notificationCRUD
+    _notificationsStream = notificationCRUD
         .getSnapshotsWhere([
       {'receiverID': QueryArg(isEqualTo: FirebaseAuth.instance.currentUser!.uid)},
       {'isDeleted': QueryArg(isEqualTo: false)}
-    ])
-        .map((snapshot) =>
+    ]).map((snapshot) =>
         snapshot.docs.map((doc) => doc.data() as NotificationModel.Notification).toList());
-
-    // Listen to the notifications stream and update the BehaviorSubject
-    notificationsStream.listen((notifications) {
-      _notificationsController.add(notifications);
-    });
   }
+
+  Stream<List<NotificationModel.Notification>> get currentNotifications => _notificationsStream;
 
   // A static method to easily get the instance of this bloc in the widget tree
   static NotificationBloc get(context) => BlocProvider.of(context);
 
-  // Dispose the BehaviorSubject when the bloc is closed
-  @override
-  Future<void> close() {
-    _notificationsController.close();
-    return super.close();
-  }
 }
