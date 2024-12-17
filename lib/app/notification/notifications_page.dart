@@ -1,13 +1,16 @@
 import 'dart:developer';
 import 'package:async_builder/async_builder.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hedeyati/bloc/friendship/friendship_bloc.dart';
+import 'package:hedeyati/bloc/friendship/frienship_events.dart';
 import 'package:hedeyati/bloc/notification/notification_bloc.dart';
 import 'package:hedeyati/models/notification.dart' as NotificationModel;
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import '../../bloc/generic_bloc/generic_crud_events.dart';
 import '../reusable_components/build_card.dart';
-import 'package:hedeyati/app/reusable_components/app_theme.dart';
+
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -155,8 +158,8 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
   Widget _buildNotificationTile(NotificationModel.Notification notification) {
     return ListTile(
       leading: notification.type == NotificationModel.NotificationType.friendRequest
-          ? const Icon(Icons.person_add , color: Colors.pinkAccent)
-          : const Icon(Icons.notifications , color: Colors.pinkAccent),
+          ? const Icon(Icons.person_add, color: Colors.pinkAccent)
+          : const Icon(Icons.notifications, color: Colors.pinkAccent),
       title: Text(
         notification.title,
         style: const TextStyle(
@@ -165,10 +168,35 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
         ),
       ),
       subtitle: Text(notification.body),
-      trailing: Text(
-        notification.isRead ? "Read" : "Unread",
-        style: TextStyle(color: notification.isRead ? Colors.grey : Colors.pinkAccent),
-      ),
+      trailing: notification.type == NotificationModel.NotificationType.friendRequest
+          ? Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Accept Button
+          IconButton(
+            icon: const Icon(Icons.check, color: Colors.pinkAccent),
+            onPressed: () {
+              _acceptFriendRequest(notification);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.cancel_outlined, color: Colors.red),
+            onPressed: () {
+              _declineFriendRequest(notification);
+            },
+          ),
+        ],
+      )
+    : null,
     );
   }
+
+  void _acceptFriendRequest(NotificationModel.Notification notification) {
+    context.read<FriendshipBloc>().add(FriendRequestUpdateStatus(requesterID:notification.initiatorID, recieverID:notification.receiverID, accept: true));
+  }
+
+  void _declineFriendRequest(NotificationModel.Notification notification) {
+    context.read<FriendshipBloc>().add(FriendRequestUpdateStatus(requesterID:notification.initiatorID, recieverID:notification.receiverID, accept: false));
+  }
+
 }

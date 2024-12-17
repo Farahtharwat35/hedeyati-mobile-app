@@ -14,3 +14,12 @@ class GetMyFriends extends GenericCRUDEvents {
 
   GetMyFriends(this.userID);
 }
+
+class FriendRequestUpdateStatus extends GenericCRUDEvents {
+  final String requesterID;
+  final String recieverID;
+  final bool accept;
+
+  FriendRequestUpdateStatus({required this.requesterID, required this.recieverID, required this.accept});
+
+}

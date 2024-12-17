@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
@@ -58,15 +60,28 @@ class Friendship extends Model {
     required String? id,
     String? requesterID,
     String? recieverID,
-    String? friendshipStatus,
+    int? friendshipStatusID,
+    bool isDeleted = false,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? deletedAt,
   }) {
-    return Friendship(
-      id: id ?? this.id,
-      requesterID: requesterID ?? this.requesterID,
-      recieverID: recieverID ?? this.recieverID,
-      members: members,
-      friendshipStatusID: friendshipStatusID,
-    );
+    try {
+      log('***********Copying Friendship***********');
+      return Friendship(
+        id: id ?? this.id,
+        requesterID: requesterID ?? this.requesterID,
+        recieverID: recieverID ?? this.recieverID,
+        friendshipStatusID: friendshipStatusID ?? this.friendshipStatusID,
+        members: members,
+      ).. createdAt = createdAt
+       .. updatedAt = updatedAt
+       .. deletedAt = deletedAt
+       .. isDeleted = isDeleted;
+    } catch (e) {
+      log('***********Failed to copy Friendship: $e***********');
+      rethrow;
+    }
   }
 
   @override

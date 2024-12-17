@@ -15,6 +15,7 @@ class FriendshipBloc extends ModelBloc<Friendship> {
     _initializeStreams(userID: userID);
     on<AddFriend>(addFriend);
     on<GetMyFriends>(getFriendships);
+    on<FriendRequestUpdateStatus>(updateFriendRequestStatus);
   }
 
   late final Stream<List<Friendship>> friendshipStream;
@@ -62,6 +63,42 @@ class FriendshipBloc extends ModelBloc<Friendship> {
     if (friendships.isEmpty) {
       emit(ModelEmptyState());
       return;
+    }
+  }
+
+  Future<void> updateFriendRequestStatus(FriendRequestUpdateStatus friendRequest , Emitter emit) async{
+    log('***********Friend Request Update Status Event Triggered***********');
+    late Friendship friendship;
+    try {
+      List<Friendship> friendships = await friendshipCRUD.getWhere([{'requesterID': QueryArg(isEqualTo: friendRequest.requesterID), 'recieverID': QueryArg(isEqualTo: friendRequest.recieverID)}]);
+      if(friendships.isEmpty) {
+          log('***********No friend request found***********');
+          emit(ModelEmptyState());
+          return;
+        };
+      if (friendRequest.accept) {
+        log('***********Updating Friendship status to be accepted ... ***********');
+        friendship = friendships.first.copyWith(id:friendships.first.id,friendshipStatusID: FriendshipStatus.accepted.index);
+        log('-----------------Friendship After Update: $friendship-----------------');
+      } else {
+        log('***********Updating Friendship status to be rejected ... ***********');
+        friendship =  friendships.first.copyWith(
+          id: friendships.first.id,
+          friendshipStatusID: FriendshipStatus.rejected.index,
+          isDeleted: true,
+          deletedAt: DateTime.now()
+        );
+      }
+      try{
+        await friendshipCRUD.update(friendship);
+        log('***********Friendship status updated successfully***********');
+        emit(ModelUpdatedState(friendship));
+      } catch (e) {
+        log('***********Failed to update model: $e***********');
+        emit(ModelErrorState(message: Response(success: false, message: 'Failed to update model: $e')));
+      }
+    } catch (e) {
+      emit(ModelErrorState(message: Response(success: false, message: 'Failed to update model: $e')));
     }
   }
 
