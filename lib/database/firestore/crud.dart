@@ -69,6 +69,7 @@ class CRUD<GenericModel extends Model> {
 
   Future<void> update(GenericModel model) {
     model.updatedAt = DateTime.now();
+    log('***********Updating model: ${model.toJson()}****************');
     return model.getReference().doc(model.id).update(model.toJson());
   }
 

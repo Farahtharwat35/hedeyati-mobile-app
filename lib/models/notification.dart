@@ -39,9 +39,12 @@ class Notification extends Model {
       type: type,
       initiatorID: initiatorID,
       receiverID: receiverID,
-    )..isRead = isRead;
+    )
+      ..isRead = isRead
+      ..id = id
+      ..createdAt = createdAt
+      ..isDeleted = isDeleted;
   }
-
 
   @override
   CollectionReference<Notification> getReference() => instance;

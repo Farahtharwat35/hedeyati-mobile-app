@@ -56,6 +56,7 @@ class ModelBloc<GenericModel extends Model> extends Bloc<GenericCRUDEvents, Mode
   Future<void> update(UpdateModel event, Emitter<ModelStates> emit) async {
     emit(ModelLoadingState());
     try {
+      log('Started updating model ... : ${event.updatedModel}');
       await _CRUD.update(event.updatedModel as GenericModel);
       emit(ModelUpdatedState(event.updatedModel));
     } catch (e) {

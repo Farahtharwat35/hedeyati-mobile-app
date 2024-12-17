@@ -1,11 +1,13 @@
+import 'dart:developer';
+import 'package:async_builder/async_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:hedeyati/bloc/notification/notification_bloc.dart';
 import 'package:hedeyati/models/notification.dart' as NotificationModel;
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import '../../bloc/generic_bloc/generic_crud_events.dart';
 import '../reusable_components/build_card.dart';
+import 'package:hedeyati/app/reusable_components/app_theme.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -26,38 +28,12 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
     notificationBloc = context.read<NotificationBloc>();
     notificationBloc.initializeStreams();  // Initialize the streams when the page is loaded
   }
+
   void _onTabChanged() {
-    if (_tabController.indexIsChanging) {
-      setState(() {
-        // Access notifications via the StreamBuilder instead of trying to use .value
-        notificationBloc.currentNotifications.listen((notifications) {
-          List<NotificationModel.Notification>? selectedTabNotifications;
-
-          if (_tabController.index == 0) {
-            // Friend Requests Tab
-            selectedTabNotifications = notifications
-                .where((notification) =>
-            notification.type == NotificationModel.NotificationType.friendRequest && !notification.isRead)
-                .toList();
-          } else if (_tabController.index == 1) {
-            // Other Notifications Tab
-            selectedTabNotifications = notifications
-                .where((notification) =>
-            notification.type == NotificationModel.NotificationType.other && !notification.isRead)
-                .toList();
-          }
-
-          // Mark unread notifications as read
-          if (selectedTabNotifications != null) {
-            for (var notification in selectedTabNotifications) {
-              notificationBloc.add(UpdateModel(notification.copyWith(isRead: true)));
-            }
-          }
-        });
-      });
+    if(_tabController.indexIsChanging) {
+      setState(() {});
     }
   }
-
 
   @override
   void dispose() {
@@ -84,23 +60,45 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
             ),
           ),
           Expanded(
-            child: StreamBuilder<List<NotificationModel.Notification>>(
-              stream: notificationBloc.currentNotifications,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return const Center(child: Text('No notifications found!'));
-                } else {
-                  final notifications = snapshot.data!;
+              child: AsyncBuilder<List<NotificationModel.Notification>>(
+                stream: notificationBloc.currentNotifications,
+                waiting: (context) => const Center(child: CircularProgressIndicator()),
+                error: (context, error, stackTrace) => buildCard(context, [
+                  Text('Error: $error', style: myTheme.textTheme.bodyLarge),
+                ]),
+                builder: (context, notifications) {
+                  if (notifications== null || notifications.isEmpty) {
+                    if (_tabController.index == 0) {
+                      return buildCard(context, [
+                        Center(child: Text('Friend Requests', style: myTheme.textTheme.headlineMedium)),
+                        const SizedBox(height: 16),
+                        Center(child: Text('No friend requests yet!', style: myTheme.textTheme.bodyLarge)),
+                      ]);
+                    }
+                    else {
+                      return buildCard(context, [
+                        Center(child: Text('Other Notifications', style: myTheme.textTheme.headlineMedium)),
+                        const SizedBox(height: 16),
+                        Center(child: Text('No notifications yet!', style: myTheme.textTheme.bodyLarge)),
+                      ]);
+                    }
+                  }
+                  else{
+                  // Separate the friend requests and other notifications
                   final friendRequests = notifications
                       .where((notification) => notification.type == NotificationModel.NotificationType.friendRequest)
                       .toList();
+
                   final otherNotifications = notifications
                       .where((notification) => notification.type == NotificationModel.NotificationType.other)
                       .toList();
+
+                  // Only update unread notifications ONCE outside of the builder
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _markNotificationsAsRead(friendRequests);
+                    _markNotificationsAsRead(otherNotifications);
+                  });
+
                   return TabBarView(
                     controller: _tabController,
                     children: [
@@ -108,13 +106,20 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
                       _buildNotificationTab(otherNotifications, "No notifications yet!"),
                     ],
                   );
-                }
-              },
+                }},
+              ),
             ),
-          ),
         ],
       ),
     );
+  }
+
+  void _markNotificationsAsRead(List<NotificationModel.Notification> notifications) {
+    for (var notification in notifications) {
+      if (!notification.isRead) {
+        context.read<NotificationBloc>().add(UpdateModel(notification.copyWith(isRead: true)));
+      }
+    }
   }
 
   Widget _buildNotificationTab(List<NotificationModel.Notification> notifications, String emptyMessage) {
