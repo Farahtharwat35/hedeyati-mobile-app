@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,8 @@ import 'package:hedeyati/helpers/query_arguments.dart';
 import 'package:hedeyati/models/friendship.dart';
 import 'package:hedeyati/bloc/user/user_bloc.dart';
 import '../../bloc/friendship/frienship_events.dart';
+import '../../bloc/user/user_event.dart';
+import '../../bloc/user/user_states.dart';
 import '../../models/notification.dart' as Notification;
 import '../../models/notification.dart';
 
@@ -25,6 +28,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
   final TextEditingController _inputController = TextEditingController();
   String _selectedMethod = 'Username';
   late final FriendshipBloc friendshipBloc;
+  String requesterName = '';
 
   @override
   void initState() {
@@ -129,6 +133,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                 );
                               }
                             },
+
                             builder: (context, userState) {
                               return BlocConsumer<FriendshipBloc, ModelStates>(
                                 listener: (context, friendshipState) {
@@ -137,10 +142,7 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                       const SnackBar(
                                         content: Text(
                                           'Preparing Your Friend Request...',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle: FontStyle.italic,
-                                          ),
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
                                         ),
                                         backgroundColor: Colors.pinkAccent,
                                       ),
@@ -150,67 +152,40 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                       const SnackBar(
                                         content: Text(
                                           'Friend Request Sent Successfully! Waiting for approval',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle: FontStyle.italic,
-                                          ),
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
                                         ),
                                         backgroundColor: Colors.pinkAccent,
                                       ),
                                     );
                                     var addedModel = friendshipState.addedModel as Friendship;
 
-                                    // Add the notification and listen for state changes
-                                    NotificationBloc().add(AddModel(Notification.Notification(
-                                      title: 'Friend Request',
-                                      body: 'You have a new friend request',
-                                      type: NotificationType.friendRequest,
-                                      initiatorID: FirebaseAuth.instance.currentUser!.uid,
-                                      receiverID: addedModel.recieverID,
-                                    )));
+                                    // Triggering to get the user name after sending the friend request
+                                    context.read<UserBloc>().add(GetUserName(
+                                      userId: addedModel.requesterID,
+                                    ));
 
-                                    // Wrap this in a BlocListener to check the notification state
-                                    BlocListener<NotificationBloc, ModelStates>(
-                                      listener: (context, notificationState) {
-                                        if (notificationState is ModelAddedState) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(
-                                              content: Text(
-                                                'Notification Sent Successfully!',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontStyle: FontStyle.italic,
-                                                ),
-                                              ),
-                                              backgroundColor: Colors.pinkAccent,
-                                            ),
-                                          );
-                                        } else if (notificationState is ModelErrorState) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                notificationState.message.message,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontStyle: FontStyle.italic,
-                                                ),
-                                              ),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      child: Container(), // Empty container, it's only for state listening
-                                    );
+                                    // Wrapping the notification creation logic in a condition that ensures `requesterName` is updated
+                                    context.read<UserBloc>().stream.listen((userState) {
+                                      if (userState is UserNameLoaded) {
+                                        requesterName = userState.name;
+                                        log('Requester Name: $requesterName');
+
+                                        // Proceeding with sending the notification after requesterName is updated
+                                        context.read<NotificationBloc>().add(AddModel(Notification.Notification(
+                                          title: 'Friend Request',
+                                          body: '$requesterName wants to be your friend',
+                                          type: NotificationType.friendRequest,
+                                          initiatorID: FirebaseAuth.instance.currentUser!.uid,
+                                          receiverID: addedModel.recieverID,
+                                        )));
+                                      }
+                                    });
                                   } else if (friendshipState is ModelErrorState) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           friendshipState.message.message,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontStyle: FontStyle.italic,
-                                          ),
+                                          style: const TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
                                         ),
                                         backgroundColor: Colors.red,
                                       ),
@@ -230,16 +205,8 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
                                         _selectedMethod == 'Username'
-                                            ? context.read<UserBloc>().add(LoadModel([
-                                          {
-                                            'username': QueryArg(isEqualTo: _inputController.text)
-                                          }
-                                        ]))
-                                            : context.read<UserBloc>().add(LoadModel([
-                                          {
-                                            'phoneNumber': QueryArg(isEqualTo: _inputController.text)
-                                          }
-                                        ]));
+                                            ? context.read<UserBloc>().add(LoadModel([{'username': QueryArg(isEqualTo: _inputController.text)}]))
+                                            : context.read<UserBloc>().add(LoadModel([{'phoneNumber': QueryArg(isEqualTo: _inputController.text)}]));
                                       }
                                     },
                                     child: const Center(child: Text('Add Friend', style: TextStyle(fontSize: 18))),

@@ -143,7 +143,7 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
   Widget _buildNotificationTile(NotificationModel.Notification notification) {
     return BlocBuilder<FriendshipBloc, ModelStates>(
       buildWhen: (previous, current) {
-        // Rebuild only if the state change relates to the current notification
+        // Rebuilding only if the state change relates to the current notification
         return current is FriendshipStatusLoaded &&
             current.notificationID == notification.id;
       },
