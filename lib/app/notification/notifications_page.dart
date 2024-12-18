@@ -10,6 +10,7 @@ import 'package:hedeyati/models/notification.dart' as NotificationModel;
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import '../../bloc/friendship/friendship_states.dart';
 import '../../bloc/generic_bloc/generic_crud_events.dart';
+import '../../helpers/formatTimeDifference.dart';
 import '../reusable_components/build_card.dart';
 
 
@@ -87,6 +88,12 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
                   final otherNotifications = notifications
                       .where((notification) => notification.type == NotificationModel.NotificationType.other)
                       .toList();
+
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _markNotificationsAsRead(friendRequests);
+                    _markNotificationsAsRead(otherNotifications);
+                  });
+
                   return TabBarView(
                     controller: _tabController,
                     children: [
@@ -103,8 +110,17 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
     );
   }
 
+  void _markNotificationsAsRead(List<NotificationModel.Notification> notifications) {
+    for (var notification in notifications) {
+      if (!notification.isRead) {
+        context.read<NotificationBloc>().add(UpdateModel(notification.copyWith(isRead: true)));
+      }
+    }
+  }
+
   Widget _buildNotificationTab(List<NotificationModel.Notification> notifications, int tabIndex) {
-    final title = tabIndex == 0 ? 'Friend Requests' : 'Other Notifications';
+    final title = tabIndex == 0 ? ''
+        'Friend Requests' : 'Other Notifications';
     final content = <Widget>[
       Center(child: Text(title, style: myTheme.textTheme.headlineMedium)),
       const SizedBox(height: 16),
@@ -134,13 +150,22 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
       builder: (context, state) {
         final isFriendRequest = notification.type == NotificationModel.NotificationType.friendRequest;
         Widget? trailing;
-
         if (isFriendRequest) {
           if (state is FriendshipStatusLoaded &&
               state.notificationID == notification.id && state.friendshipStatus != 0) {
-            // Use the updated status for this specific notification
+            // Using the updated status for this specific notification
             final status = state.friendshipStatus;
-            trailing = _buildFriendRequestStatus(status);
+            trailing = Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  formatTimeDifference(notification.createdAt!),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                ),
+                const SizedBox(height: 2),
+                _buildFriendRequestStatus(status),
+              ],
+            );
           } else {
             log('Notification Requester: ${notification.initiatorID} , Reciever: ${notification.receiverID} , Notification ID: ${notification.id}');
             context.read<FriendshipBloc>().add(GetFriendRequestStatus(
@@ -148,24 +173,40 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
               recieverID: notification.receiverID,
               notificationID: notification.id!,
             ));
-
-            trailing = Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.check, color: Colors.pinkAccent),
-                  onPressed: () => _acceptFriendRequest(notification),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.cancel_outlined, color: Colors.pinkAccent),
-                  onPressed: () => _declineFriendRequest(notification),
-                ),
-              ],
+            trailing =  Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: Text(
+                      maxLines: 1,
+                      formatTimeDifference(notification.createdAt!),
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                  ),
+                  // const SizedBox(height: 2),
+                  Expanded(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.check, color: Colors.pinkAccent),
+                          onPressed: () => _acceptFriendRequest(notification),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.cancel_outlined, color: Colors.pinkAccent),
+                          onPressed: () => _declineFriendRequest(notification),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
             );
           }
         }
 
         return ListTile(
+          contentPadding: const EdgeInsets.all(8.0),
           leading: Icon(
             isFriendRequest ? Icons.person_add : Icons.notifications,
             color: Colors.pinkAccent,
@@ -180,7 +221,6 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
       },
     );
   }
-
 
 
   Widget _buildFriendRequestStatus(int status) {
