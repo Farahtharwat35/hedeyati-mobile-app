@@ -8,6 +8,7 @@ import '../../database/firestore/crud.dart';
 import '../../helpers/query_arguments.dart';
 import '../../helpers/response.dart';
 import '../generic_bloc/generic_crud_bloc.dart';
+import 'friendship_states.dart';
 import 'frienship_events.dart';
 
 class FriendshipBloc extends ModelBloc<Friendship> {
@@ -16,6 +17,7 @@ class FriendshipBloc extends ModelBloc<Friendship> {
     on<AddFriend>(addFriend);
     on<GetMyFriends>(getFriendships);
     on<FriendRequestUpdateStatus>(updateFriendRequestStatus);
+    on<GetFriendRequestStatus>(getFriendRequestStatus);
   }
 
   late final Stream<List<Friendship>> friendshipStream;
@@ -99,6 +101,23 @@ class FriendshipBloc extends ModelBloc<Friendship> {
       }
     } catch (e) {
       emit(ModelErrorState(message: Response(success: false, message: 'Failed to update model: $e')));
+    }
+  }
+
+  Future<void> getFriendRequestStatus(GetFriendRequestStatus friendRequest , Emitter emit) async{
+    log('***********Friend Request Status Event Triggered***********');
+    try {
+      List<Friendship> friendships = await friendshipCRUD.getWhere([{'requesterID': QueryArg(isEqualTo: friendRequest.requesterID), 'recieverID': QueryArg(isEqualTo: friendRequest.recieverID)}]);
+      if(friendships.isEmpty) {
+        log('***********No friend request found***********');
+        emit(ModelEmptyState());
+        return;
+      };
+      log('***********Friend Request Found***********');
+      log('***********Friendship Status: ${friendships.first.friendshipStatusID} for notification ${friendRequest.notificationID} ***********');
+      emit(FriendshipStatusLoaded(friendships.first.friendshipStatusID!, friendRequest.notificationID));
+    } catch (e) {
+      emit(ModelErrorState(message: Response(success: false, message: 'Failed to get model: $e')));
     }
   }
 

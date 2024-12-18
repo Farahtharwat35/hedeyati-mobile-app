@@ -6,9 +6,12 @@ import 'package:hedeyati/bloc/friendship/friendship_bloc.dart';
 import 'package:hedeyati/bloc/friendship/frienship_events.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
 import 'package:hedeyati/bloc/notification/notification_bloc.dart';
+import 'package:hedeyati/models/model.dart';
 import 'package:hedeyati/models/notification.dart' as NotificationModel;
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
+import '../../bloc/friendship/friendship_states.dart';
 import '../../bloc/generic_bloc/generic_crud_events.dart';
+import '../../models/friendship.dart';
 import '../reusable_components/build_card.dart';
 
 
@@ -22,7 +25,6 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> with TickerProviderStateMixin {
   late TabController _tabController;
   late NotificationBloc notificationBloc;
-  late bool? isFriendRequestAccepted = null;
 
   @override
   void initState() {
@@ -30,7 +32,7 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
     notificationBloc = context.read<NotificationBloc>();
-    notificationBloc.initializeStreams();  // Initialize the streams when the page is loaded
+    notificationBloc.initializeStreams();
   }
 
   void _onTabChanged() {
@@ -44,8 +46,7 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
     _tabController.dispose();
     super.dispose();
   }
-
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -67,9 +68,7 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
             child: BlocListener<FriendshipBloc, ModelStates>(
               listener: (context, state) {
                 if (state is ModelUpdatedState) {
-                  setState(() {
-
-                  });
+                  setState(() {});
                 }
               },
               child: AsyncBuilder<List<NotificationModel.Notification>>(
@@ -80,43 +79,29 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
                 ]),
                 builder: (context, notifications) {
                   if (notifications == null || notifications.isEmpty) {
-                    if (_tabController.index == 0) {
-                      return buildCard(context, [
-                        Center(child: Text('Friend Requests', style: myTheme.textTheme.headlineMedium)),
-                        const SizedBox(height: 16),
-                        Center(child: Text('No friend requests yet!', style: myTheme.textTheme.bodyLarge)),
-                      ]);
-                    } else {
-                      return buildCard(context, [
-                        Center(child: Text('Other Notifications', style: myTheme.textTheme.headlineMedium)),
-                        const SizedBox(height: 16),
-                        Center(child: Text('No notifications yet!', style: myTheme.textTheme.bodyLarge)),
-                      ]);
-                    }
-                  } else {
-                    // Separate the friend requests and other notifications
-                    final friendRequests = notifications
-                        .where((notification) => notification.type == NotificationModel.NotificationType.friendRequest)
-                        .toList();
-
-                    final otherNotifications = notifications
-                        .where((notification) => notification.type == NotificationModel.NotificationType.other)
-                        .toList();
-
-                    // Only update unread notifications ONCE outside of the builder
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      _markNotificationsAsRead(friendRequests);
-                      _markNotificationsAsRead(otherNotifications);
-                    });
-
-                    return TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildNotificationTab(friendRequests, "No friend requests yet!"),
-                        _buildNotificationTab(otherNotifications, "No notifications yet!"),
-                      ],
-                    );
+                    return _buildNotificationTab(notifications!,_tabController.index);
                   }
+
+                  final friendRequests = notifications
+                      .where((notification) => notification.type == NotificationModel.NotificationType.friendRequest)
+                      .toList();
+
+                  final otherNotifications = notifications
+                      .where((notification) => notification.type == NotificationModel.NotificationType.other)
+                      .toList();
+
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _markNotificationsAsRead(friendRequests);
+                    _markNotificationsAsRead(otherNotifications);
+                  });
+
+                  return TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildNotificationTab(friendRequests, 0),
+                      _buildNotificationTab(otherNotifications, 1),
+                    ],
+                  );
                 },
               ),
             ),
@@ -134,127 +119,120 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
     }
   }
 
-  Widget _buildNotificationTab(List<NotificationModel.Notification> notifications, String emptyMessage) {
-    List<Widget> content = [];
-    content.add(Center(
-      child: _tabController.index == 0
-          ? Text(
-        'Friend Requests',
-        style: myTheme.textTheme.headlineMedium,
-      )
-          : Text(
-        'Other Notifications',
-        style: myTheme.textTheme.headlineMedium,
-      ),
-    ));
-    content.add(const SizedBox(height: 16));
+  Widget _buildNotificationTab(List<NotificationModel.Notification> notifications, int tabIndex) {
+    final title = tabIndex == 0 ? 'Friend Requests' : 'Other Notifications';
+    final content = <Widget>[
+      Center(child: Text(title, style: myTheme.textTheme.headlineMedium)),
+      const SizedBox(height: 16),
+    ];
 
     if (notifications.isEmpty) {
       content.add(Center(
         child: Text(
-          emptyMessage,
+          tabIndex == 0 ? 'No friend requests yet!' : 'No notifications yet!',
           style: myTheme.textTheme.bodyLarge,
         ),
       ));
     } else {
-      content.addAll(
-        notifications.map((notification) => _buildNotificationTile(notification)).toList(),
-      );
+      content.addAll(notifications.map((notification) => _buildNotificationTile(notification)).toList());
     }
+
     return buildCard(context, content);
   }
 
   Widget _buildNotificationTile(NotificationModel.Notification notification) {
-    return ListTile(
-      leading: notification.type == NotificationModel.NotificationType.friendRequest
-          ? const Icon(Icons.person_add, color: Colors.pinkAccent)
-          : const Icon(Icons.notifications, color: Colors.pinkAccent),
-      title: Text(
-        notification.title,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
-      ),
-      subtitle: Text(notification.body),
-      trailing: notification.type == NotificationModel.NotificationType.friendRequest
-          ? (isFriendRequestAccepted != null
-          ? (isFriendRequestAccepted == true
-          ? Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green, width: 1),
-        ),
-        child: const Text(
-          "Accepted",
-          style: TextStyle(
-            color: Colors.green,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
+    return BlocBuilder<FriendshipBloc, ModelStates>(
+      buildWhen: (previous, current) {
+        // Rebuild only if the state change relates to the current notification
+        return current is FriendshipStatusLoaded &&
+            current.notificationID == notification.id;
+      },
+      builder: (context, state) {
+        final isFriendRequest = notification.type == NotificationModel.NotificationType.friendRequest;
+        Widget? trailing;
+
+        if (isFriendRequest) {
+          if (state is FriendshipStatusLoaded &&
+              state.notificationID == notification.id && state.friendshipStatus != 0) {
+            // Use the updated status for this specific notification
+            final status = state.friendshipStatus;
+            trailing = _buildFriendRequestStatus(status);
+          } else {
+            log('Notification Requester: ${notification.initiatorID} , Reciever: ${notification.receiverID} , Notification ID: ${notification.id}');
+            context.read<FriendshipBloc>().add(GetFriendRequestStatus(
+              requesterID: notification.initiatorID,
+              recieverID: notification.receiverID,
+              notificationID: notification.id!,
+            ));
+
+            trailing = Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.check, color: Colors.pinkAccent),
+                  onPressed: () => _acceptFriendRequest(notification),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.cancel_outlined, color: Colors.pinkAccent),
+                  onPressed: () => _declineFriendRequest(notification),
+                ),
+              ],
+            );
+          }
+        }
+
+        return ListTile(
+          leading: Icon(
+            isFriendRequest ? Icons.person_add : Icons.notifications,
+            color: Colors.pinkAccent,
           ),
-        ),
-      )
-          : Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.2), // Light red background
-          borderRadius: BorderRadius.circular(12), // Rounded corners
-          border: Border.all(color: Colors.red, width: 1), // Red border
-        ),
-        child: const Text(
-          "Declined",
-          style: TextStyle(
-            color: Colors.red,
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
+          title: Text(
+            notification.title,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),
-        ),
-      ))
-          : Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Accept Button
-          IconButton(
-            icon: const Icon(Icons.check, color: Colors.pinkAccent),
-            onPressed: () {
-              _acceptFriendRequest(notification);
-            },
-          ),
-          // Decline Button
-          IconButton(
-            icon: const Icon(Icons.cancel_outlined, color: Colors.red),
-            onPressed: () {
-              _declineFriendRequest(notification);
-            },
-          ),
-        ],
-      ))
-          : null,
+          subtitle: Text(notification.body),
+          trailing: trailing,
+        );
+      },
     );
   }
 
 
+
+  Widget _buildFriendRequestStatus(int status) {
+    final isAccepted = status == 1;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: isAccepted ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isAccepted ? Colors.green : Colors.red, width: 1),
+      ),
+      child: Text(
+        isAccepted ? "Accepted" : "Declined",
+        style: TextStyle(
+          color: isAccepted ? Colors.green : Colors.red,
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+        ),
+      ),
+    );
+  }
   void _acceptFriendRequest(NotificationModel.Notification notification) {
     context.read<FriendshipBloc>().add(FriendRequestUpdateStatus(
-        requesterID: notification.initiatorID,
-        recieverID: notification.receiverID,
-        accept: true));
-    setState(() {
-      isFriendRequestAccepted = true;
-    });
+      requesterID: notification.initiatorID,
+      recieverID: notification.receiverID,
+      accept: true,
+    ));
   }
 
   void _declineFriendRequest(NotificationModel.Notification notification) {
     context.read<FriendshipBloc>().add(FriendRequestUpdateStatus(
-        requesterID: notification.initiatorID,
-        recieverID: notification.receiverID,
-        accept: false));
-    setState(() {
-      isFriendRequestAccepted = false;
-    });
-    }
+      requesterID: notification.initiatorID,
+      recieverID: notification.receiverID,
+      accept: false,
+    ));
   }
+}
 
 
