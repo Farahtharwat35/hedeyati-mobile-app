@@ -6,12 +6,10 @@ import 'package:hedeyati/bloc/friendship/friendship_bloc.dart';
 import 'package:hedeyati/bloc/friendship/frienship_events.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
 import 'package:hedeyati/bloc/notification/notification_bloc.dart';
-import 'package:hedeyati/models/model.dart';
 import 'package:hedeyati/models/notification.dart' as NotificationModel;
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import '../../bloc/friendship/friendship_states.dart';
 import '../../bloc/generic_bloc/generic_crud_events.dart';
-import '../../models/friendship.dart';
 import '../reusable_components/build_card.dart';
 
 
@@ -89,12 +87,6 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
                   final otherNotifications = notifications
                       .where((notification) => notification.type == NotificationModel.NotificationType.other)
                       .toList();
-
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _markNotificationsAsRead(friendRequests);
-                    _markNotificationsAsRead(otherNotifications);
-                  });
-
                   return TabBarView(
                     controller: _tabController,
                     children: [
@@ -109,14 +101,6 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
         ],
       ),
     );
-  }
-
-  void _markNotificationsAsRead(List<NotificationModel.Notification> notifications) {
-    for (var notification in notifications) {
-      if (!notification.isRead) {
-        context.read<NotificationBloc>().add(UpdateModel(notification.copyWith(isRead: true)));
-      }
-    }
   }
 
   Widget _buildNotificationTab(List<NotificationModel.Notification> notifications, int tabIndex) {

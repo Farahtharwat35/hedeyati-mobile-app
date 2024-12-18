@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/app/login-signup/signup_page.dart';
 import 'package:hedeyati/authentication/signin_by_email_and_password.dart';
+import 'package:hedeyati/bloc/notification/notification_bloc.dart';
+import 'package:overlay_support/overlay_support.dart';
 import '../../bloc/signUp/signup_bloc.dart';
 import '../home/tab_bar.dart';
 
@@ -15,13 +17,15 @@ class LoginPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center, // Center everything vertically
+        mainAxisAlignment:
+            MainAxisAlignment.center, // Center everything vertically
         children: [
           _header(context),
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15), // Reduced padding for form
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 15), // Reduced padding for form
                 child: Column(
                   children: [
                     _inputField(context),
@@ -34,7 +38,12 @@ class LoginPage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         shape: const StadiumBorder(),
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Theme.of(context).elevatedButtonTheme.style?.backgroundColor?.resolve({}) ?? Colors.pink,
+                        backgroundColor: Theme.of(context)
+                                .elevatedButtonTheme
+                                .style
+                                ?.backgroundColor
+                                ?.resolve({}) ??
+                            Colors.pink,
                         minimumSize: Size(double.infinity, 50),
                       ),
                       child: InkWell(
@@ -43,9 +52,16 @@ class LoginPage extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         onTap: () async {
-                          final response = await SignInByEmailAndPassword.login(_emailController.text, _passwordController.text);
+                          final response = await SignInByEmailAndPassword.login(
+                              _emailController.text, _passwordController.text);
                           if (response.success) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const MyTabBar()));
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BlocProvider(
+                                          create: (_) => NotificationBloc()
+                                            ..initializeStreams(),
+                                          child: MyTabBar())));
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -68,7 +84,8 @@ class LoginPage extends StatelessWidget {
 
   _header(context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 170, left: 20, right: 20), // Padding from the top added here
+      padding: const EdgeInsets.only(
+          top: 170, left: 20, right: 20), // Padding from the top added here
       child: Column(
         children: [
           // Animated "Hedeyati" with letter-by-letter animation and a gift icon
@@ -93,18 +110,25 @@ class LoginPage extends StatelessWidget {
                 },
               ),
               const SizedBox(width: 10), // Space between icon and text
-              Icon(Icons.card_giftcard, color: Colors.pinkAccent, size: 40), // Gift icon
+              Icon(Icons.card_giftcard,
+                  color: Colors.pinkAccent, size: 40), // Gift icon
             ],
           ),
-          const SizedBox(height: 15), // Reduced space between the "Hedeyati" and "Welcome Back"
+          const SizedBox(
+              height:
+                  15), // Reduced space between the "Hedeyati" and "Welcome Back"
           Padding(
             padding: const EdgeInsets.all(20),
             child: const Text(
               "Welcome Back!",
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, fontFamily: 'GreatVibes'),
+              style: TextStyle(
+                  fontSize: 40,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'GreatVibes'),
             ),
           ),
-          const Text("Enter your credentials to login", style: TextStyle(fontStyle: FontStyle.italic)),
+          const Text("Enter your credentials to login",
+              style: TextStyle(fontStyle: FontStyle.italic)),
           const SizedBox(height: 30), // Add extra padding to separate from form
         ],
       ),
@@ -152,7 +176,11 @@ class LoginPage extends StatelessWidget {
   _forgotPassword(context) {
     return TextButton(
       onPressed: () {},
-      child: Text("Forgot password?", style: Theme.of(context).textTheme.bodyMedium?.apply(fontStyle: FontStyle.italic)),
+      child: Text("Forgot password?",
+          style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+              ?.apply(fontStyle: FontStyle.italic)),
     );
   }
 
@@ -165,10 +193,11 @@ class LoginPage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => BlocProvider(
-                create: (context) => SignupBloc(),
-                child: SignupPage(),
-              )),
+              MaterialPageRoute(
+                  builder: (context) => BlocProvider(
+                        create: (context) => SignupBloc(),
+                        child: SignupPage(),
+                      )),
             );
           },
           child: Text("Sign Up", style: Theme.of(context).textTheme.bodyMedium),

@@ -11,19 +11,37 @@ class NotificationBloc extends ModelBloc<NotificationModel.Notification> {
 
   late Stream<List<NotificationModel.Notification>> _notificationsStream;
 
+  late Stream<List<NotificationModel.Notification>> _nonSeenNotificationsStream;
+
   // Method to initialize the notifications stream
   void initializeStreams() {
-    _notificationsStream = notificationCRUD
-        .getSnapshotsWhere([
-      {'receiverID': QueryArg(isEqualTo: FirebaseAuth.instance.currentUser!.uid)},
+    _notificationsStream = notificationCRUD.getSnapshotsWhere([
+      {
+        'receiverID':
+            QueryArg(isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      },
       {'isDeleted': QueryArg(isEqualTo: false)}
-    ]).map((snapshot) =>
-        snapshot.docs.map((doc) => doc.data() as NotificationModel.Notification).toList());
+    ]).map((snapshot) => snapshot.docs
+        .map((doc) => doc.data() as NotificationModel.Notification)
+        .toList());
+
+    _nonSeenNotificationsStream = notificationCRUD.getSnapshotsWhere([
+      {
+        'receiverID':
+            QueryArg(isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+      },
+      {'isRead': QueryArg(isEqualTo: false)},
+      {'isDeleted': QueryArg(isEqualTo: false)}
+    ]).map((snapshot) => snapshot.docs
+        .map((doc) => doc.data() as NotificationModel.Notification)
+        .toList());
   }
 
-  Stream<List<NotificationModel.Notification>> get currentNotifications => _notificationsStream;
+  Stream<List<NotificationModel.Notification>> get currentNotifications =>
+      _notificationsStream;
+
+  Stream<List<NotificationModel.Notification>> get nonSeenNotificationStream => _nonSeenNotificationsStream;
 
   // A static method to easily get the instance of this bloc in the widget tree
   static NotificationBloc get(context) => BlocProvider.of(context);
-
 }
