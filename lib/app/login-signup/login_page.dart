@@ -55,13 +55,7 @@ class LoginPage extends StatelessWidget {
                           final response = await SignInByEmailAndPassword.login(
                               _emailController.text, _passwordController.text);
                           if (response.success) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => BlocProvider(
-                                          create: (_) => NotificationBloc()
-                                            ..initializeStreams(),
-                                          child: MyTabBar())));
+                            Navigator.pushReplacementNamed(context, '/tabBar');
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(

@@ -8,6 +8,7 @@ import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'app/home/tab_bar.dart';
 import 'bloc/bloc_observer.dart';
+import 'bloc/notification/notification_bloc.dart';
 import 'firebase_options.dart';
 
 
@@ -31,8 +32,11 @@ class Hedeyati extends StatelessWidget {
         theme: myTheme,
         initialRoute: '/',
         routes: {
-          '/': (context) => LoginPage(),
-          '/home': (context) => HomePage(),
+          '/login': (context) => LoginPage(),
+          '/tabBar': (context) => BlocProvider(
+      create: (_) => NotificationBloc()..initializeStreams(),
+      child: MyTabBar(),
+      ),
         },
       ),
     );

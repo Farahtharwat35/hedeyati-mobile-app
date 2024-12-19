@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/bloc/signUp/signup_events.dart';
 import 'package:hedeyati/bloc/signUp/signup_states.dart';
 import 'package:hedeyati/database/firestore/crud.dart';

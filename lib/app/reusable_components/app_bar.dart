@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 
+import '../../authentication/signout.dart';
+
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key, required this.title});
 
@@ -21,6 +23,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           .of(context)
           .colorScheme
           .primary,
+      leading: IconButton(
+        icon: ModalRoute.of(context)?.settings.name == '/tabBar' ? Icon(Icons.logout) : Icon(Icons.arrow_back),
+        onPressed: () {
+          if (ModalRoute.of(context)?.settings.name == '/tabBar') {
+            Signout().signOut();
+            Navigator.pushReplacementNamed(context, '/login');
+          } else {
+            Navigator.of(context).pop(); // Go back to the previous screen
+          }
+        },
+      ),
       bottom: TabBar(
         indicatorColor: myTheme.colorScheme.surface,
         labelColor: myTheme.colorScheme.surface,
