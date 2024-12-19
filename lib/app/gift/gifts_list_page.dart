@@ -111,7 +111,7 @@ class _GiftListPageState extends State<GiftListPage> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
+              gift.firestoreUserID == FirebaseAuth.instance.currentUser!.uid ? IconButton(
                 icon: const Icon(Icons.edit, color: Colors.pinkAccent),
                 onPressed: () {
                   Navigator.push(
@@ -133,7 +133,7 @@ class _GiftListPageState extends State<GiftListPage> {
                     ),
                   );
                 },
-              ),
+              ): const SizedBox(),
               IconButton(
                 icon:
                     const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
