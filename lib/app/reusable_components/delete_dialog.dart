@@ -4,7 +4,6 @@ import '../../bloc/generic_bloc/generic_crud_events.dart';
 import '../../models/model.dart';
 
 void confirmDelete(BuildContext context, ModelBloc bloc, Model model ,Text message) {
-
   showDialog(
     context: context,
     builder: (context) {

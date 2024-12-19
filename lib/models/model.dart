@@ -6,10 +6,12 @@ abstract class Model {
   // Map<String,dynamic>? getSortableAttributes();
   // Map<String,dynamic>? getFilterableAttributes();
   String? id;
-  DateTime? createdAt;
-  DateTime? updatedAt;
-  DateTime? deletedAt;
+  String? createdAt;
+  String? updatedAt;
+  String? deletedAt;
   bool isDeleted = false;
   Map<String, dynamic> toJson();
   CollectionReference<Model> getReference();
+  static DateTime _fromTimestamp(Timestamp timestamp) => timestamp.toDate();
+  static Timestamp _toTimestamp(DateTime date) => Timestamp.fromDate(date);
 }

@@ -62,9 +62,7 @@ class Friendship extends Model {
     String? recieverID,
     int? friendshipStatusID,
     bool isDeleted = false,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    DateTime? deletedAt,
+    String? deletedAt,
   }) {
     try {
       log('***********Copying Friendship***********');
@@ -76,7 +74,7 @@ class Friendship extends Model {
         members: members,
       ).. createdAt = createdAt
        .. updatedAt = updatedAt
-       .. deletedAt = deletedAt
+       .. deletedAt = deletedAt ?? this.deletedAt
        .. isDeleted = isDeleted;
     } catch (e) {
       log('***********Failed to copy Friendship: $e***********');

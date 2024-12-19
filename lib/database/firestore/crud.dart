@@ -62,13 +62,13 @@ class CRUD<GenericModel extends Model> {
   }
 
   Future<void> add({required GenericModel model , bool uuID = true}) async {
-    model.createdAt = DateTime.now();
+    model.createdAt = DateTime.now().toIso8601String();
     uuID ? model.id = uuIDGenerator() : model.id = model.id;
     await model.getReference().doc(model.id).set(model);
   }
 
   Future<void> update(GenericModel model) {
-    model.updatedAt = DateTime.now();
+    model.updatedAt = DateTime.now().toIso8601String();
     log('***********Updating model: ${model.toJson()}****************');
     return model.getReference().doc(model.id).update(model.toJson());
   }

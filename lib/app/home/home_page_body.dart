@@ -1,13 +1,15 @@
+
 import 'dart:developer';
 import 'package:async_builder/async_builder.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
+import 'package:hedeyati/app/reusable_components/delete_dialog.dart';
 import 'package:hedeyati/bloc/friendship/frienship_events.dart';
-import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/helpers/listFiltering.dart';
 import 'package:hedeyati/models/user.dart' as User;
+import 'package:intl/intl.dart';
 import '../../bloc/events/event_bloc.dart';
 import '../../bloc/friendship/friendship_bloc.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
@@ -91,7 +93,7 @@ class _FriendsListState extends State<FriendsList> {
   Widget _buildFriendsTile(BuildContext context, User.User user, List<Event> events, Friendship friendship) {
     List<Event> upcomingEvents = filterList(events ?? [], (event) {
       log("Event FireStoreUserID: ${event.firestoreUserID}");
-      return event.createdAt!.isBefore(DateTime.now()) && event.firestoreUserID == user.id;
+      return DateTime.parse(event.createdAt!).isBefore(DateTime.now()) && event.firestoreUserID == user.id;
     });
 
     return ListTile(
@@ -164,60 +166,70 @@ class DetailPage extends StatelessWidget {
       backgroundColor: myTheme.colorScheme.secondary,
       body: Center(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(24.0), // Increase the outer padding
           child: Container(
+            width: MediaQuery.of(context).size.width * 0.9, // Set width to 90% of the screen
+            height: MediaQuery.of(context).size.height * 0.4, // Set height to 60% of the screen
             decoration: BoxDecoration(
               gradient: const LinearGradient(
                 colors: [Colors.pinkAccent, Colors.pink],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(24), // Slightly larger border radius
               boxShadow: const [
                 BoxShadow(
                   color: Colors.black26,
-                  blurRadius: 8,
-                  offset: Offset(0, 4),
+                  blurRadius: 12, // Increased blur for a softer shadow
+                  offset: Offset(0, 6),
                 ),
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32), // Adjust inner padding
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
                 children: [
                   Text(
                     'Details for ${user.username}',
                     style: const TextStyle(
-                      fontSize: 22,
+                      fontSize: 26, // Larger font size
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24), // Increased spacing
                   Text(
                     'Email: ${user.email}',
-                    style: const TextStyle(color: Colors.white70),
+                    style: const TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.bold), // Larger subtitle font
+                    textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16), // More spacing
+                  Text(
+                    'Friends Since: ${DateFormat('dd/MM/yyyy').format(DateTime.parse(friendship.updatedAt!))}',
+                    style: const TextStyle(color: Colors.white70, fontSize: 18 , fontWeight: FontWeight.bold), // Larger subtitle font
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 32), // More spacing before the button
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 48), // Larger button
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      backgroundColor: Colors.pink,
+                      foregroundColor: Colors.white,
                     ),
                     onPressed: () {
-                      friendshipBloc.add(UpdateModel(
-                        friendship.copyWith(
-                          id: friendship.id,
-                          friendshipStatusID: 2,
-                        ),
-                      ));
-
-                      Navigator.pop(context);
+                      // friendshipBloc.add(UpdateModel(
+                      //   friendship.copyWith(
+                      //     id: friendship.id,
+                      //     friendshipStatusID: 2,
+                      //   ),
+                      // ));
+                      return confirmDelete(context, friendshipBloc, friendship, Text("Are you sure you want to remove ${user.username} from your friends list?"));
                     },
-                    child: const Text('Remove Friend'),
+                    child: const Text('Remove Friend', style: TextStyle(fontSize: 18)), // Larger button text
                   ),
                 ],
               ),

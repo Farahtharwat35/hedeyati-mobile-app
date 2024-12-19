@@ -1,10 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:async_builder/async_builder.dart';
 import 'package:provider/provider.dart';
 import '../../bloc/events/event_bloc.dart';
+import '../../bloc/generic_bloc/generic_states.dart';
 import '../../bloc/gift_category/gift_category_bloc.dart';
 import '../../bloc/gifts/gift_bloc.dart';
+import '../../bloc/user/user_bloc.dart';
+import '../../bloc/user/user_event.dart';
+import '../../bloc/user/user_states.dart';
 import '../../models/event.dart';
 import '../gift/gifts_list_page.dart';
 import '../reusable_components/app_theme.dart';
@@ -23,6 +28,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
   late TabController _mainTabController;
   late List<Stream<List<Event>>> _eventStreams;
   late EventBloc eventBloc;
+  late UserBloc userBloc;
 
   @override
   void initState() {
@@ -30,6 +36,8 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
     eventBloc = context.read<EventBloc>();
+    userBloc = context.read<UserBloc>();
+
   }
 
   @override
@@ -123,68 +131,91 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
       ),
     );
   }
-
   Widget _buildEventTile(
       BuildContext context, Event event, EventBloc eventBloc) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundImage: NetworkImage(event.image.isNotEmpty
-            ? event.image
-            : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
-        radius: 25,
-      ),
-      title: Text(
-        event.name,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        ),
-      ),
-      subtitle: Text(
-        "${event.eventDate.day}/${event.eventDate.month}/${event.eventDate.year}",
-        style: const TextStyle(color: Colors.grey),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          IconButton(
-            icon: const Icon(Icons.edit, color: Colors.pinkAccent),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      EditEvent(event: event, eventBloc: eventBloc),
-                ),
-              );
-            },
+    userBloc.add(GetUserName(userId: event.firestoreUserID!));
+
+    return BlocBuilder<UserBloc, ModelStates>(
+      builder: (context, state) {
+        String username = 'Unknown User';
+        if (state is UserNameLoaded) {
+          username = state.name;
+        } else if (state is ModelErrorState) {
+          username = 'Error loading username';
+        }
+
+        return ListTile(
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(event.image.isNotEmpty
+                ? event.image
+                : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
+            radius: 25,
           ),
-          IconButton(
-            icon: const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
-            onPressed: () {
-              showEventDetails(context, event, eventBloc);
-            },
-          ),
-        ],
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MultiBlocProvider(
-              providers: [
-                Provider<GiftBloc>(
-                  create: (_) => GiftBloc(eventID: event.id),
-                ),
-                Provider<GiftCategoryBloc>(
-                  create: (_) => GiftCategoryBloc(),
-                ),
-              ],
-              child: GiftListPage(event: event , eventBloc: EventBloc()),
+          title: Text(
+            event.name,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
           ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${event.eventDate.day}/${event.eventDate.month}/${event.eventDate.year}",
+                style: const TextStyle(color: Colors.grey , fontSize: 14 , fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'From: $username',
+                style: const TextStyle(color: Colors.grey, fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (event.firestoreUserID == FirebaseAuth.instance.currentUser!.uid)
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.pinkAccent),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            EditEvent(event: event, eventBloc: eventBloc),
+                      ),
+                    );
+                  },
+                ),
+              IconButton(
+                icon: const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
+                onPressed: () {
+                  showEventDetails(context, event, eventBloc);
+                },
+              ),
+            ],
+          ),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MultiBlocProvider(
+                  providers: [
+                    Provider<GiftBloc>(
+                      create: (_) => GiftBloc(eventID: event.id),
+                    ),
+                    Provider<GiftCategoryBloc>(
+                      create: (_) => GiftCategoryBloc(),
+                    ),
+                  ],
+                  child: GiftListPage(event: event, eventBloc: EventBloc()),
+                ),
+              ),
+            );
+          },
         );
       },
     );
   }
+
 }

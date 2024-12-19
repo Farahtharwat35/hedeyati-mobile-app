@@ -43,7 +43,8 @@ class Notification extends Model {
       ..isRead = isRead
       ..id = id
       ..createdAt = createdAt
-      ..isDeleted = isDeleted;
+      ..isDeleted = isDeleted
+      ..updatedAt = updatedAt;
   }
 
   @override

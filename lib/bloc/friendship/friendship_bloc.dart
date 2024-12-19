@@ -24,7 +24,7 @@ class FriendshipBloc extends ModelBloc<Friendship> {
   final FriendshipCRUD friendshipCRUD = FriendshipCRUD();
 
   void initializeStreams() {
-    List<Map<String, QueryArg>> queryArgs = [{'members' : QueryArg(arrayContains: userID)} , {'friendshipStatusID': QueryArg(isEqualTo: FriendshipStatus.accepted.index)}];
+    List<Map<String, QueryArg>> queryArgs = [{'members' : QueryArg(arrayContains: userID)} , {'friendshipStatusID': QueryArg(isEqualTo: FriendshipStatus.accepted.index)}, {'isDeleted': QueryArg(isEqualTo: false)}];
 
     _friendshipStream = friendshipCRUD.getSnapshotsWhere(queryArgs)
         .map((snapshot) => snapshot.docs.map((doc) => doc.data() as Friendship).toList());
@@ -100,7 +100,7 @@ class FriendshipBloc extends ModelBloc<Friendship> {
           id: friendships.first.id,
           friendshipStatusID: FriendshipStatus.rejected.index,
           isDeleted: true,
-          deletedAt: DateTime.now()
+          deletedAt: DateTime.now().toIso8601String(),
         );
       }
       try{

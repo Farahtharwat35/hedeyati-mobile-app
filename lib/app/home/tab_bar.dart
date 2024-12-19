@@ -67,8 +67,11 @@ class _MyTabBarState extends State<MyTabBar> {
                 body: TabBarView(
                   children: <Widget>[
                     const HomePage(),
-                    BlocProvider(
-                      create: (_) => EventBloc(),
+                    MultiBlocProvider(
+                      providers: [
+                        BlocProvider(create: (_) => EventBloc()..initializeStreams()),
+                        BlocProvider(create: (_) => UserBloc()),
+                      ],
                       child: EventsPage(),
                     ),
                     MultiBlocProvider(

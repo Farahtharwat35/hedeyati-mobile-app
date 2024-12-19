@@ -159,7 +159,7 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  formatTimeDifference(notification.createdAt!),
+                  formatTimeDifference(DateTime.parse(notification.createdAt!)),
                   style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 ),
                 const SizedBox(height: 2),
@@ -180,7 +180,7 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
                   Expanded(
                     child: Text(
                       maxLines: 1,
-                      formatTimeDifference(notification.createdAt!),
+                      formatTimeDifference(DateTime.parse(notification.createdAt!)),
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                   ),
@@ -204,7 +204,6 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
             );
           }
         }
-
         return ListTile(
           contentPadding: const EdgeInsets.all(8.0),
           leading: Icon(

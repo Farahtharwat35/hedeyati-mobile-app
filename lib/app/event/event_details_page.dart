@@ -77,7 +77,7 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
                       event as Model,
                       Text(
                           'Are you sure you want to delete the event "${event.name}"?'));
-                },
+                } ,
                 child: const Text(
                   'Delete',
                   style: TextStyle(

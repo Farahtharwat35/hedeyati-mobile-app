@@ -34,8 +34,8 @@ class Gift extends Model {
     required this.price,
     required this.categoryID,
     this.storesLocationRecommendation,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    String? createdAt,
+    String? updatedAt,
   }) ;
 
   Gift copyWith({
@@ -50,8 +50,8 @@ class Gift extends Model {
     double? price,
     String? categoryID,
     String? storesLocationRecommendation,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    String? createdAt,
+    String? updatedAt,
   }) {
     return Gift(
       id: this.id,
@@ -91,8 +91,8 @@ class Gift extends Model {
     description: 'Dummy gift description',
     price: 0.0,
     categoryID: 'dummy-category',
-    createdAt: DateTime.now(),
-    updatedAt: DateTime.now(),
+    createdAt: DateTime.now().toIso8601String(),
+    updatedAt: DateTime.now().toIso8601String(),
   );
 
   @override
