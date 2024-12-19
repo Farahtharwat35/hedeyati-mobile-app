@@ -40,9 +40,7 @@ class _EditEventPageState extends State<EditEvent> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: myTheme,
-      home: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text('Edit Event', textAlign: TextAlign.center),
@@ -125,8 +123,7 @@ class _EditEventPageState extends State<EditEvent> {
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   @override

@@ -80,7 +80,6 @@ class Gift extends Model {
     fromFirestore: (snapshot, _) => Gift.fromJson({
       ...snapshot.data()!,
       'id': snapshot.id,
-      'firestoreUserID': FirebaseAuth.instance.currentUser!.uid,
     }),
     toFirestore: (gift, _) => gift.toJson(),
   );

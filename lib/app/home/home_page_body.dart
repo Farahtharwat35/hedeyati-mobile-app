@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 import 'dart:math' as math;
 import 'package:async_builder/async_builder.dart';
@@ -14,7 +13,6 @@ import '../../bloc/friendship/friendship_bloc.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
 import '../../models/event.dart';
 import '../../models/friendship.dart';
-import '../../models/user.dart';
 import '../reusable_components/build_card.dart';
 
 List<int> numbers = [
@@ -115,7 +113,11 @@ class _FriendsListState extends State<FriendsList> {
   }
 
   Widget _buildFriendsTile(BuildContext context, User.User user , List<Event> events) {
-    List<Event> upcomingEvents = filterList(events, (event) => event.createdAt!.isAfter(DateTime.now()) && event.firestoreUserID == user.id);
+    List<Event> upcomingEvents = filterList(events, (event) {
+      log("Event FireStoreUserID: ${event.firestoreUserID}");
+      log("Event: ${event.firestoreUserID} == ${user.id}");
+      return event.createdAt!.isBefore(DateTime.now()) && event.firestoreUserID == user.id;
+    });
     return ListTile(
       leading: user.avatar != null
           ? CircleAvatar(
@@ -139,7 +141,7 @@ class _FriendsListState extends State<FriendsList> {
           backgroundColor: Colors.white,
           child: Text(
                 '${upcomingEvents.length}',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                style: TextStyle(color: Colors.pinkAccent, fontWeight: FontWeight.bold),
               ),
         )
         : const SizedBox(),

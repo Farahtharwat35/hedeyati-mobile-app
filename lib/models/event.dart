@@ -85,7 +85,7 @@ class Event extends Model {
           final data = snapshot.data();
           if (data != null) {
             log('Event Data from Firestore: $data');
-            return Event.fromJson({...data, 'id': snapshot.id , 'firestoreUserID': FirebaseAuth.instance.currentUser!.uid});
+            return Event.fromJson({...data, 'id': snapshot.id});
           } else {
             log('No data found for document ID: ${snapshot.id}');
             throw Exception('No data found in Firestore document');

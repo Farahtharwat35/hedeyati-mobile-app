@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
@@ -22,8 +23,8 @@ class _CreateEventPageState extends State<CreateEventPage> {
   final TextEditingController _categoryIDController = TextEditingController();
   final TextEditingController _eventDateController = TextEditingController();
 
+  String userFirestoreID = FirebaseAuth.instance.currentUser!.uid;
 
-  String? userFirestoreID;
 
   @override
   void initState() {
@@ -79,13 +80,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                 backgroundColor: Theme.of(context).colorScheme.primary,
                                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
                               ),
-                              onPressed: userFirestoreID == null
-                                  ? null
-                                  : () async {
+                              onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   final event = Event(
                                     image: '',
-                                    firestoreUserID: userFirestoreID!,
+                                    firestoreUserID: userFirestoreID,
                                     name: _nameController.text,
                                     description: _descriptionController.text,
                                     categoryID: int.parse(_categoryIDController.text),

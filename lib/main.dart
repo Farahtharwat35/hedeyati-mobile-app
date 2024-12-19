@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hedeyati/app/home/home_page.dart';
 import 'package:hedeyati/app/login-signup/login_page.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,7 +29,11 @@ class Hedeyati extends StatelessWidget {
       child: MaterialApp(
         title: 'Hedeyati',
         theme: myTheme,
-        home: LoginPage(),
+        initialRoute: '/',
+        routes: {
+          '/': (context) => LoginPage(),
+          '/home': (context) => HomePage(),
+        },
       ),
     );
   }
