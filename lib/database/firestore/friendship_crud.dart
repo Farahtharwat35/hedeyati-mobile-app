@@ -3,6 +3,7 @@
 import 'dart:developer';
 import '../../helpers/query_arguments.dart';
 import '../../models/friendship.dart';
+import '../../shared/friendship_status_enum.dart';
 import 'crud.dart';
 
 class FriendshipCRUD extends CRUD<Friendship> {

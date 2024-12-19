@@ -1,15 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
-
+import '../shared/notification_types_enum.dart';
 import 'model.dart';
 
 part 'notification.g.dart';
-
-enum NotificationType {
-  friendRequest,
-  other,
-}
-
 
 @JsonSerializable()
 class Notification extends Model {

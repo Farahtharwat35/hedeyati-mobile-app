@@ -11,6 +11,7 @@ import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import '../../bloc/friendship/friendship_states.dart';
 import '../../bloc/generic_bloc/generic_crud_events.dart';
 import '../../helpers/formatTimeDifference.dart';
+import '../../shared/notification_types_enum.dart';
 import '../reusable_components/build_card.dart';
 
 
@@ -82,11 +83,11 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
                   }
 
                   final friendRequests = notifications
-                      .where((notification) => notification.type == NotificationModel.NotificationType.friendRequest)
+                      .where((notification) => notification.type == NotificationType.friendRequest)
                       .toList();
 
                   final otherNotifications = notifications
-                      .where((notification) => notification.type == NotificationModel.NotificationType.other)
+                      .where((notification) => notification.type == NotificationType.other)
                       .toList();
 
                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -148,7 +149,7 @@ class _NotificationPageState extends State<NotificationPage> with TickerProvider
             current.notificationID == notification.id;
       },
       builder: (context, state) {
-        final isFriendRequest = notification.type == NotificationModel.NotificationType.friendRequest;
+        final isFriendRequest = notification.type == NotificationType.friendRequest;
         Widget? trailing;
         if (isFriendRequest) {
           if (state is FriendshipStatusLoaded &&

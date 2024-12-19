@@ -4,17 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
 
-import '../helpers/timestampToDateTimeConverter.dart';
+import '../shared/friendship_status_enum.dart';
+
 
 part 'friendship.g.dart';
 
-
-enum FriendshipStatus {
-  pending,
-  accepted,
-  rejected,
-  blocked,
-}
 
 @JsonSerializable()
 // Friendship Class

@@ -1,0 +1,5 @@
+enum NotificationType {
+  friendRequest,
+  other,
+}
+

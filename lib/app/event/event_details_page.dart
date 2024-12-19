@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/reusable_components/delete_dialog.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_bloc.dart';
@@ -66,7 +67,7 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
             ),
           ),
           const SizedBox(height: 16),
-          Row(
+          event.firestoreUserID == FirebaseAuth.instance.currentUser!.uid ? Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TextButton(
@@ -89,7 +90,7 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
               ),
               const Icon(Icons.delete, color: Colors.white),
             ],
-          ),
+          ) : const SizedBox(),
         ],
       );
     },

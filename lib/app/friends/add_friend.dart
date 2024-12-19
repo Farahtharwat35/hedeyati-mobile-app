@@ -15,6 +15,7 @@ import '../../bloc/user/user_event.dart';
 import '../../bloc/user/user_states.dart';
 import '../../models/notification.dart' as Notification;
 import '../../models/notification.dart';
+import '../../shared/notification_types_enum.dart';
 
 class AddFriendPage extends StatefulWidget {
   const AddFriendPage({super.key});
