@@ -217,8 +217,7 @@ class DetailPage extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 48), // Larger button
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      backgroundColor: Colors.pink,
-                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.white,
                     ),
                     onPressed: () {
                       // friendshipBloc.add(UpdateModel(
@@ -229,7 +228,7 @@ class DetailPage extends StatelessWidget {
                       // ));
                       return confirmDelete(context, friendshipBloc, friendship, Text("Are you sure you want to remove ${user.username} from your friends list?"));
                     },
-                    child: const Text('Remove Friend', style: TextStyle(fontSize: 18)), // Larger button text
+                    child: const Text('Remove Friend', style: TextStyle(fontSize: 18 , color: Colors.pinkAccent)), // Larger button text
                   ),
                 ],
               ),

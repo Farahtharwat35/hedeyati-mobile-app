@@ -133,7 +133,7 @@ class _GiftListPageState extends State<GiftListPage> {
                     ),
                   );
                 },
-              ): const SizedBox(),
+              ): gift.isPledged ? Icon(Icons.shopping_bag_outlined, color: Colors.pinkAccent) : const SizedBox(),
               IconButton(
                 icon:
                     const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
