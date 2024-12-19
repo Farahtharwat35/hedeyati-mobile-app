@@ -30,7 +30,7 @@ class Hedeyati extends StatelessWidget {
       child: MaterialApp(
         title: 'Hedeyati',
         theme: myTheme,
-        initialRoute: '/',
+        initialRoute: '/login',
         routes: {
           '/login': (context) => LoginPage(),
           '/tabBar': (context) => BlocProvider(
