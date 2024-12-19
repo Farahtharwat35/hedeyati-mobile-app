@@ -18,25 +18,6 @@ import '../../bloc/user/user_bloc.dart';
 import '../reusable_components/card_for_details_text_style.dart';
 import '../../models/notification.dart' as Notification;
 
-import 'dart:developer';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
-import 'package:hedeyati/bloc/gifts/gift_bloc.dart';
-import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
-import 'package:hedeyati/bloc/gift_category/gift_category_events.dart';
-import 'package:hedeyati/bloc/gift_category/gift_category_states.dart';
-import 'package:hedeyati/bloc/notification/notification_bloc.dart';
-import 'package:hedeyati/bloc/user/user_event.dart';
-import 'package:hedeyati/bloc/user/user_states.dart';
-import 'package:hedeyati/models/gift.dart';
-import 'package:hedeyati/shared/notification_types_enum.dart';
-import 'package:intl/intl.dart';
-import 'package:hedeyati/app/reusable_components/card_for_details.dart';
-import '../../bloc/generic_bloc/generic_states.dart';
-import '../../bloc/user/user_bloc.dart';
-import '../reusable_components/card_for_details_text_style.dart';
-import '../../models/notification.dart' as Notification;
 
 void showGiftDetails(
     BuildContext context,
@@ -72,8 +53,17 @@ void showGiftDetails(
                 String pledgerName = '';
                 if (userState is UserNameLoaded) {
                   pledgerName = userState.name;
+                  NotificationBloc().add(
+                    AddModel(Notification.Notification(
+                      type: NotificationType.other,
+                      title: 'Gift Pledged',
+                      body: '$pledgerName has pledged your gift: "${gift.name}"',
+                      initiatorID: userId,
+                      receiverID: gift.firestoreUserID!,
+                    )),
+                  );
+                  Navigator.pop(context);
                 }
-
                 List<Widget> content = [
                   const SizedBox(height: 16),
                   Center(
@@ -129,8 +119,6 @@ void showGiftDetails(
                           ),
                         );
                         context.read<UserBloc>().add(GetUserName(userId: userId));
-                        // Close the dialog
-                        Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -146,22 +134,23 @@ void showGiftDetails(
                     ),
                   );
 
-                  // Listen for user state and then send the notification
-                  context.read<UserBloc>().stream.listen((userState) {
-                    log('User State: $userState');
-                    if (userState is UserNameLoaded) {
-                      pledgerName = userState.name;
-                      NotificationBloc().add(
-                        AddModel(Notification.Notification(
-                          type: NotificationType.other,
-                          title: 'Gift Pledged',
-                          body: '$pledgerName has pledged your gift: "${gift.name}"',
-                          initiatorID: userId,
-                          receiverID: gift.firestoreUserID!,
-                        )),
-                      );
-                    }
-                  });
+                  // // Listen for user state and then send the notification
+                  // context.read<UserBloc>().stream.listen((userState) {
+                  //   log('User State: $userState');
+                  //   if (userState is UserNameLoaded) {
+                  //     pledgerName = userState.name;
+                  //     NotificationBloc().add(
+                  //       AddModel(Notification.Notification(
+                  //         type: NotificationType.other,
+                  //         title: 'Gift Pledged',
+                  //         body: '$pledgerName has pledged your gift: "${gift.name}"',
+                  //         initiatorID: userId,
+                  //         receiverID: gift.firestoreUserID!,
+                  //       )),
+                  //     );
+                  //     Navigator.pop(context);
+                  //   }
+                  // });
                 }
 
                 return buildDetailPage(
