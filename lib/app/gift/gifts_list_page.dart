@@ -97,6 +97,13 @@ class _GiftListPageState extends State<GiftListPage> {
     return BlocBuilder<GiftCategoryBloc, ModelStates>(
       builder: (context, state) {
         return ListTile(
+          leading: gift.photoUrl != null
+              ? CircleAvatar(
+                  backgroundImage: NetworkImage(gift.photoUrl!),
+                )
+              : const CircleAvatar(
+                  backgroundImage: NetworkImage('https://th.bing.com/th/id/OIP.nHZhCNDiHKb_YsEu6ZQivgHaH5?rs=1&pid=ImgDetMain'),
+                ),
           title: Text(
             gift.name,
             style: const TextStyle(
