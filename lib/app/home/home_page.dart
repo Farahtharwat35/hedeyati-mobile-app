@@ -42,9 +42,9 @@ class _HomePageState extends State<HomePage> {
               lazy: false,
               create: (_) => FriendshipBloc(userID: FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
             ),
-            BlocProvider<UserBloc>(
+            BlocProvider<EventBloc>(
               lazy: false,
-              create: (_) => UserBloc(),
+              create: (_) => EventBloc()..initializeStreams(),
             ),
             ],
             child: Expanded(child: FriendsList())),

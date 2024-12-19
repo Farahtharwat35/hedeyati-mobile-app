@@ -7,10 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:hedeyati/bloc/friendship/frienship_events.dart';
+import 'package:hedeyati/helpers/listFiltering.dart';
 import 'package:hedeyati/models/user.dart' as User;
+import '../../bloc/events/event_bloc.dart';
 import '../../bloc/friendship/friendship_bloc.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
+import '../../models/event.dart';
 import '../../models/friendship.dart';
+import '../../models/user.dart';
 import '../reusable_components/build_card.dart';
 
 List<int> numbers = [
@@ -73,33 +77,45 @@ class _FriendsListState extends State<FriendsList> {
         if (friendships != null && friendships.isNotEmpty) {
           log("Friendships loaded: ${friendships.length}");
           context.read<FriendshipBloc>().add(
-              (GetMyFriendsList(userID: userID, friendships: friendships)));
+              GetMyFriendsList(userID: userID, friendships: friendships));
           return BlocBuilder<FriendshipBloc, ModelStates>(
             builder: (context, userState) {
-              List<Widget> friendWidgets = [];
               if (userState is ModelLoadedState) {
-                friendWidgets.add(
-                    Center(child: Text('Friends', style: myTheme.textTheme.headlineMedium)));
-                for (User.User user in userState.models as List<User.User>) {
-                  log("Building widget for user: ${user.username}");
-                  friendWidgets.add(_buildFriendsTile(context, user));
-                }
+                return AsyncBuilder<List<Event>>(
+                  stream: context.read<EventBloc>().friendsEventsStream,
+                  builder: (context, events) {
+                    List<Widget> friendWidgets = [
+                      Center(child: Text('Friends', style: myTheme.textTheme.headlineMedium))
+                    ];
+                    for (User.User user in userState.models as List<User.User>) {
+                      log("Building widget for user: ${user.username}");
+
+                      friendWidgets.add(_buildFriendsTile(context, user , events?? []));
+                    }
+                    return buildCard(context, friendWidgets);
+                  },
+                );
+              } else {
+                return buildCard(context, [
+                  Center(child: Text('Friends', style: myTheme.textTheme.headlineMedium)),
+                  Center(child: Text("No friends found."))
+                ]);
               }
-              return buildCard(context, friendWidgets);
             },
           );
+        } else {
+          log("No friendships found.");
+          return buildCard(context, [
+            Center(child: Text('Friends', style: myTheme.textTheme.headlineMedium)),
+            Center(child: Text("No friends found."))
+          ]);
         }
-        log("No friendships found.");
-        return buildCard(context, [
-          Center(
-              child: Text('Friends', style: myTheme.textTheme.headlineMedium)),
-          Center(child: Text("No friends found."))
-        ]);
       },
     );
   }
 
-  Widget _buildFriendsTile(BuildContext context, User.User user) {
+  Widget _buildFriendsTile(BuildContext context, User.User user , List<Event> events) {
+    List<Event> upcomingEvents = filterList(events, (event) => event.createdAt!.isAfter(DateTime.now()) && event.firestoreUserID == user.id);
     return ListTile(
       leading: user.avatar != null
           ? CircleAvatar(
@@ -116,21 +132,17 @@ class _FriendsListState extends State<FriendsList> {
           ),
         ),
       ),
-      trailing: (() {
-        int x = generate_random_number();
-        return x > 0
-            ? CircleAvatar(
+
+    trailing: upcomingEvents.isNotEmpty
+        ? CircleAvatar(
           radius: 12,
           backgroundColor: Colors.white,
           child: Text(
-            numbers[math.Random().nextInt(numbers.length)]
-                .toString(),
-            style: const TextStyle(
-                fontSize: 12, color: Colors.black),
-          ),
+                '${upcomingEvents.length}',
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
         )
-            : null;
-      })(),
+        : const SizedBox(),
       title: Text(
         user.username,
         style: TextStyle(
@@ -155,6 +167,7 @@ class _FriendsListState extends State<FriendsList> {
   }
 }
 
+
 class DetailPage extends StatelessWidget {
   final User.User user;
 
@@ -164,7 +177,10 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: Text(user.username)),
+        title: Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 70, 0),
+          child: Center(child: Text(user.username)),
+        ),
         titleTextStyle: myTheme.appBarTheme.titleTextStyle,
       ),
       body: Center(
@@ -172,13 +188,13 @@ class DetailPage extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Container(
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
+              gradient: LinearGradient(
                 colors: [Colors.pinkAccent, Colors.pink],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
-              boxShadow: const [
+              boxShadow: [
                 BoxShadow(
                   color: Colors.black26,
                   blurRadius: 8,
@@ -192,8 +208,8 @@ class DetailPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Details for ${user.username}',
-                    style: const TextStyle(
+                    'Details for $user',
+                    style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
@@ -201,8 +217,8 @@ class DetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    'More information about ${user.username} would go here.',
-                    style: const TextStyle(color: Colors.white70),
+                    'More information about $user would go here.',
+                    style: TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
