@@ -1,5 +1,7 @@
+import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/helpers/userCredentials.dart';
@@ -25,7 +27,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   String userFirestoreID = FirebaseAuth.instance.currentUser!.uid;
 
-
   @override
   void initState() {
     super.initState();
@@ -34,100 +35,125 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text('Create Event', textAlign: TextAlign.center),
-          titleTextStyle: Theme.of(context).textTheme.headlineMedium,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          centerTitle: true, // Center the title
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Create Event', textAlign: TextAlign.center),
+        titleTextStyle: Theme.of(context).textTheme.headlineMedium,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        centerTitle: true, // Center the title
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: Center(
-          child: SingleChildScrollView(
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              elevation: 8,
-              shadowColor: Colors.black.withOpacity(0.8),
-              color: Color(0xFFF1F1F1),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _header(),
-                    const SizedBox(height: 20),
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildTextField(controller: _nameController, args: {'labelText': 'Event Name', 'prefixIcon': Icons.event , 'maxLength': 10}),
-                          buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description , 'maxLines': 3 , 'hintText': 'Enter a description (Optional)'} , emptyValidator: false),
-                          buildTextField(controller: _categoryIDController, args: {'labelText': 'Category ID', 'prefixIcon': Icons.category , 'keyboardType': TextInputType.number}),
-                          buildDatePickerField(_eventDateController, 'Event Date', context),
-                          const SizedBox(height: 20),
-                          Center(
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                backgroundColor: Theme.of(context).colorScheme.primary,
-                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                              ),
-                              onPressed: () async {
-                                if (_formKey.currentState!.validate()) {
-                                  final event = Event(
-                                    image: '',
-                                    firestoreUserID: userFirestoreID,
-                                    name: _nameController.text,
-                                    description: _descriptionController.text,
-                                    categoryID: int.parse(_categoryIDController.text),
-                                    eventDate: DateTime.parse(_eventDateController.text),
-                                    status: 1,
-                                  );
-                                  EventBloc.get(context).add(AddModel(event));
-                                  if (EventBloc.get(context).state is ModelAddedState) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Event added successfully!',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-                                        ),
-                                        backgroundColor: Colors.pinkAccent,
-                                      ),
-                                    );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Failed to add event',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
-                                        ),
-                                        backgroundColor: Colors.red,
-                                      ),
-                                    );
-                                  }
-                                  Navigator.pop(context);
-                                }
-                              },
-                              child: const Text('Create Event', style: TextStyle(fontSize: 18)),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            elevation: 8,
+            shadowColor: Colors.black.withOpacity(0.8),
+            color: Color(0xFFF1F1F1),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _header(),
+                  const SizedBox(height: 20),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        buildTextField(controller: _nameController, args: {'labelText': 'Event Name', 'prefixIcon': Icons.event, 'maxLength': 10}),
+                        buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description, 'maxLines': 3, 'hintText': 'Enter a description (Optional)'}, emptyValidator: false),
+                        buildTextField(controller: _categoryIDController, args: {'labelText': 'Category ID', 'prefixIcon': Icons.category, 'keyboardType': TextInputType.number}),
+                        buildDatePickerField(_eventDateController, 'Event Date', context),
+                        const SizedBox(height: 20),
+                        Center(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              backgroundColor: Theme.of(context).colorScheme.primary,
+                              foregroundColor: Theme.of(context).colorScheme.onPrimary,
                             ),
+                            onPressed: () async {
+                              if (_formKey.currentState!.validate()) {
+                                final event = Event(
+                                  image: '',
+                                  firestoreUserID: userFirestoreID,
+                                  name: _nameController.text,
+                                  description: _descriptionController.text,
+                                  categoryID: int.parse(_categoryIDController.text),
+                                  eventDate: DateTime.parse(_eventDateController.text),
+                                  status: 1,
+                                );
+                                EventBloc.get(context).add(AddModel(event));
+                              }
+                            },
+                            child: const Text('Create Event', style: TextStyle(fontSize: 18)),
                           ),
-                        ],
-                      ),
+                        ),
+                        BlocBuilder<EventBloc, ModelStates>(
+                          builder: (context, state) {
+                            log('State is: ${EventBloc.get(context).state}');
+                            if (EventBloc.get(context).state is ModelLoadingState) {
+                              log('First IF - State is: ${EventBloc.get(context).state}');
+                              Future.delayed(Duration.zero, () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Adding event...',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                    ),
+                                    backgroundColor: Colors.pinkAccent,
+                                  ),
+                                );
+                              });
+                            } else if (EventBloc.get(context).state is ModelAddedState) {
+                              log('Second IF - State is: ${EventBloc.get(context).state}');
+                              Future.delayed(Duration.zero, () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Event added successfully!',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                    ),
+                                    backgroundColor: Colors.pinkAccent,
+                                  ),
+                                );
+                              });
+                            } else if (EventBloc.get(context).state is ModelErrorState) {
+                              log('Third IF - State is: ${EventBloc.get(context).state}');
+                              Future.delayed(Duration.zero, () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Failed to add event',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              });
+                            }
+                            return Container(); // Return an empty container or any widget here as required.
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   @override

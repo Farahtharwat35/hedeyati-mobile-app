@@ -37,6 +37,10 @@ Widget buildDatePickerField(TextEditingController controller, String label, Buil
         if (value == null || value.isEmpty || DateTime.tryParse(value) == null) {
           return 'Please select a valid $label';
         }
+        DateTime eventDate = DateTime.parse(value);
+        if (eventDate.isBefore(DateTime.now())) {
+          return 'Event date cannot be in the past';
+        }
         return null;
       },
       readOnly: true,
