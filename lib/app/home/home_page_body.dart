@@ -7,19 +7,35 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:hedeyati/bloc/friendship/frienship_events.dart';
-import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
-import 'package:hedeyati/bloc/user/user_event.dart';
-import 'package:hedeyati/helpers/query_arguments.dart';
 import 'package:hedeyati/models/user.dart' as User;
 import '../../bloc/friendship/friendship_bloc.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
-import '../../bloc/user/user_bloc.dart';
-import '../../bloc/user/user_states.dart';
 import '../../models/friendship.dart';
-import '../../models/user.dart';
 import '../reusable_components/build_card.dart';
 
-List<int> numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+List<int> numbers = [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20
+];
 
 int generate_random_number() {
   return numbers[math.Random().nextInt(numbers.length)];
@@ -56,77 +72,84 @@ class _FriendsListState extends State<FriendsList> {
       builder: (context, friendships) {
         if (friendships != null && friendships.isNotEmpty) {
           log("Friendships loaded: ${friendships.length}");
-
-          List<Widget> friendWidgets = [];
-
-          context.read<FriendshipBloc>().add((GetMyFriendsList(userID: userID , friendships:  friendships)));
+          context.read<FriendshipBloc>().add(
+              (GetMyFriendsList(userID: userID, friendships: friendships)));
           return BlocBuilder<FriendshipBloc, ModelStates>(
             builder: (context, userState) {
+              List<Widget> friendWidgets = [];
               if (userState is ModelLoadedState) {
+                friendWidgets.add(
+                    Center(child: Text('Friends', style: myTheme.textTheme.headlineMedium)));
                 for (User.User user in userState.models as List<User.User>) {
-                  log("User: ${user.username}");
-                  friendWidgets.add(
-                    ListTile(
-                      leading: user.avatar != null
-                          ? CircleAvatar(
-                        backgroundImage: NetworkImage(user.avatar!),
-                      )
-                          : CircleAvatar(
-                        backgroundColor: Colors.pinkAccent,
-                        child: Text(
-                          user.username[0],
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      trailing: (() {
-                        int x = generate_random_number();
-                        return x > 0
-                            ? CircleAvatar(
-                          radius: 12,
-                          backgroundColor: Colors.white,
-                          child: Text(
-                            numbers[math.Random().nextInt(numbers.length)]
-                                .toString(),
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.black),
-                          ),
-                        )
-                            : null;
-                      })(),
-                      title: Text(
-                        user.username,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: myTheme.textTheme.bodyMedium!.color,
-                        ),
-                      ),
-                      subtitle: Text(
-                        'Tap to view details',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailPage(user: user),
-                          ),
-                        );
-                      },
-                    ),
-                  );
+                  log("Building widget for user: ${user.username}");
+                  friendWidgets.add(_buildFriendsTile(context, user));
                 }
               }
-                return buildCard(context, friendWidgets);
-              },
+              return buildCard(context, friendWidgets);
+            },
           );
         }
         log("No friendships found.");
-        return const Center(child: Text("No friends found."));
+        return buildCard(context, [
+          Center(
+              child: Text('Friends', style: myTheme.textTheme.headlineMedium)),
+          Center(child: Text("No friends found."))
+        ]);
+      },
+    );
+  }
+
+  Widget _buildFriendsTile(BuildContext context, User.User user) {
+    return ListTile(
+      leading: user.avatar != null
+          ? CircleAvatar(
+        backgroundImage: NetworkImage(user.avatar!),
+      )
+          : CircleAvatar(
+        backgroundColor: Colors.pinkAccent,
+        child: Text(
+          user.username[0],
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      trailing: (() {
+        int x = generate_random_number();
+        return x > 0
+            ? CircleAvatar(
+          radius: 12,
+          backgroundColor: Colors.white,
+          child: Text(
+            numbers[math.Random().nextInt(numbers.length)]
+                .toString(),
+            style: const TextStyle(
+                fontSize: 12, color: Colors.black),
+          ),
+        )
+            : null;
+      })(),
+      title: Text(
+        user.username,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: myTheme.textTheme.bodyMedium!.color,
+        ),
+      ),
+      subtitle: Text(
+        'Tap to view details',
+        style: TextStyle(color: Colors.grey[600]),
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailPage(user: user),
+          ),
+        );
       },
     );
   }
@@ -190,24 +213,4 @@ class DetailPage extends StatelessWidget {
       backgroundColor: myTheme.colorScheme.secondary,
     );
   }
-
-  Future<void> loadFriendModel(BuildContext context, String friendID) async {
-    Completer<void> completer = Completer<void>();
-
-    StreamSubscription? subscription;
-    subscription = context.read<UserBloc>().stream.listen((state) {
-      if (state is ModelLoadedState) {
-        if (state.models.any((model) => model.id == friendID)) {
-          completer.complete();
-          subscription?.cancel();
-        }
-      }
-    });
-
-    context.read<UserBloc>().add(LoadModel([{'id': QueryArg(isEqualTo: friendID)}]));
-
-    // Wait for the completer to complete
-    await completer.future;
-  }
-
 }
