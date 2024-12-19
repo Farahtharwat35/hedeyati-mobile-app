@@ -7,7 +7,6 @@ class MigrationV1 implements Migration {
 
 
     print('Deleting old tables...');
-
     // Dropping the old tables as they are very old schemas
     batch.execute('DROP TABLE IF EXISTS User;');
     batch.execute('DROP TABLE IF EXISTS Friendship;');

@@ -28,14 +28,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   void initState() {
     super.initState();
-    _loadUserCredientials();
-  }
-
-  Future<void> _loadUserCredientials() async {
-    final credentials = await UserCredentials.getCredentials();
-    setState(() {
-      userFirestoreID = credentials;
-    });
   }
 
   @override

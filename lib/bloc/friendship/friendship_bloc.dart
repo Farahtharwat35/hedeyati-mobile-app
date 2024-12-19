@@ -4,29 +4,30 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
 import 'package:hedeyati/database/firestore/friendship_crud.dart';
 import 'package:hedeyati/models/friendship.dart';
-import '../../database/firestore/crud.dart';
 import '../../helpers/query_arguments.dart';
 import '../../helpers/response.dart';
 import '../generic_bloc/generic_crud_bloc.dart';
 import 'friendship_states.dart';
 import 'frienship_events.dart';
+import '../../database/firestore/crud.dart';
+import '../../models/user.dart' as User;
 
 class FriendshipBloc extends ModelBloc<Friendship> {
-  FriendshipBloc(String userID) : super(model: Friendship.dummy()) {
-    _initializeStreams(userID: userID);
+  FriendshipBloc({required this.userID}) : super(model: Friendship.dummy()) {
     on<AddFriend>(addFriend);
-    on<GetMyFriends>(getFriendships);
+    // on<GetMyFriendships>(getFriendships);
+    on<GetMyFriendsList>(getMyFriendsModels);
     on<FriendRequestUpdateStatus>(updateFriendRequestStatus);
     on<GetFriendRequestStatus>(getFriendRequestStatus);
   }
-
-  late final Stream<List<Friendship>> friendshipStream;
+  late final String userID;
+  late final Stream<List<Friendship>> _friendshipStream;
   final FriendshipCRUD friendshipCRUD = FriendshipCRUD();
 
-  void _initializeStreams({required String userID}) {
-    List<Map<String, QueryArg>> queryArgs = [{'members' : QueryArg(arrayContains: userID)}];
+  void initializeStreams() {
+    List<Map<String, QueryArg>> queryArgs = [{'members' : QueryArg(arrayContains: userID)} , {'friendshipStatusID': QueryArg(isEqualTo: FriendshipStatus.accepted.index)}];
 
-    friendshipStream = friendshipCRUD.getSnapshotsWhere(queryArgs)
+    _friendshipStream = friendshipCRUD.getSnapshotsWhere(queryArgs)
         .map((snapshot) => snapshot.docs.map((doc) => doc.data() as Friendship).toList());
   }
 
@@ -38,7 +39,7 @@ class FriendshipBloc extends ModelBloc<Friendship> {
       emit(ModelErrorState(message: Response(success: false, message:'You can not add yourself as a friend')));
       return;
     }
-    List<Friendship> friends = await friendshipCRUD.getMyFriends(addFriend.friendship.requesterID);
+    List<Friendship> friends = await friendshipCRUD.getMyFriendships(addFriend.friendship.requesterID);
     if (friends.isEmpty) {
     try {
       List<String> pendingFriendRequests = await friendshipCRUD.getMyPendingFriendsIDs(addFriend.friendship.requesterID);
@@ -60,13 +61,25 @@ class FriendshipBloc extends ModelBloc<Friendship> {
     }
   }
 
-  Future<void> getFriendships(GetMyFriends myFriends , Emitter emit) async{
-    List<Friendship> friendships = await FriendshipCRUD().getMyFriends(myFriends.userID);
-    if (friendships.isEmpty) {
+  Future<void> getMyFriendsModels(GetMyFriendsList myFriendships , Emitter emit) async{
+    List<String> friendsIDs = myFriendships.friendships.map((friendship) => friendship.requesterID == userID ? friendship.recieverID : friendship.requesterID).toList();
+    // I want to get the users by IDs
+    List<Map<String, QueryArg>> queryArgs = [{'id': QueryArg(whereIn: friendsIDs)}];
+    List<User.User> friends = await userCRUD.getWhere(queryArgs);
+    if (friends.isEmpty) {
       emit(ModelEmptyState());
       return;
     }
+    emit(ModelLoadedState(friends));
   }
+
+  // Future<void> getFriendships(GetMyFriends myFriends , Emitter emit) async{
+  //   List<Friendship> friendships = await FriendshipCRUD().getMyFriendships(myFriends.userID);
+  //   if (friendships.isEmpty) {
+  //     emit(ModelEmptyState());
+  //     return;
+  //   }
+  // }
 
   Future<void> updateFriendRequestStatus(FriendRequestUpdateStatus friendRequest , Emitter emit) async{
     log('***********Friend Request Update Status Event Triggered***********');
@@ -120,6 +133,8 @@ class FriendshipBloc extends ModelBloc<Friendship> {
       emit(ModelErrorState(message: Response(success: false, message: 'Failed to get model: $e')));
     }
   }
+
+  Stream<List<Friendship>> get myFriendsStream => _friendshipStream;
 
   static FriendshipBloc get(context) => BlocProvider.of(context);
 

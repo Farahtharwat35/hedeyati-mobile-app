@@ -10,10 +10,11 @@ class AddFriend extends GenericCRUDEvents {
   AddFriend(this.friendship);
 }
 
-class GetMyFriends extends GenericCRUDEvents {
+class GetMyFriendsList extends GenericCRUDEvents {
   final String userID;
+  final List<Friendship> friendships;
 
-  GetMyFriends(this.userID);
+  GetMyFriendsList({required this.userID , required this.friendships});
 }
 
 class FriendRequestUpdateStatus extends GenericCRUDEvents {

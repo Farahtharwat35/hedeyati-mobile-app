@@ -36,8 +36,19 @@ class _HomePageState extends State<HomePage> {
       },
       child: BlocBuilder<GiftCategoryBloc, ModelStates>(
         builder: (context, state) => Scaffold(
-          body: const Column(
-            children: [MySearchBar(), Expanded(child: FriendsListWidget())],
+          body: Column(
+            children: [const MySearchBar(), MultiBlocProvider(providers: [
+            BlocProvider<FriendshipBloc>(
+              lazy: false,
+              create: (_) => FriendshipBloc(userID: FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
+            ),
+            BlocProvider<UserBloc>(
+              lazy: false,
+              create: (_) => UserBloc(),
+            ),
+            ],
+            child: Expanded(child: FriendsList())),
+            ],
           ),
           floatingActionButton: SpeedDial(
             icon: Icons.add,
@@ -53,7 +64,7 @@ class _HomePageState extends State<HomePage> {
                           providers: [
                             BlocProvider<FriendshipBloc>(
                               lazy: false,
-                              create: (_) => FriendshipBloc(FirebaseAuth.instance.currentUser!.uid),
+                              create: (_) => FriendshipBloc(userID:FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
                             ),
                             BlocProvider<UserBloc>(
                               lazy: false,

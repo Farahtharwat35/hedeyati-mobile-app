@@ -76,7 +76,7 @@ class _MyTabBarState extends State<MyTabBar> {
                         BlocProvider(create: (_) => NotificationBloc()..initializeStreams()),
                         BlocProvider(create: (_) => UserBloc()),
                         BlocProvider(
-                          create: (_) => FriendshipBloc(FirebaseAuth.instance.currentUser!.uid),
+                          create: (_) => FriendshipBloc(userID:FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
                           lazy: false,
                         ),
                       ],

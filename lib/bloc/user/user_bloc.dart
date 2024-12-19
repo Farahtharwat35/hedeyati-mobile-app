@@ -15,7 +15,7 @@ class UserBloc extends ModelBloc<User> {
     on<GetUserName>(getUserNameByID);
   }
 
-  getUserNameByID(GetUserName event ,  Emitter emit) async {
+  getUserNameByID(GetUserName event , Emitter emit) async {
     log('***********Getting user name***********');
    List<User> users = await userCRUD.getWhere([{'id': QueryArg(isEqualTo: event.userId)}]);
     if (users.isNotEmpty) {
