@@ -99,7 +99,7 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc,
                             eventBloc as ModelBloc,
                             event as Model,
                             Text(
-                                'Are you sure you want to delete the event "${event.name}"?'));
+                                'Are you sure you want to delete the event "${event.name}"?') , isLocal: isLocalEvent);
                       },
                       child: const Text(
                         'Delete',
