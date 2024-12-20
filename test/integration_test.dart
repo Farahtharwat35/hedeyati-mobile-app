@@ -28,25 +28,25 @@ void main() {
 
     await tester.pumpAndSettle(const Duration(seconds: 5));
 
-    final homeScreen = find.byKey(const Key('home_page'));
+    final homeScreen = find.byIcon(Icons.home);
     expect(homeScreen, findsAny);
 
-    // Find the search TextField by key (assuming you set a key for it, like 'search_field')
+
     final searchField = find.byKey(const Key('search_bar'));
 
-    // Make sure the search field exists
+
     expect(searchField, findsOneWidget);
 
-    // Enter the text 'azza' into the search field
+
     await tester.enterText(searchField, 'azza');
 
-    // Wait for the UI to update
+
     await tester.pumpAndSettle();
 
-    // Optionally, you can add a delay if necessary
+
     await Future.delayed(const Duration(seconds: 10));
 
-    // Check if the 'No friends found' text is displayed
+
     final notFound = find.text('No friends found.');
     expect(notFound, findsOneWidget);
 

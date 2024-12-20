@@ -32,12 +32,6 @@ class SignupPage extends StatelessWidget {
             content: Text("Account created successfully , You can login now"),
             backgroundColor: Colors.pinkAccent,
           );
-          Future.delayed(const Duration(seconds: 1), () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const MyTabBar()),
-            );
-          });
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => LoginPage()),
