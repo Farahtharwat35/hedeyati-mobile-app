@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:intl/intl.dart';
-
 Widget buildDatePickerField(TextEditingController controller, String label, BuildContext context) {
-
   Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -25,11 +23,11 @@ Widget buildDatePickerField(TextEditingController controller, String label, Buil
         prefixIcon: Icon(Icons.calendar_today, color: myTheme.primaryColor),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when focused
+          borderSide: BorderSide(color: Colors.pinkAccent),
           borderRadius: BorderRadius.circular(16),
         ),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.pinkAccent), // PinkAccent when enabled
+          borderSide: BorderSide(color: Colors.pinkAccent),
           borderRadius: BorderRadius.circular(16),
         ),
       ),

@@ -78,40 +78,39 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          BlocConsumer<EventBloc,ModelStates>(
-            listener: (context, state) {
-              if (state is ModelUpdatedState || state is ModelSuccessState) {
-                context.read<EventBloc>().add(GetEventsLocally());
-              }
-            },
-            builder: (context, state) {
-              if (state is LoadedLocalEvents) {
-                localEvents = state.events;
-                log("Local Events: ${localEvents.length} , ${localEvents.map((e) => e.name)} , ${localEvents.map((e) => e.id)} , ${localEvents.map((e) => e.firestoreUserID)}");
-              }
-              else if (state is ModelEmptyState) {
-                log('No events found locally');
-                localEvents = [];
-              }
-              else if (state is ModelErrorState) {
-                log('Error: ${state.message.message}');
-              }
-              else if (state is ModelLoadingState) {
-                return const Center(child: CircularProgressIndicator());
-              }return Expanded(
-                child: AsyncBuilder(
-                  future : eventBloc.initializeStreams(),
-                    waiting: (context) =>
+          BlocConsumer<EventBloc, ModelStates>(listener: (context, state) {
+            if (state is ModelUpdatedState || state is ModelSuccessState) {
+              context.read<EventBloc>().add(GetEventsLocally());
+            }
+          }, builder: (context, state) {
+            if (state is LoadedLocalEvents) {
+              localEvents = state.events;
+              log("Local Events: ${localEvents.length} , ${localEvents.map((e) => e.name)} , ${localEvents.map((e) => e.id)} , ${localEvents.map((e) => e.firestoreUserID)}");
+            } else if (state is ModelEmptyState) {
+              log('No events found locally');
+              localEvents = [];
+            } else if (state is ModelErrorState) {
+              log('Error: ${state.message.message}');
+            } else if (state is ModelLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return Expanded(
+              child: AsyncBuilder(
+                  future: eventBloc.initializeStreams(),
+                  waiting: (context) =>
                       const Center(child: CircularProgressIndicator()),
-                    error: (context, error, stack) {
-                      debugPrint('Error: $error');
-                      debugPrint('Stack Trace: $stack');
-                      return Center(
-                        child: Text('Error: $error'),
-                      );
-                    },
-                    builder: (context,snapshot){
-                      _eventStreams = [eventBloc.myEventsStream, eventBloc.friendsEventsStream];
+                  error: (context, error, stack) {
+                    debugPrint('Error: $error');
+                    debugPrint('Stack Trace: $stack');
+                    return Center(
+                      child: Text('Error: $error'),
+                    );
+                  },
+                  builder: (context, snapshot) {
+                    _eventStreams = [
+                      eventBloc.myEventsStream,
+                      eventBloc.friendsEventsStream
+                    ];
                     return AsyncBuilder<List<Event>>(
                       stream: _eventStreams[_mainTabController.index],
                       waiting: (context) =>
@@ -140,7 +139,8 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                         final filteredEvents =
                             events?.where((event) => !event.isDeleted).toList();
                         if (filteredEvents == null || filteredEvents.isEmpty) {
-                          content.add(const Center(child: Text('No events found.')));
+                          content.add(
+                              const Center(child: Text('No events found.')));
                         } else {
                           content.addAll(
                             filteredEvents
@@ -148,26 +148,29 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                                     _buildEventTile(context, event, eventBloc))
                                 .toList(),
                           );
-                          if (_mainTabController.index == 0) {content.addAll(localEvents
-                              .map((event) =>
-                                  _buildEventTile(context, event, eventBloc))
-                              .toList());}
+                          if (_mainTabController.index == 0) {
+                            content.addAll(localEvents
+                                .map((event) =>
+                                    _buildEventTile(context, event, eventBloc))
+                                .toList());
+                          }
                         }
                         return buildCard(context, content);
                       },
                     );
-                  }
-                ),
-              );
-            }
-          ),
+                  }),
+            );
+          }),
         ],
       ),
     );
   }
-  Widget _buildEventTile(BuildContext context, Event event, EventBloc eventBloc) {
+
+  Widget _buildEventTile(
+      BuildContext context, Event event, EventBloc eventBloc) {
     return BlocProvider(
-      create: (_) => UserBloc()..add(GetUserName(userId: event.firestoreUserID!)),
+      create: (_) =>
+          UserBloc()..add(GetUserName(userId: event.firestoreUserID!)),
       child: BlocBuilder<UserBloc, ModelStates>(
         builder: (context, state) {
           String username = 'Unknown User';
@@ -176,107 +179,125 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
           } else if (state is ModelErrorState) {
             username = 'Error loading username';
           }
-          EventCategoryBloc.get(context).add(LoadModel([{'id' : QueryArg(isEqualTo: event.categoryID)}]));
-          return BlocBuilder<EventCategoryBloc , ModelStates> (
-            builder: (context , state) {
-              if (state is ModelErrorState) {
-                return const Center(child: Text('Error loading category'));
-              }
-              else if (state is ModelLoadingState){
-                return const Center(child: CircularProgressIndicator());
-              }
-              else if (state is ModelEmptyState){
-                return const Center(child: Text('No category found'));
-              }
-              else if (state is ModelLoadedState){
-                DateTime eventDate = DateTime.parse(event.eventDate);
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(event.image.isNotEmpty
-                        ? event.image
-                        : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
-                    radius: 25,
+          EventCategoryBloc.get(context).add(LoadModel([
+            {'id': QueryArg(isEqualTo: event.categoryID)}
+          ]));
+          return BlocBuilder<EventCategoryBloc, ModelStates>(
+              builder: (context, state) {
+            if (state is ModelErrorState) {
+              return const Center(child: Text('Error loading category'));
+            } else if (state is ModelLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is ModelEmptyState) {
+              return const Center(child: Text('No category found'));
+            } else if (state is ModelLoadedState) {
+              DateTime eventDate = DateTime.parse(event.eventDate);
+              return ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(event.image.isNotEmpty
+                      ? event.image
+                      : 'https://th.bing.com/th/id/R.38be526e30e3977fb59c88f6bdc21693?rik=JeWAtcDhYBB8Qg&riu=http%3a%2f%2fsomethingdifferentcompanies.com%2fwp-content%2fuploads%2f2016%2f06%2fevent-image.jpeg&ehk=zyr0vwrJU%2fDm%2bLN0rSy8QnSUSlmBCS%2bRxG7AeymborI%3d&risl=&pid=ImgRaw&r=0'),
+                  radius: 25,
+                ),
+                title: Text(
+                  event.name,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
-                  title: Text(
-                    event.name,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${eventDate.day}/${eventDate.month}/${eventDate.year}",
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "${eventDate.day}/${eventDate.month}/${eventDate.year}",
-                        style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'From: $username',
-                        style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (event.firestoreUserID == FirebaseAuth.instance.currentUser!.uid)
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.pinkAccent),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => localEvents.contains(event) ? BlocProvider<EventCategoryBloc>(
-                                    create: (BuildContext context) => EventCategoryBloc()..initializeStreams(),
-                                    lazy: false,
-                                    child: EditEvent(event: event, eventBloc: eventBloc, isLocalEvent: true)) : BlocProvider<EventCategoryBloc>(
-                                      create: (BuildContext context) => EventCategoryBloc()..initializeStreams(),
-                                      child:  EditEvent(event: event, eventBloc: eventBloc , isLocalEvent: false)
-                                    ),
-                              ),
-                            );
-                          },
-                        ),
+                    Text(
+                      'From: $username',
+                      style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (event.firestoreUserID ==
+                        FirebaseAuth.instance.currentUser!.uid)
                       IconButton(
-                        icon: const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
+                        icon: const Icon(Icons.edit, color: Colors.pinkAccent),
                         onPressed: () {
-                          EventCategory category = state.models.first as EventCategory;
-                          localEvents.contains(event) ? showEventDetails(context, event, eventBloc ,category.name, isLocalEvent:  true) : showEventDetails(context, event, eventBloc,category.name, isLocalEvent:  false);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider<EventBloc>(
+                                        lazy: false,
+                                        create: (BuildContext context) =>
+                                            EventBloc()
+                                              ..initializeStreams()
+                                    ),
+                                    BlocProvider<EventCategoryBloc>(
+                                        create: (BuildContext context) =>
+                                            EventCategoryBloc()
+                                              ..initializeStreams()),
+                                  ],
+                                  child: EditEvent(
+                                      event: event,
+                                      isLocalEvent: localEvents.contains(event)
+                                          ? true
+                                          : false)),
+                            ),
+                          );
                         },
                       ),
-                    ],
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => MultiBlocProvider(
-                          providers: [
-                            Provider<GiftBloc>(
-                              create: (_) => GiftBloc(eventID: event.id),
-                            ),
-                            Provider<GiftCategoryBloc>(
-                              create: (_) => GiftCategoryBloc(),
-                            ),
-                          ],
-                          child: GiftListPage(event: event, eventBloc: EventBloc()),
-                        ),
+                    IconButton(
+                      icon: const Icon(Icons.remove_red_eye,
+                          color: Colors.pinkAccent),
+                      onPressed: () {
+                        EventCategory category =
+                            state.models.first as EventCategory;
+                        localEvents.contains(event)
+                            ? showEventDetails(
+                                context, event, eventBloc, category.name,
+                                isLocalEvent: true)
+                            : showEventDetails(
+                                context, event, eventBloc, category.name,
+                                isLocalEvent: false);
+                      },
+                    ),
+                  ],
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MultiBlocProvider(
+                        providers: [
+                          Provider<GiftBloc>(
+                            create: (_) => GiftBloc(eventID: event.id),
+                          ),
+                          Provider<GiftCategoryBloc>(
+                            create: (_) => GiftCategoryBloc(),
+                          ),
+                        ],
+                        child:
+                            GiftListPage(event: event, eventBloc: EventBloc()),
                       ),
-                    );
-                  },
-                );
-              }
-              return const SizedBox();
+                    ),
+                  );
+                },
+              );
             }
-
-          );
+            return const SizedBox();
+          });
         },
       ),
     );
