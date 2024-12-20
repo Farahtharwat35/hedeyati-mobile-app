@@ -27,7 +27,6 @@ class AddFriendPage extends StatefulWidget {
 class _AddFriendPageState extends State<AddFriendPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _inputController = TextEditingController();
-  String _selectedMethod = 'Username';
   late final FriendshipBloc friendshipBloc;
   String requesterName = '';
 
@@ -73,19 +72,39 @@ class _AddFriendPageState extends State<AddFriendPage> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildDropdown(),
-                          const SizedBox(height: 20),
-                          buildTextField(
+                          // TextField for Friend Username
+                          TextFormField(
                             controller: _inputController,
-                            args: {
-                              'labelText':
-                                  'Enter ${_selectedMethod.toLowerCase()}',
-                              'prefixIcon': _selectedMethod == 'Username'
-                                  ? Icons.person
-                                  : Icons.phone,
-                              'keyboardType': _selectedMethod == 'Phone Number'
-                                  ? TextInputType.phone
-                                  : TextInputType.text,
+                            decoration: InputDecoration(
+                              labelText: 'Friend Username',
+                              labelStyle: TextStyle(
+                                color: Colors.pinkAccent,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              prefixIcon: const Icon(Icons.person),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Colors.pinkAccent,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(16),
+                                borderSide: BorderSide(
+                                  color: Colors.pinkAccent,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                  color: Colors.pinkAccent,
+                                )),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter a username';
+                              }
+                              return null;
                             },
                           ),
                           const SizedBox(height: 20),
@@ -134,7 +153,6 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                 );
                               }
                             },
-
                             builder: (context, userState) {
                               return BlocConsumer<FriendshipBloc, ModelStates>(
                                 listener: (context, friendshipState) {
@@ -143,50 +161,67 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                       const SnackBar(
                                         content: Text(
                                           'Preparing Your Friend Request...',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle: FontStyle.italic),
                                         ),
                                         backgroundColor: Colors.pinkAccent,
                                       ),
                                     );
-                                  } else if (friendshipState is ModelAddedState) {
+                                  } else if (friendshipState
+                                      is ModelAddedState) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
                                           'Friend Request Sent Successfully! Waiting for approval',
-                                          style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle: FontStyle.italic),
                                         ),
                                         backgroundColor: Colors.pinkAccent,
                                       ),
                                     );
-                                    var addedModel = friendshipState.addedModel as Friendship;
+                                    var addedModel = friendshipState.addedModel
+                                        as Friendship;
 
                                     // Triggering to get the user name after sending the friend request
                                     context.read<UserBloc>().add(GetUserName(
-                                      userId: addedModel.requesterID,
-                                    ));
+                                          userId: addedModel.requesterID,
+                                        ));
 
                                     // Wrapping the notification creation logic in a condition that ensures `requesterName` is updated
-                                    context.read<UserBloc>().stream.listen((userState) {
+                                    context
+                                        .read<UserBloc>()
+                                        .stream
+                                        .listen((userState) {
                                       if (userState is UserNameLoaded) {
                                         requesterName = userState.name;
                                         log('Requester Name: $requesterName');
 
                                         // Proceeding with sending the notification after requesterName is updated
-                                        context.read<NotificationBloc>().add(AddModel(Notification.Notification(
-                                          title: 'Friend Request',
-                                          body: '$requesterName wants to be your friend',
-                                          type: NotificationType.friendRequest,
-                                          initiatorID: FirebaseAuth.instance.currentUser!.uid,
-                                          receiverID: addedModel.recieverID,
-                                        )));
+                                        context.read<NotificationBloc>().add(
+                                                AddModel(
+                                                    Notification.Notification(
+                                              title: 'Friend Request',
+                                              body:
+                                                  '$requesterName wants to be your friend',
+                                              type: NotificationType
+                                                  .friendRequest,
+                                              initiatorID: FirebaseAuth
+                                                  .instance.currentUser!.uid,
+                                              receiverID: addedModel.recieverID,
+                                            )));
                                       }
                                     });
-                                  } else if (friendshipState is ModelErrorState) {
+                                  } else if (friendshipState
+                                      is ModelErrorState) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           friendshipState.message.message,
-                                          style: const TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontStyle: FontStyle.italic),
                                         ),
                                         backgroundColor: Colors.red,
                                       ),
@@ -196,21 +231,31 @@ class _AddFriendPageState extends State<AddFriendPage> {
                                 builder: (context, friendshipState) {
                                   return ElevatedButton(
                                     style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 40),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 40),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(16),
                                       ),
-                                      backgroundColor: Theme.of(context).colorScheme.primary,
-                                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                      foregroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
                                     ),
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
-                                        _selectedMethod == 'Username'
-                                            ? context.read<UserBloc>().add(LoadModel([{'username': QueryArg(isEqualTo: _inputController.text)}]))
-                                            : context.read<UserBloc>().add(LoadModel([{'phoneNumber': QueryArg(isEqualTo: _inputController.text)}]));
+                                        context.read<UserBloc>().add(LoadModel([
+                                              {
+                                                'username': QueryArg(
+                                                    isEqualTo:
+                                                        _inputController.text)
+                                              }
+                                            ]));
                                       }
                                     },
-                                    child: const Center(child: Text('Add Friend', style: TextStyle(fontSize: 18))),
+                                    child: const Center(
+                                        child: Text('Add Friend',
+                                            style: TextStyle(fontSize: 18))),
                                   );
                                 },
                               );
@@ -225,40 +270,6 @@ class _AddFriendPageState extends State<AddFriendPage> {
             ),
           ),
         ));
-  }
-
-  Widget _buildDropdown() {
-    return DropdownButtonFormField<String>(
-      value: _selectedMethod,
-      decoration: InputDecoration(
-        labelText: 'Add by',
-        labelStyle: TextStyle(
-          color: Colors.pinkAccent,
-          fontWeight: FontWeight.bold,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: Colors.pinkAccent),
-        ),
-      ),
-      items: ['Username', 'Phone Number']
-          .map(
-            (method) => DropdownMenuItem(
-              value: method,
-              child: Text(method),
-            ),
-          )
-          .toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedMethod = value!;
-          _inputController.clear();
-        });
-      },
-    );
   }
 
   Widget _header() {

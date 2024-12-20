@@ -18,13 +18,13 @@ class SignupBloc extends ModelBloc<User.User> {
     on<CreateUserAccount>(createUserAccount);
   }
 
-  Future<bool> validateCredentialsUniqueness(String username, String phoneNumber) async {
-    final bool areValid = await userDataUniquenessValidator(username: username, phone: phoneNumber);
+  Future<bool> validateCredentialsUniqueness(String username) async {
+    final bool areValid = await userDataUniquenessValidator(username: username);
     return areValid;
   }
 
   Future<void> createUserAccount(CreateUserAccount event, Emitter emit) async {
-    bool areValid = await validateCredentialsUniqueness(event.user.username, event.user.phoneNumber);
+    bool areValid = await validateCredentialsUniqueness(event.user.username);
     if (!areValid) {
       log('***********Username or Phone number already exists***********');
       emit(UserCredentialsValidated(message: Response(success: false, message: 'Username or Phone number already exists')));

@@ -10,7 +10,7 @@ class Gift extends Model {
   @override
   String? id;
   final String name;
-  final String? firestoreUserID;
+  final String firestoreUserID;
   final String eventID;
   final String description;
   final String? photoUrl;
@@ -23,7 +23,7 @@ class Gift extends Model {
 
   Gift({
     this.id,
-    this.firestoreUserID,
+    required this.firestoreUserID,
     required this.eventID,
     required this.name,
     required this.description,
@@ -34,8 +34,6 @@ class Gift extends Model {
     required this.price,
     required this.categoryID,
     this.storesLocationRecommendation,
-    String? createdAt,
-    String? updatedAt,
   }) ;
 
   Gift copyWith({
@@ -50,8 +48,6 @@ class Gift extends Model {
     double? price,
     String? categoryID,
     String? storesLocationRecommendation,
-    String? createdAt,
-    String? updatedAt,
   }) {
     return Gift(
       id: this.id,
@@ -66,9 +62,9 @@ class Gift extends Model {
       price: price ?? this.price,
       categoryID: this.categoryID,
       storesLocationRecommendation: storesLocationRecommendation ?? this.storesLocationRecommendation,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
+    ).. createdAt = createdAt
+      .. updatedAt = updatedAt
+      .. isDeleted = isDeleted;
   }
 
   factory Gift.fromJson(Map<String, dynamic> json) => _$GiftFromJson(json);
@@ -91,8 +87,6 @@ class Gift extends Model {
     description: 'Dummy gift description',
     price: 0.0,
     categoryID: 'dummy-category',
-    createdAt: DateTime.now().toIso8601String(),
-    updatedAt: DateTime.now().toIso8601String(),
   );
 
   @override

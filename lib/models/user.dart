@@ -10,14 +10,12 @@ class User extends Model {
   String username;
   String email;
   String? avatar;
-  String phoneNumber;
 
   User({
     this.id,
     required this.username,
     required this.email,
     this.avatar,
-    required this.phoneNumber,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
@@ -33,7 +31,7 @@ class User extends Model {
   @override
   CollectionReference<User> getReference() => instance;
 
-  static User dummy() => User(username: '', email: '', avatar: '', phoneNumber: '');
+  static User dummy() => User(username: '', email: '', avatar: '');
 
   User copyWith({
     required String? id,
@@ -48,12 +46,11 @@ class User extends Model {
       username: name ?? username,
       email: email ?? this.email,
       avatar: avatar ?? this.avatar,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
     );
   }
 
   @override
   String toString() {
-    return 'User{id: $id, username: $username, email: $email, avatar: $avatar, phone: $phoneNumber}';
+    return 'User{id: $id, username: $username, email: $email, avatar: $avatar}';
   }
 }

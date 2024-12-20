@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:async_builder/async_builder.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
@@ -176,6 +179,7 @@ class _AddGiftPage extends State<AddGift> {
                                       Theme.of(context).colorScheme.onPrimary,
                                 ),
                                 onPressed: () async {
+                                  log("Firebase Auth: ${FirebaseAuth.instance.currentUser!.uid}");
                                   if (_formKey.currentState!.validate() &&
                                       selectedCategoryId != null &&
                                       selectedEventId != null) {
@@ -186,6 +190,7 @@ class _AddGiftPage extends State<AddGift> {
                                       price:
                                           double.parse(_priceController.text),
                                       categoryID: selectedCategoryId!,
+                                      firestoreUserID: FirebaseAuth.instance.currentUser!.uid,
                                     );
                                     GiftBloc.get(context).add(AddModel(gift));
                                   }

@@ -8,7 +8,7 @@ part of 'gift.dart';
 
 Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
       id: json['id'] as String?,
-      firestoreUserID: json['firestoreUserID'] as String?,
+      firestoreUserID: json['firestoreUserID'] as String,
       eventID: json['eventID'] as String,
       name: json['name'] as String,
       description: json['description'] as String,
@@ -22,9 +22,9 @@ Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
       categoryID: json['categoryID'] as String,
       storesLocationRecommendation:
           json['storesLocationRecommendation'] as String?,
-      createdAt: json['createdAt'] as String?,
-      updatedAt: json['updatedAt'] as String?,
     )
+      ..createdAt = json['createdAt'] as String?
+      ..updatedAt = json['updatedAt'] as String?
       ..deletedAt = json['deletedAt'] as String?
       ..isDeleted = json['isDeleted'] as bool;
 

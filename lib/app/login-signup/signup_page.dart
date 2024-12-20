@@ -137,21 +137,6 @@ class SignupPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         TextField(
-          keyboardType: TextInputType.phone,
-          controller: phoneNumberController,
-          decoration: InputDecoration(
-            hintText: "Phone Number",
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide.none,
-            ),
-            fillColor: Colors.pink[100],
-            filled: true,
-            prefixIcon: const Icon(Icons.phone),
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextField(
           keyboardType: TextInputType.visiblePassword,
           controller: passwordController,
           decoration: InputDecoration(
@@ -176,7 +161,6 @@ class SignupPage extends StatelessWidget {
         User user = User(
           username: usernameController.text,
           email: emailController.text,
-          phoneNumber: phoneNumberController.text,
         );
         SignupBloc.get(context).add(CreateUserAccount(user:user , password: passwordController.text));
       },
