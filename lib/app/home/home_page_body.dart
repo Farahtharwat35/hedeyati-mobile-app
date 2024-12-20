@@ -61,6 +61,7 @@ class _FriendsListState extends State<FriendsList> {
               }
 
               if (userState is ModelLoadedState) {
+                filteredFriends = userState.models as List<User.User>;
                 return AsyncBuilder<List<Event>>(
                   stream: context.read<EventBloc>().friendsEventsStream,
                   builder: (context, events) {
@@ -73,6 +74,12 @@ class _FriendsListState extends State<FriendsList> {
                           labelText: 'Search friends',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.search),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.pinkAccent), // Border when focused
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.pinkAccent), // Border when not focused
+                          ),
                         ),
                         onChanged: (query) {
                           setState(() {
@@ -116,7 +123,6 @@ class _FriendsListState extends State<FriendsList> {
                         ),
                       ),
                     ]);
-
                     return Column(
                       children: [
                         searchBar,
@@ -136,7 +142,7 @@ class _FriendsListState extends State<FriendsList> {
                   const Center(child: CircularProgressIndicator()),
                 );
               } else {
-                return Center(child: Text("Failed to load friends."));
+                return const Center(child: CircularProgressIndicator());
               }
             },
           );
