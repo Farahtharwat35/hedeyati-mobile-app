@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:intl/intl.dart';
-Widget buildDatePickerField(TextEditingController controller, String label, BuildContext context) {
+Widget buildDatePickerField(TextEditingController controller, String label, BuildContext context , {Key? key}) {
   Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -17,6 +17,7 @@ Widget buildDatePickerField(TextEditingController controller, String label, Buil
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 10.0),
     child: TextFormField(
+      key: key,
       controller: controller,
       decoration: InputDecoration(
         labelText: label,

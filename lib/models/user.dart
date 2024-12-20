@@ -12,7 +12,6 @@ class User extends Model {
   String? avatar;
   String phoneNumber;
 
-
   User({
     this.id,
     required this.username,

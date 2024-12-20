@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'app/home/tab_bar.dart';
+import 'bloc/authentication/authentication.dart';
 import 'bloc/bloc_observer.dart';
 import 'bloc/notification/notification_bloc.dart';
 import 'firebase_options.dart';
@@ -35,7 +36,7 @@ class Hedeyati extends StatelessWidget {
           '/login': (context) => LoginPage(),
           '/tabBar': (context) => BlocProvider(
       create: (_) => NotificationBloc()..initializeStreams(),
-      child: MyTabBar(),
+      child: ProtectedRoute(child: MyTabBar()),
       ),
         },
       ),

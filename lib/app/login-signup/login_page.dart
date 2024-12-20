@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         mainAxisAlignment:
-            MainAxisAlignment.center, // Center everything vertically
+        MainAxisAlignment.center, // Center everything vertically
         children: [
           _header(context),
           Expanded(
@@ -34,36 +34,34 @@ class LoginPage extends StatelessWidget {
                     _signup(context),
                     const SizedBox(height: 10),
                     ElevatedButton(
-                      onPressed: () {},
+                      key: Key('login_button'), // Added key here
+                      onPressed: () async {
+                        final response = await SignInByEmailAndPassword.login(
+                            _emailController.text, _passwordController.text);
+                        if (response.success) {
+                          Navigator.pushReplacementNamed(context, '/tabBar');
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(response.message),
+                            ),
+                          );
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                         shape: const StadiumBorder(),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         backgroundColor: Theme.of(context)
-                                .elevatedButtonTheme
-                                .style
-                                ?.backgroundColor
-                                ?.resolve({}) ??
+                            .elevatedButtonTheme
+                            .style
+                            ?.backgroundColor
+                            ?.resolve({}) ??
                             Colors.pink,
                         minimumSize: Size(double.infinity, 50),
                       ),
-                      child: InkWell(
-                        child: Text(
-                          "Login",
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        onTap: () async {
-                          final response = await SignInByEmailAndPassword.login(
-                              _emailController.text, _passwordController.text);
-                          if (response.success) {
-                            Navigator.pushReplacementNamed(context, '/tabBar');
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(response.message),
-                              ),
-                            );
-                          }
-                        },
+                      child: Text(
+                        "Login",
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                   ],
@@ -79,16 +77,15 @@ class LoginPage extends StatelessWidget {
   _header(context) {
     return Padding(
       padding: const EdgeInsets.only(
-          top: 170, left: 20, right: 20), // Padding from the top added here
+          top: 170, left: 20, right: 20),
       child: Column(
         children: [
-          // Animated "Hedeyati" with letter-by-letter animation and a gift icon
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TweenAnimationBuilder(
                 tween: Tween(begin: 0.0, end: 1.0),
-                duration: const Duration(milliseconds: 1000), // Faster reveal
+                duration: const Duration(milliseconds: 1000),
                 builder: (context, value, child) {
                   String text = "Hedeyati";
                   int length = (value * text.length).toInt();
@@ -108,9 +105,7 @@ class LoginPage extends StatelessWidget {
                   color: Colors.pinkAccent, size: 40), // Gift icon
             ],
           ),
-          const SizedBox(
-              height:
-                  15), // Reduced space between the "Hedeyati" and "Welcome Back"
+          const SizedBox(height: 15), // Reduced space between the "Hedeyati" and "Welcome Back"
           Padding(
             padding: const EdgeInsets.all(20),
             child: const Text(
@@ -134,6 +129,7 @@ class LoginPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
+          key: Key('email_field'),
           controller: _emailController,
           keyboardType: TextInputType.emailAddress,
           decoration: InputDecoration(
@@ -149,6 +145,7 @@ class LoginPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         TextField(
+          key: Key('password_field'),
           controller: _passwordController,
           keyboardType: TextInputType.visiblePassword,
           decoration: InputDecoration(
@@ -169,6 +166,7 @@ class LoginPage extends StatelessWidget {
 
   _forgotPassword(context) {
     return TextButton(
+      key: Key('forgot_password_button'),
       onPressed: () {},
       child: Text("Forgot password?",
           style: Theme.of(context)
@@ -184,14 +182,15 @@ class LoginPage extends StatelessWidget {
       children: [
         const Text("Don't have an account? "),
         TextButton(
+          key: Key('signup_button'), // Added key here
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => BlocProvider(
-                        create: (context) => SignupBloc(),
-                        child: SignupPage(),
-                      )),
+                    create: (context) => SignupBloc(),
+                    child: SignupPage(),
+                  )),
             );
           },
           child: Text("Sign Up", style: Theme.of(context).textTheme.bodyMedium),

@@ -1,4 +1,4 @@
-import 'dart:developer'; // Importing log for debugging
+import 'dart:developer';
 import 'package:async_builder/async_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,13 +28,13 @@ class _FriendsListState extends State<FriendsList> {
   List<Friendship> friendships = [];
   TextEditingController _searchController = TextEditingController();
   List<User.User> filteredFriends = [];
+  bool isSearching = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  @override
   Widget build(BuildContext context) {
     return AsyncBuilder<List<Friendship>>(
       stream: context.read<FriendshipBloc>().myFriendsStream,
@@ -49,19 +49,17 @@ class _FriendsListState extends State<FriendsList> {
       builder: (context, friendships) {
         if (friendships != null && friendships.isNotEmpty) {
           log("Friendships loaded: ${friendships.length}");
-          context
-              .read<FriendshipBloc>()
-              .add(GetMyFriendsList(userID: userID, friendships: friendships));
+          context.read<FriendshipBloc>().add(GetMyFriendsList(userID: userID, friendships: friendships));
           this.friendships = friendships;
-
           return BlocBuilder<FriendshipBloc, ModelStates>(
             builder: (context, userState) {
               if (userState is ModelLoadingState) {
                 return const Center(child: CircularProgressIndicator());
               }
-
               if (userState is ModelLoadedState) {
-                filteredFriends = userState.models as List<User.User>;
+                 if(!isSearching) {
+                  filteredFriends = userState.models as List<User.User>;
+                }
                 return AsyncBuilder<List<Event>>(
                   stream: context.read<EventBloc>().friendsEventsStream,
                   builder: (context, events) {
@@ -69,31 +67,30 @@ class _FriendsListState extends State<FriendsList> {
                     Widget searchBar = Padding(
                       padding: const EdgeInsets.fromLTRB(21, 21, 21, 0),
                       child: TextField(
+                        key: const Key('search_bar'),
                         controller: _searchController,
                         decoration: InputDecoration(
                           labelText: 'Search friends',
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.search),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.pinkAccent), // Border when focused
+                            borderSide: BorderSide(color: Colors.pinkAccent),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(color: Colors.pinkAccent), // Border when not focused
+                            borderSide: BorderSide(color: Colors.pinkAccent),
                           ),
                         ),
                         onChanged: (query) {
                           setState(() {
+                            isSearching = true;
                             filteredFriends = filterList(
                               userState.models as List<User.User>,
-                                  (friend) => friend.username
-                                  .toLowerCase()
-                                  .contains(query.toLowerCase()),
+                                  (friend) => friend.username.toLowerCase().contains(query.toLowerCase()),
                             );
                           });
                         },
                       ),
                     );
-
                     List<Widget> content = [
                       Center(
                         child: Text(
@@ -102,17 +99,14 @@ class _FriendsListState extends State<FriendsList> {
                         ),
                       ),
                     ];
-
                     List<Widget> friendWidgets = filteredFriends.map((user) {
                       return _buildFriendsTile(
                         context,
                         user,
                         events ?? [],
-                        friendships.firstWhere((friendship) =>
-                            friendship.members.contains(user.id)),
+                        friendships.firstWhere((friendship) => friendship.members.contains(user.id)),
                       );
                     }).toList();
-
                     content.addAll(friendWidgets.isNotEmpty
                         ? friendWidgets
                         : [
@@ -155,6 +149,7 @@ class _FriendsListState extends State<FriendsList> {
       },
     );
   }
+
 
   Widget _buildFriendsTile(BuildContext context, User.User user,
       List<Event> events, Friendship friendship) {

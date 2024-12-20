@@ -44,11 +44,16 @@ class _EditEventPageState extends State<EditEvent> {
     _nameController = TextEditingController(text: widget.event.name);
     _descriptionController = TextEditingController(text: widget.event.description);
     _categoryIDController = TextEditingController(text: widget.event.categoryID.toString());
+
+    // Ensuring that the controller has the correct date format if the date exists
     _eventDateController = TextEditingController(
-      text: DateFormat("yyyy-MM-dd").format(DateTime.parse(widget.event.eventDate)),
+      text: widget.event.eventDate.isNotEmpty
+          ? DateFormat("yyyy-MM-dd").format(DateTime.parse(widget.event.eventDate))
+          : '',
     );
     _selectedCategoryId = widget.event.categoryID;
   }
+
 
   @override
   Widget build(BuildContext context) {

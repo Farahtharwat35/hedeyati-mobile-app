@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'text_form_field_decoration.dart';
 
-Widget buildTextField({required TextEditingController controller, required Map<String, dynamic> args,bool emptyValidator=true}) {
+Widget buildTextField({required TextEditingController controller, required Map<String, dynamic> args,bool emptyValidator=true , Key? key}) {
   return Padding(
     padding: const EdgeInsets.symmetric(vertical: 10.0),
     child: TextFormField(
+      key: key,
       controller: controller,
       autofocus: true,
       keyboardType: args['keyboardType'] ?? TextInputType.text,

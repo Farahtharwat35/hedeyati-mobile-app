@@ -49,11 +49,11 @@ class _MyTabBarState extends State<MyTabBar> {
             if (notifications != null && notifications.isNotEmpty) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 List<Widget> content = [];
-                content.addAll(notifications.map((e) => Center(child: Text(e.title , style: myTheme.textTheme.headlineMedium))).toList());
-                content.addAll(notifications.map((e) => Center(child: Text(e.body , style: TextStyle(fontWeight: FontWeight.bold , color: Colors.pinkAccent)))).toList());
+                content.addAll(notifications.map((e) => Center(child: Text(e.title, style: myTheme.textTheme.headlineMedium))).toList());
+                content.addAll(notifications.map((e) => Center(child: Text(e.body, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.pinkAccent)))).toList());
 
                 showOverlayNotification(
-                      duration: const Duration(seconds: 6),
+                  duration: const Duration(seconds: 6),
                       (context) => buildCard(context, content),
                 );
 
@@ -64,30 +64,25 @@ class _MyTabBarState extends State<MyTabBar> {
               initialIndex: 0,
               length: 3,
               child: Scaffold(
-                appBar: const CustomAppBar(title: 'Hedeyati'),
+                appBar: const CustomAppBar(key: Key('custom_app_bar'), title: 'Hedeyati'),
                 body: TabBarView(
                   children: <Widget>[
-                    const HomePage(),
+                    const HomePage(key: Key('home_page')),
                     MultiBlocProvider(
                       providers: [
                         BlocProvider(create: (_) => EventBloc()..initializeStreams()),
                         BlocProvider(create: (_) => UserBloc()),
-                        BlocProvider(
-                          create: (BuildContext context) => EventCategoryBloc(),
-                        )
+                        BlocProvider(create: (BuildContext context) => EventCategoryBloc()),
                       ],
-                      child: EventsPage(),
+                      child: EventsPage(key: Key('events_page')),
                     ),
                     MultiBlocProvider(
                       providers: [
                         BlocProvider(create: (_) => NotificationBloc()..initializeStreams()),
                         BlocProvider(create: (_) => UserBloc()),
-                        BlocProvider(
-                          create: (_) => FriendshipBloc(userID:FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
-                          lazy: false,
-                        ),
+                        BlocProvider(create: (_) => FriendshipBloc(userID: FirebaseAuth.instance.currentUser!.uid)..initializeStreams(), lazy: false),
                       ],
-                      child: const NotificationPage(),
+                      child: const NotificationPage(key: Key('notification_page')),
                     ),
                   ],
                 ),

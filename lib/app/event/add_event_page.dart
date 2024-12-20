@@ -45,7 +45,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         title: const Text('Create Event', textAlign: TextAlign.center),
         titleTextStyle: Theme.of(context).textTheme.headlineMedium,
         backgroundColor: Theme.of(context).colorScheme.primary,
-        centerTitle: true, // Center the title
+        centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
@@ -54,6 +54,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Card(
+            key: Key('create_event_card'), // Added key for the card widget
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16.0),
             ),
@@ -61,138 +62,153 @@ class _CreateEventPageState extends State<CreateEventPage> {
             shadowColor: Colors.black.withOpacity(0.8),
             color: Color(0xFFF1F1F1),
             child: AsyncBuilder<List<EventCategory>>(
-              stream: EventCategoryBloc.get(context).eventCategoryBlocStream,
-              waiting: (context) => const Center(child: CircularProgressIndicator()),
-              error: (context, error, stack) {
-                log('Error: $error');
-                log('Stack Trace: $stack');
-                return Center(
-                  child: Text('Error: $error'),
-                );
-              },
-              builder: (context , categories) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _header(),
-                      const SizedBox(height: 20),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            buildTextField(controller: _nameController, args: {'labelText': 'Event Name', 'prefixIcon': Icons.event, 'maxLength': 10}),
-                            buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description, 'maxLines': 3, 'hintText': 'Enter a description (Optional)'}, emptyValidator: false),
-                            _buildCategoryDropdown(categories!),
-                            buildDatePickerField(_eventDateController, 'Event Date', context),
-                            const SizedBox(height: 20),
-                            Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Row(
-                                  children: [
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30), // Adjusted padding for smaller buttons
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                        backgroundColor: Theme.of(context).colorScheme.primary,
-                                        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                                      ),
-                                      onPressed: () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          final event = Event(
-                                            image: '',
-                                            firestoreUserID: userFirestoreID,
-                                            name: _nameController.text,
-                                            description: _descriptionController.text,
-                                            categoryID: selectedCategoryId!,
-                                            eventDate: DateTime.parse(_eventDateController.text).toIso8601String(),
-                                          );
-                                          EventBloc.get(context).add(AddModel(event));
-                                        }
-                                      },
-                                      child: const Text('Create Event', style: TextStyle(fontSize: 16)), // Smaller text
-                                    ),
-                                    const SizedBox(width: 10),
-                                    ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30), // Adjusted padding for smaller buttons
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                        backgroundColor: Colors.grey, // Color for "Save for Later"
-                                        foregroundColor: Colors.white,
-                                      ),
-                                      onPressed: () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          final event = Event(
-                                            image: '',
-                                            firestoreUserID: userFirestoreID,
-                                            name: _nameController.text,
-                                            description: _descriptionController.text,
-                                            categoryID: selectedCategoryId!,
-                                            eventDate: DateTime.parse(_eventDateController.text).toIso8601String(),
-                                          );
-                                          EventBloc.get(context).add(SaveEventLocally(event));
-                                        }
-                                      },
-                                      child: const Text('Save For Later', style: TextStyle(fontSize: 16)), // Smaller text
-                                    ),
-                                  ],
-                                ),
+                key: Key('async_event_category_builder'), // Key for AsyncBuilder
+                stream: EventCategoryBloc.get(context).eventCategoryBlocStream,
+                waiting: (context) => const Center(child: CircularProgressIndicator()),
+                error: (context, error, stack) {
+                  log('Error: $error');
+                  log('Stack Trace: $stack');
+                  return Center(
+                    child: Text('Error: $error'),
+                  );
+                },
+                builder: (context, categories) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _header(),
+                        const SizedBox(height: 20),
+                        Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              buildTextField(
+                                key: Key('event_name_field'), // Key for event name field
+                                controller: _nameController,
+                                args: {'labelText': 'Event Name', 'prefixIcon': Icons.event, 'maxLength': 10},
                               ),
-                            )
-                          ],
+                              buildTextField(
+                                key: Key('description_field'), // Key for description field
+                                controller: _descriptionController,
+                                args: {'labelText': 'Description', 'prefixIcon': Icons.description, 'maxLines': 3, 'hintText': 'Enter a description (Optional)'},
+                                emptyValidator: false,
+                              ),
+                              _buildCategoryDropdown(categories!),
+                              buildDatePickerField(
+                                  key: Key('event_date_field'), // Key for event date picker field
+                                  _eventDateController, 'Event Date', context
+                              ),
+                              const SizedBox(height: 20),
+                              Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Row(
+                                    children: [
+                                      ElevatedButton(
+                                        key: Key('create_event_button'), // Key for create event button
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                          backgroundColor: Theme.of(context).colorScheme.primary,
+                                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                        ),
+                                        onPressed: () async {
+                                          if (_formKey.currentState!.validate()) {
+                                            final event = Event(
+                                              image: '',
+                                              firestoreUserID: userFirestoreID,
+                                              name: _nameController.text,
+                                              description: _descriptionController.text,
+                                              categoryID: selectedCategoryId!,
+                                              eventDate: DateTime.parse(_eventDateController.text).toIso8601String(),
+                                            );
+                                            EventBloc.get(context).add(AddModel(event));
+                                          }
+                                        },
+                                        child: const Text('Create Event', style: TextStyle(fontSize: 16)),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      ElevatedButton(
+                                        key: Key('save_for_later_button'), // Key for save for later button
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                          backgroundColor: Colors.grey,
+                                          foregroundColor: Colors.white,
+                                        ),
+                                        onPressed: () async {
+                                          if (_formKey.currentState!.validate()) {
+                                            final event = Event(
+                                              image: '',
+                                              firestoreUserID: userFirestoreID,
+                                              name: _nameController.text,
+                                              description: _descriptionController.text,
+                                              categoryID: selectedCategoryId!,
+                                              eventDate: DateTime.parse(_eventDateController.text).toIso8601String(),
+                                            );
+                                            EventBloc.get(context).add(SaveEventLocally(event));
+                                          }
+                                        },
+                                        child: const Text('Save For Later', style: TextStyle(fontSize: 16)),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                      BlocBuilder<EventBloc, ModelStates>(
-                        builder: (context, state) {
-                          if (EventBloc.get(context).state is ModelLoadingState) {
-                            Future.delayed(Duration.zero, () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Adding event...',
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                        BlocBuilder<EventBloc, ModelStates>(
+                          builder: (context, state) {
+                            if (EventBloc.get(context).state is ModelLoadingState) {
+                              Future.delayed(Duration.zero, () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Adding event...',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                    ),
+                                    backgroundColor: Colors.pinkAccent,
                                   ),
-                                  backgroundColor: Colors.pinkAccent,
-                                ),
-                              );
-                            });
-                          } else if (EventBloc.get(context).state is ModelAddedState || EventBloc.get(context).state is ModelSuccessState) {
-                            Future.delayed(Duration.zero, () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Event added successfully!',
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                );
+                              });
+                            } else if (EventBloc.get(context).state is ModelAddedState || EventBloc.get(context).state is ModelSuccessState) {
+                              Future.delayed(Duration.zero, () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Event added successfully!',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                    ),
+                                    backgroundColor: Colors.pinkAccent,
                                   ),
-                                  backgroundColor: Colors.pinkAccent,
-                                ),
-                              );
-                            });
-                          } else if (EventBloc.get(context).state is ModelErrorState) {
-                            log('Error: ${(EventBloc.get(context).state as ModelErrorState).message.message}');
-                            Future.delayed(Duration.zero, () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Failed to add event',
-                                    style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                );
+                              });
+                            } else if (EventBloc.get(context).state is ModelErrorState) {
+                              log('Error: ${(EventBloc.get(context).state as ModelErrorState).message.message}');
+                              Future.delayed(Duration.zero, () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Failed to add event',
+                                      style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic),
+                                    ),
+                                    backgroundColor: Colors.red,
                                   ),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            });
-                          }
-                          return Container(); // Return an empty container or any widget here as required.
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              }
+                                );
+                              });
+                            }
+                            return Container();
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                }
             ),
           ),
         ),
@@ -210,7 +226,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   _header() {
     return Padding(
-      padding: const EdgeInsets.only(top: 50, left: 20, right: 20), // Adjust padding as needed
+      padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
       child: Column(
         children: [
           Row(
@@ -234,9 +250,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
   }
 
-
   Widget _buildCategoryDropdown(List<EventCategory> categories) {
     return DropdownButtonFormField<String>(
+      key: Key('category_dropdown'), // Key for the category dropdown
       decoration: fieldDecorator({
         'labelText': 'Select Category',
         'prefixIcon': Icons.category,
@@ -256,5 +272,5 @@ class _CreateEventPageState extends State<CreateEventPage> {
       validator: (value) => value == null ? 'Please select a category' : null,
     );
   }
-
 }
+

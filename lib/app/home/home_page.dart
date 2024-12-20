@@ -10,12 +10,10 @@ import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
 import 'package:hedeyati/bloc/gift_category/gift_category_events.dart';
 import 'package:hedeyati/bloc/gifts/gift_bloc.dart';
 import 'package:hedeyati/bloc/user/user_bloc.dart';
-import 'package:hedeyati/models/event_category.dart';
 import '../../bloc/friendship/friendship_bloc.dart';
 import '../../bloc/notification/notification_bloc.dart';
 import '../friends/add_friend.dart';
 import '../gift/add_gift.dart';
-import '../home/search_bar.dart';
 import '../../bloc/events/event_bloc.dart';
 import '../event/add_event_page.dart';
 import 'package:provider/provider.dart';
@@ -39,24 +37,29 @@ class _HomePageState extends State<HomePage> {
       child: BlocBuilder<GiftCategoryBloc, ModelStates>(
         builder: (context, state) => Scaffold(
           body: Column(
-            children: [MultiBlocProvider(providers: [
-            BlocProvider<FriendshipBloc>(
-              lazy: false,
-              create: (_) => FriendshipBloc(userID: FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
-            ),
-            BlocProvider<EventBloc>(
-              lazy: false,
-              create: (_) => EventBloc()..initializeStreams(),
-            ),
-            ],
-            child: Expanded(child: FriendsList())),
+            children: [
+              MultiBlocProvider(
+                providers: [
+                  BlocProvider<FriendshipBloc>(
+                    lazy: false,
+                    create: (_) => FriendshipBloc(userID: FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
+                  ),
+                  BlocProvider<EventBloc>(
+                    lazy: false,
+                    create: (_) => EventBloc()..initializeStreams(),
+                  ),
+                ],
+                child: Expanded(child: FriendsList()),
+              ),
             ],
           ),
           floatingActionButton: SpeedDial(
+            key: Key('speed_dial_button'),
             icon: Icons.add,
             foregroundColor: myTheme.colorScheme.onPrimary,
             children: [
               SpeedDialChild(
+                key: Key('add_friend_button'),
                 backgroundColor: myTheme.colorScheme.secondary,
                 child: const Icon(Icons.person_add),
                 label: 'Add Friend',
@@ -66,7 +69,7 @@ class _HomePageState extends State<HomePage> {
                           providers: [
                             BlocProvider<FriendshipBloc>(
                               lazy: false,
-                              create: (_) => FriendshipBloc(userID:FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
+                              create: (_) => FriendshipBloc(userID: FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
                             ),
                             BlocProvider<UserBloc>(
                               lazy: false,
@@ -77,10 +80,11 @@ class _HomePageState extends State<HomePage> {
                               create: (_) => NotificationBloc()..initializeStreams(),
                             ),
                           ],
-                          child: AddFriendPage())));
+                          child: AddFriendPage())) );
                 },
               ),
               SpeedDialChild(
+                key: Key('add_event_button'),
                 backgroundColor: myTheme.colorScheme.secondary,
                 child: const Icon(Icons.event),
                 label: 'Add Event',
@@ -99,17 +103,17 @@ class _HomePageState extends State<HomePage> {
                         ],
                         child: CreateEventPage(),
                       ),
-                      ),
+                    ),
                   );
                 },
               ),
               SpeedDialChild(
+                key: Key('add_gift_button'),
                 backgroundColor: myTheme.colorScheme.secondary,
                 child: const Icon(Icons.card_giftcard),
                 label: 'Add Gift',
                 onTap: () {
-                  final giftCategoryBloc =
-                  BlocProvider.of<GiftCategoryBloc>(context);
+                  final giftCategoryBloc = BlocProvider.of<GiftCategoryBloc>(context);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
