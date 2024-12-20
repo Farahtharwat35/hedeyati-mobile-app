@@ -12,7 +12,7 @@ import '../../bloc/generic_bloc/generic_crud_events.dart';
 import '../../models/event.dart';
 import '../../models/model.dart';
 
-void showEventDetails(BuildContext context, Event event, EventBloc eventBloc,
+void showEventDetails(BuildContext context, Event event, EventBloc eventBloc,String categoryName,
     {bool isLocalEvent = false}) {
   showDialog(
     context: context,
@@ -52,7 +52,7 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc,
           const SizedBox(height: 16),
           Center(
             child: Text(
-              'Event Category: Birthday',
+              'Event Category: $categoryName',
               style: const TextStyle(
                   fontSize: 16,
                   color: Colors.white70,

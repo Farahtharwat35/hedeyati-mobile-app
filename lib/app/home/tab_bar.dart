@@ -7,6 +7,7 @@ import 'package:hedeyati/app/home/home_page.dart';
 import 'package:hedeyati/app/notification/notifications_page.dart';
 import 'package:hedeyati/app/event/main_events_page.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
+import 'package:hedeyati/bloc/event_category/event_category_bloc.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
 import 'package:hedeyati/bloc/friendship/friendship_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
@@ -71,6 +72,9 @@ class _MyTabBarState extends State<MyTabBar> {
                       providers: [
                         BlocProvider(create: (_) => EventBloc()..initializeStreams()),
                         BlocProvider(create: (_) => UserBloc()),
+                        BlocProvider(
+                          create: (BuildContext context) => EventCategoryBloc(),
+                        )
                       ],
                       child: EventsPage(),
                     ),

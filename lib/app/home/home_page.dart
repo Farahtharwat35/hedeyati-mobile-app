@@ -4,11 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:hedeyati/app/home/home_page_body.dart';
+import 'package:hedeyati/bloc/event_category/event_category_bloc.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
 import 'package:hedeyati/bloc/gift_category/gift_category_bloc.dart';
 import 'package:hedeyati/bloc/gift_category/gift_category_events.dart';
 import 'package:hedeyati/bloc/gifts/gift_bloc.dart';
 import 'package:hedeyati/bloc/user/user_bloc.dart';
+import 'package:hedeyati/models/event_category.dart';
 import '../../bloc/friendship/friendship_bloc.dart';
 import '../../bloc/notification/notification_bloc.dart';
 import '../friends/add_friend.dart';
@@ -86,10 +88,17 @@ class _HomePageState extends State<HomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => Provider<EventBloc>(
-                        create: (_) => EventBloc(),
-                        child: const CreateEventPage(),
-                        ),
+                      builder: (context) => MultiBlocProvider(
+                        providers: [
+                          BlocProvider<EventBloc>(
+                            create: (_) => EventBloc(),
+                          ),
+                          BlocProvider<EventCategoryBloc>(
+                            create: (_) => EventCategoryBloc()..initializeStreams(),
+                          ),
+                        ],
+                        child: CreateEventPage(),
+                      ),
                       ),
                   );
                 },

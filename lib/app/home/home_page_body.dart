@@ -131,7 +131,7 @@ class _FriendsListState extends State<FriendsList> {
         ),
       ),
       subtitle: Text(
-        'Tap to view details',
+        'Tap to view friend details',
         style: TextStyle(color: Colors.grey[600]),
       ),
       onTap: () {
@@ -220,12 +220,6 @@ class DetailPage extends StatelessWidget {
                       backgroundColor: Colors.white,
                     ),
                     onPressed: () {
-                      // friendshipBloc.add(UpdateModel(
-                      //   friendship.copyWith(
-                      //     id: friendship.id,
-                      //     friendshipStatusID: 2,
-                      //   ),
-                      // ));
                       return confirmDelete(context, friendshipBloc, friendship, Text("Are you sure you want to remove ${user.username} from your friends list?"));
                     },
                     child: const Text('Remove Friend', style: TextStyle(fontSize: 18 , color: Colors.pinkAccent)), // Larger button text

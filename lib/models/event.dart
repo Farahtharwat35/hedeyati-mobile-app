@@ -14,7 +14,7 @@ class Event extends Model {
   final String image;
   final String name;
   final String description;
-  final int categoryID;
+  final String categoryID;
   final String eventDate;
 
   Event({
@@ -32,7 +32,7 @@ class Event extends Model {
     String? image,
     String? name,
     String? description,
-    int? categoryID,
+    String? categoryID,
     String? eventDate,
     int? status,
     String? createdBy,
@@ -114,7 +114,7 @@ class Event extends Model {
       firestoreUserID: '',
       name: '',
       description: '',
-      categoryID: 0,
+      categoryID: '',
       eventDate: DateTime.now().toIso8601String(),
     );
   }

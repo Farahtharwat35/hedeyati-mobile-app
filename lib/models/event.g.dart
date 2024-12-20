@@ -11,7 +11,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       firestoreUserID: json['firestoreUserID'] as String?,
       name: json['name'] as String,
       description: json['description'] as String,
-      categoryID: (json['categoryID'] as num).toInt(),
+      categoryID: json['categoryID'] as String,
       eventDate: json['eventDate'] as String,
       image: json['image'] as String,
     )

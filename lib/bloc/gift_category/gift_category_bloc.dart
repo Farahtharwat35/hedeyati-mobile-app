@@ -4,6 +4,7 @@ import 'package:sqflite/sqflite.dart';
 import '../../database/crud/sqflite_crud_service_class.dart';
 import '../../database/firestore/crud.dart';
 import '../../helpers/dataMapper.dart';
+import '../../helpers/query_arguments.dart';
 import '../../models/gift_category.dart';
 import '../generic_bloc/generic_crud_bloc.dart';
 import '../generic_bloc/generic_states.dart';
@@ -21,7 +22,7 @@ class GiftCategoryBloc extends ModelBloc<GiftCategory> {
   late final Stream<List<GiftCategory>> _giftCategoryStream;
 
   void _initializeStreams() {
-    _giftCategoryStream = giftCategoryCRUD.getSnapshotsWhere([]).map(
+    _giftCategoryStream = giftCategoryCRUD.getSnapshotsWhere([{'isDeleted': QueryArg(isEqualTo: false)}]).map(
           (snapshot) => snapshot.docs.map((doc) => doc.data() as GiftCategory).toList(),
     );
   }

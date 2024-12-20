@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:async_builder/async_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
@@ -9,12 +10,17 @@ import 'package:hedeyati/models/event.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
 import 'package:hedeyati/app/reusable_components/date_picker_field_widget.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_states.dart';
+import 'package:hedeyati/models/event_category.dart';
 import 'package:intl/intl.dart';
+
+import '../../bloc/event_category/event_category_bloc.dart';
+import '../reusable_components/text_form_field_decoration.dart';
 
 class EditEvent extends StatefulWidget {
   final Event event;
   final bool isLocalEvent;
   final EventBloc eventBloc;
+
 
   const EditEvent({Key? key, required this.event, required this.eventBloc , required this.isLocalEvent}) : super(key: key);
 
@@ -28,6 +34,7 @@ class _EditEventPageState extends State<EditEvent> {
   late TextEditingController _descriptionController;
   late TextEditingController _categoryIDController;
   late TextEditingController _eventDateController;
+  String? _selectedCategoryId ;
 
   @override
   void initState() {
@@ -40,6 +47,7 @@ class _EditEventPageState extends State<EditEvent> {
     _descriptionController = TextEditingController(text: widget.event.description);
     _categoryIDController = TextEditingController(text: widget.event.categoryID.toString());
     _eventDateController = TextEditingController(text: widget.event.eventDate);
+    _selectedCategoryId = widget.event.categoryID;
   }
 
   @override
@@ -80,7 +88,7 @@ class _EditEventPageState extends State<EditEvent> {
                         children: [
                           buildTextField(controller: _nameController, args: {'labelText': 'Event Name', 'prefixIcon': Icons.event}),
                           buildTextField(controller: _descriptionController, args: {'labelText': 'Description', 'prefixIcon': Icons.description, 'maxLines': 3}, emptyValidator: false),
-                          buildTextField(controller: _categoryIDController, args: {'labelText': 'Category ID', 'prefixIcon': Icons.category} , emptyValidator: false),
+                          _buildEventCategoryDropdown(context),
                           buildDatePickerField(TextEditingController(
                             text: DateFormat("dd/MM/yyyy").format(DateTime.parse(_eventDateController.text))), 'Event Date', context),
                           const SizedBox(height: 20),
@@ -98,7 +106,7 @@ class _EditEventPageState extends State<EditEvent> {
                                     id: widget.event.id,
                                     name: _nameController.text,
                                     description: _descriptionController.text,
-                                    categoryID: int.parse(_categoryIDController.text),
+                                    categoryID: _selectedCategoryId,
                                     eventDate: DateTime.parse(_eventDateController.text).toIso8601String(),
                                     updatedAt: DateTime.now(),
                                   );
@@ -136,6 +144,42 @@ class _EditEventPageState extends State<EditEvent> {
           ),
         ),
       );
+  }
+
+  Widget _buildEventCategoryDropdown(context) {
+    return AsyncBuilder<List<EventCategory>>(
+      stream: EventCategoryBloc.get(context).eventCategoryBlocStream,
+      waiting: (context) => const Center(child: CircularProgressIndicator()),
+      error: (context, error, stack) {
+        debugPrint('Error: $error');
+        debugPrint('Stack Trace: $stack');
+        return Center(
+          child: Text('Error: $error'),
+        );
+      },
+      builder: (context, events) {
+        return DropdownButtonFormField<String>(
+          decoration: fieldDecorator({
+            'labelText': 'Select Event',
+            'prefixIcon': Icons.event,
+          }),
+          value: _selectedCategoryId,
+          items: events?.map((event) {
+            return DropdownMenuItem(
+              value: event.id,
+              child: Text(event.name),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedCategoryId = value!;
+            });
+          },
+          validator: (value) =>
+          value == null ? 'Please select an event' : null,
+        );
+      },
+    );
   }
 
   @override
