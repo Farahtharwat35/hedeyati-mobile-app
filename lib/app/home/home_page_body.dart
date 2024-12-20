@@ -6,13 +6,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hedeyati/bloc/friendship/friendship_bloc.dart';
 import 'package:hedeyati/models/friendship.dart';
 import 'package:hedeyati/models/user.dart' as User;
-import 'package:hedeyati/helpers/listFiltering.dart'; // Import the filterList function
+import 'package:hedeyati/helpers/listFiltering.dart';
 import 'package:intl/intl.dart';
 import '../../bloc/events/event_bloc.dart';
 import '../../bloc/friendship/frienship_events.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
 import '../../models/event.dart';
-import '../../models/user.dart' as User;
 import '../reusable_components/app_theme.dart';
 import '../reusable_components/build_card.dart';
 import '../reusable_components/delete_dialog.dart';
