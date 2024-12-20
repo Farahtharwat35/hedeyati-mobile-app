@@ -99,10 +99,10 @@ void showGiftDetails(
                       style: getCardForDetailsTextStyle(),
                     ),
                     const SizedBox(height: 8),
-                    Text(
-                      'Pledged by: $pledgerName',
-                      style: getCardForDetailsTextStyle(),
-                    ),
+                    // Text(
+                    //   'Pledged by: $pledgerName',
+                    //   style: getCardForDetailsTextStyle(),
+                    // ),
                   ]);
                 } else if (userId != gift.firestoreUserID) {
                   content.add(
