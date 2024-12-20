@@ -36,7 +36,7 @@ class Hedeyati extends StatelessWidget {
           '/login': (context) => LoginPage(),
           '/tabBar': (context) => BlocProvider(
       create: (_) => NotificationBloc()..initializeStreams(),
-      child: ProtectedRoute(child: MyTabBar()),
+      child:MyTabBar(),
       ),
         },
       ),
