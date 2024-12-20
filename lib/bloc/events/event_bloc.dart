@@ -13,6 +13,7 @@ import '../../models/event.dart';
 import '../generic_bloc/generic_crud_bloc.dart';
 import '../generic_bloc/generic_states.dart';
 import 'event_events.dart';
+import 'event_states.dart';
 
 class EventBloc extends ModelBloc<Event> {
   EventBloc() : super(model: Event.dummy()){
@@ -65,7 +66,8 @@ class EventBloc extends ModelBloc<Event> {
     emit(ModelLoadingState());
     log('***********Deleting event locally [EVENT LOADING]***********');
     try {
-      await SqliteDatabaseCRUD.alterModel('Event', AlterType.update, {'isDeleted': true}, where: 'id = ?', whereArgs: [event.eventID]);
+      log('eventID: ${event.eventID}');
+      await SqliteDatabaseCRUD.batchAlterModel('Event', AlterType.update, [{'isDeleted': 1}],where: 'id = ?', whereArgs: [event.eventID] , conflictAlgorithm: ConflictAlgorithm.replace);
       log('***********Deleting event locally [EVENT DELETED]***********');
       emit(ModelSuccessState(message: Response(success: true, message: 'Event deleted successfully')));
     } catch (e) {
@@ -79,7 +81,7 @@ class EventBloc extends ModelBloc<Event> {
     emit(ModelLoadingState());
     log('***********Updating event locally [EVENT LOADING]***********');
     try {
-      await SqliteDatabaseCRUD.alterModel('Event', AlterType.update, event.event.toJson(), where: 'id = ?', whereArgs: [event.event.id]);
+      await SqliteDatabaseCRUD.batchAlterModel('Event', AlterType.update, [event.event.toJson()], where: 'id = ?', whereArgs: [event.event.id]);
       log('***********Updating event locally [EVENT UPDATED]***********');
       emit(ModelUpdatedState(event.event));
     } catch (e) {
@@ -93,7 +95,7 @@ class EventBloc extends ModelBloc<Event> {
     emit(ModelLoadingState());
     log('***********Getting event locally [EVENT LOADING]***********');
     try {
-      List<Map<String, Object?>> result = await SqliteDatabaseCRUD.getWhere('Event', where: 'id = ?', whereArgs: [event.eventID]);
+      List<Map<String, Object?>> result = await SqliteDatabaseCRUD.getWhere('Event', where: 'id = ? AND isDeleted = 0', whereArgs: [event.eventID]);
       result = dbResultTypesConverter(result , [{'isDeleted': 'bool'}]);
       log('***********Getting event locally [EVENT LOADED]***********');
       emit(ModelLoadedState([Event.fromJson(result.first)]));
@@ -108,10 +110,11 @@ class EventBloc extends ModelBloc<Event> {
     emit(ModelLoadingState());
     log('***********Getting all local events [EVENT LOADING]***********');
     try {
-      List<Map<String, Object?>> events = await SqliteDatabaseCRUD.getWhere('Event');
+      List<Map<String, Object?>> events = await SqliteDatabaseCRUD.getWhere('Event' , where: 'isDeleted = 0');
+      log('# Events From Local DB: ${events.length}');
       events = dbResultTypesConverter(events , [{'isDeleted': 'bool'}]);
       log('***********Getting all local events [EVENT LOADED]***********');
-      emit(ModelLoadedState(events.map((e) => Event.fromJson(e)).toList()));
+      events.isNotEmpty ? emit(LoadedLocalEvents(events.map((e) => Event.fromJson(e)).toList())) : emit(ModelEmptyState());
     } catch (e) {
       log('***********Getting all local events [EVENT ERROR]***********');
       emit(ModelErrorState(message: Response(success: false, message: e.toString())));

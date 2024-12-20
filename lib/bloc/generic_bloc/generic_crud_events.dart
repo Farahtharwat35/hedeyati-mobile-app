@@ -20,7 +20,8 @@ class LoadModel extends GenericCRUDEvents {
 
 class AddModel extends GenericCRUDEvents {
   final Model model;
-  AddModel(this.model);
+  final bool uuID;
+  AddModel(this.model , {this.uuID = true});
 
   @override
   List<Object?> get props => [model];

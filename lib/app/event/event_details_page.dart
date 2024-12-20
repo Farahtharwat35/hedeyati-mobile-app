@@ -1,14 +1,19 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/reusable_components/delete_dialog.dart';
+import 'package:hedeyati/bloc/events/event_events.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:hedeyati/app/reusable_components/card_for_details.dart';
 import '../../bloc/events/event_bloc.dart';
+import '../../bloc/generic_bloc/generic_crud_events.dart';
 import '../../models/event.dart';
 import '../../models/model.dart';
 
-void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
+void showEventDetails(BuildContext context, Event event, EventBloc eventBloc,
+    {bool isLocalEvent = false}) {
   showDialog(
     context: context,
     barrierDismissible: true,
@@ -67,30 +72,48 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
             ),
           ),
           const SizedBox(height: 16),
-          event.firestoreUserID == FirebaseAuth.instance.currentUser!.uid ? Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () {
-                  return confirmDelete(
-                      context,
-                      eventBloc as ModelBloc,
-                      event as Model,
-                      Text(
-                          'Are you sure you want to delete the event "${event.name}"?'));
-                } ,
-                child: const Text(
-                  'Delete',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                      fontSize: 17),
-                ),
-              ),
-              const Icon(Icons.delete, color: Colors.white),
-            ],
-          ) : const SizedBox(),
+          // will add a button called Publish Event
+          isLocalEvent
+              ? ElevatedButton(
+                  onPressed: () async {
+                    log('Local Event is being published , ${event.id}');
+                    eventBloc.add(AddModel(event , uuID: false));
+                    await Future.delayed(const Duration(milliseconds: 500));
+                    log('Local Event is being deleted , ${event.id}');
+                    eventBloc.add(DeleteEventLocally(event.id!));
+                  },
+                  child: const Text(
+                    'Publish Event',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                )
+              : const SizedBox(),
+          event.firestoreUserID == FirebaseAuth.instance.currentUser!.uid
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        return confirmDelete(
+                            context,
+                            eventBloc as ModelBloc,
+                            event as Model,
+                            Text(
+                                'Are you sure you want to delete the event "${event.name}"?'));
+                      },
+                      child: const Text(
+                        'Delete',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontStyle: FontStyle.italic,
+                            fontSize: 17),
+                      ),
+                    ),
+                    const Icon(Icons.delete, color: Colors.white),
+                  ],
+                )
+              : const SizedBox(),
         ],
       );
     },

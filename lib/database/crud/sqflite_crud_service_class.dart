@@ -17,13 +17,16 @@ class SqliteDatabaseCRUD {
     final db = await SqliteConnectionFactory().openConnection();
     switch (alterType) {
       case AlterType.update:
-        await db.update(table, values, where: where, whereArgs: whereArgs, conflictAlgorithm: conflictAlgorithm);
+        int result = await db.update(table, values, where: where, whereArgs: whereArgs, conflictAlgorithm: conflictAlgorithm);
+        log ('Updated $result rows');
         break;
       case AlterType.delete:
-        await db.delete(table, where: where, whereArgs: whereArgs);
+        int result =  await db.delete(table, where: where, whereArgs: whereArgs);
+        log ('Deleted $result rows');
         break;
       case AlterType.insert:
-        await db.insert(table, values, conflictAlgorithm: conflictAlgorithm);
+       int result = await db.insert(table, values, conflictAlgorithm: conflictAlgorithm);
+       log('Inserted $result rows');
         break;
     }
   }
@@ -33,19 +36,17 @@ class SqliteDatabaseCRUD {
     final db = await SqliteConnectionFactory().openConnection();
     final batch = db.batch();
     for (var value in values) {
-      value['isDeleted'] = value['isDeleted'] == false ? 0 : 1;
-      value['id'] ??= uuIDGenerator();
       switch (alterType) {
         case AlterType.update:
-          value['updatedAt'] ??= DateTime.now().toIso8601String();
+          value['updatedAt'] = DateTime.now().toIso8601String();
           batch.update(table, value, where: where, whereArgs: whereArgs, conflictAlgorithm: conflictAlgorithm);
           break;
         case AlterType.delete:
-          value['deletedAt'] ??= DateTime.now().toIso8601String();
-          value['isDeleted'] = 1;
           batch.delete(table, where: where, whereArgs: whereArgs);
           break;
         case AlterType.insert:
+          value['id'] ??= uuIDGenerator();
+          value['isDeleted'] = value['isDeleted'] == false ? 0 : 1;
           value['createdAt'] ??= DateTime.now().toIso8601String();
           log('//////////////////// Data Being Inserted : $value //////////////////////');
           batch.insert(table, value, conflictAlgorithm: conflictAlgorithm);

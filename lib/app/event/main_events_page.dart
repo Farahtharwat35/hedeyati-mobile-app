@@ -6,6 +6,7 @@ import 'package:async_builder/async_builder.dart';
 import 'package:provider/provider.dart';
 import '../../bloc/events/event_bloc.dart';
 import '../../bloc/events/event_events.dart';
+import '../../bloc/events/event_states.dart';
 import '../../bloc/generic_bloc/generic_states.dart';
 import '../../bloc/gift_category/gift_category_bloc.dart';
 import '../../bloc/gifts/gift_bloc.dart';
@@ -31,7 +32,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
   late List<Stream<List<Event>>> _eventStreams;
   late EventBloc eventBloc;
   late UserBloc userBloc;
-  late List<Event> localEvents;
+  List<Event> localEvents = [];
 
   @override
   void initState() {
@@ -75,13 +76,18 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
           ),
           BlocConsumer<EventBloc,ModelStates>(
             listener: (context, state) {
-              if (state is ModelUpdatedState) {
+              if (state is ModelUpdatedState || state is ModelSuccessState) {
                 context.read<EventBloc>().add(GetEventsLocally());
               }
             },
             builder: (context, state) {
-              if (state is ModelLoadedState) {
-                localEvents = state.models as List<Event>;
+              if (state is LoadedLocalEvents) {
+                localEvents = state.events;
+                log("Local Events: ${localEvents.length} , ${localEvents.map((e) => e.name)} , ${localEvents.map((e) => e.id)} , ${localEvents.map((e) => e.firestoreUserID)}");
+              }
+              else if (state is ModelEmptyState) {
+                log('No events found locally');
+                localEvents = [];
               }
               else if (state is ModelErrorState) {
                 log('Error: ${state.message.message}');
@@ -219,7 +225,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                 IconButton(
                   icon: const Icon(Icons.remove_red_eye, color: Colors.pinkAccent),
                   onPressed: () {
-                    showEventDetails(context, event, eventBloc);
+                    localEvents.contains(event) ? showEventDetails(context, event, eventBloc , isLocalEvent:  true) : showEventDetails(context, event, eventBloc , isLocalEvent:  false);
                   },
                 ),
               ],
