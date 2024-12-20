@@ -58,7 +58,7 @@ void showEventDetails(BuildContext context, Event event, EventBloc eventBloc) {
           const SizedBox(height: 16),
           Center(
             child: Text(
-              'On: ${DateFormat("dd/MM/yyyy").format(event.eventDate)}',
+              'On: ${DateFormat("dd/MM/yyyy").format(DateTime.parse(event.eventDate))}',
               style: const TextStyle(
                   fontSize: 16,
                   color: Colors.white70,

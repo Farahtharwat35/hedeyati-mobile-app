@@ -1,10 +1,8 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:hedeyati/models/model.dart';
 
-import '../helpers/timestampToDateTimeConverter.dart';
 
 part 'event.g.dart';
 @JsonSerializable()
@@ -17,8 +15,7 @@ class Event extends Model {
   final String name;
   final String description;
   final int categoryID;
-  final DateTime eventDate;
-  final int status;
+  final String eventDate;
 
   Event({
     this.id,
@@ -27,7 +24,6 @@ class Event extends Model {
     required this.description,
     required this.categoryID,
     required this.eventDate,
-    required this.status,
     required this.image
   });
 
@@ -37,7 +33,7 @@ class Event extends Model {
     String? name,
     String? description,
     int? categoryID,
-    DateTime? eventDate,
+    String? eventDate,
     int? status,
     String? createdBy,
     DateTime? createdAt,
@@ -53,7 +49,6 @@ class Event extends Model {
       description: description ?? this.description,
       categoryID: categoryID ?? this.categoryID,
       eventDate: eventDate ?? this.eventDate,
-      status: status ?? this.status,
     );
   }
 
@@ -117,13 +112,12 @@ class Event extends Model {
       name: '',
       description: '',
       categoryID: 0,
-      eventDate: DateTime.now(),
-      status: 0,
+      eventDate: DateTime.now().toIso8601String(),
     );
   }
 
   @override
   String toString() {
-    return 'Event{firestoreUserID: $firestoreUserID, image: $image, name: $name, description: $description, categoryID: $categoryID, eventDate: $eventDate, status: $status, createdAt: $createdAt, deletedAt: $deletedAt}';
+    return 'Event{firestoreUserID: $firestoreUserID, image: $image, name: $name, description: $description, categoryID: $categoryID, eventDate: $eventDate, createdAt: $createdAt, deletedAt: $deletedAt}';
   }
 }

@@ -145,7 +145,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
           } else if (state is ModelErrorState) {
             username = 'Error loading username';
           }
-
+          DateTime eventDate = DateTime.parse(event.eventDate);
           return ListTile(
             leading: CircleAvatar(
               backgroundImage: NetworkImage(event.image.isNotEmpty
@@ -164,7 +164,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${event.eventDate.day}/${event.eventDate.month}/${event.eventDate.year}",
+                  "${eventDate.day}/${eventDate.month}/${eventDate.year}",
                   style: const TextStyle(
                       color: Colors.grey,
                       fontSize: 14,

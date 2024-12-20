@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
@@ -35,7 +37,7 @@ class _EditEventPageState extends State<EditEvent> {
     _nameController = TextEditingController(text: widget.event.name);
     _descriptionController = TextEditingController(text: widget.event.description);
     _categoryIDController = TextEditingController(text: widget.event.categoryID.toString());
-    _eventDateController = TextEditingController(text: widget.event.eventDate.toIso8601String());
+    _eventDateController = TextEditingController(text: widget.event.eventDate);
   }
 
   @override
@@ -95,7 +97,7 @@ class _EditEventPageState extends State<EditEvent> {
                                     name: _nameController.text,
                                     description: _descriptionController.text,
                                     categoryID: int.parse(_categoryIDController.text),
-                                    eventDate: DateTime.parse(_eventDateController.text),
+                                    eventDate: DateTime.parse(_eventDateController.text).toIso8601String(),
                                     updatedAt: DateTime.now(),
                                   );
                                   widget.eventBloc.add(UpdateModel(updatedEvent));

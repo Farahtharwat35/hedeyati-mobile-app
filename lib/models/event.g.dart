@@ -12,8 +12,7 @@ Event _$EventFromJson(Map<String, dynamic> json) => Event(
       name: json['name'] as String,
       description: json['description'] as String,
       categoryID: (json['categoryID'] as num).toInt(),
-      eventDate: DateTime.parse(json['eventDate'] as String),
-      status: (json['status'] as num).toInt(),
+      eventDate: json['eventDate'] as String,
       image: json['image'] as String,
     )
       ..createdAt = json['createdAt'] as String?
@@ -32,6 +31,5 @@ Map<String, dynamic> _$EventToJson(Event instance) => <String, dynamic>{
       'name': instance.name,
       'description': instance.description,
       'categoryID': instance.categoryID,
-      'eventDate': instance.eventDate.toIso8601String(),
-      'status': instance.status,
+      'eventDate': instance.eventDate,
     };

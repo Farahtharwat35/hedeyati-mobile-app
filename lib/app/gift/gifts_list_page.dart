@@ -151,7 +151,7 @@ class _GiftListPageState extends State<GiftListPage> {
                     context.read<GiftBloc>(),
                     context.read<GiftCategoryBloc>(),
                     FirebaseAuth.instance.currentUser!.uid,
-                    event.eventDate,
+                    DateTime.parse(event.eventDate),
                   );
                 },
               ),

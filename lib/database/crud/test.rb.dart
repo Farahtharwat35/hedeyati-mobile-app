@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var dbInstance = await SqliteConnectionFactory();
   try {
-    // await dbInstance.deleteDatabaseFile();
+    await dbInstance.deleteDatabaseFile();
     final db = await dbInstance.openConnection();
     final version = await db.getVersion();
     print('Database version: $version');
@@ -18,6 +18,8 @@ void main() async {
     await getTableSchema(db, 'GiftCategory');
     await getTableData(db, 'GiftCategory');
     await SqliteDatabaseCRUD.getAll('GiftCategory');
+    await SqliteDatabaseCRUD.getAll('Event');
+    await getTableData(db, 'Event');
   } catch (e) {
     print('Error: $e');
   }
