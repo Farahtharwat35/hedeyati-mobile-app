@@ -49,7 +49,10 @@ class Event extends Model {
       description: description ?? this.description,
       categoryID: categoryID ?? this.categoryID,
       eventDate: eventDate ?? this.eventDate,
-    );
+    ) ..createdAt = this.createdAt
+      ..updatedAt = this.updatedAt
+      ..deletedAt = this.deletedAt
+      ..isDeleted = isDeleted;
   }
 
 

@@ -81,7 +81,7 @@ class EventBloc extends ModelBloc<Event> {
     try {
       await SqliteDatabaseCRUD.alterModel('Event', AlterType.update, event.event.toJson(), where: 'id = ?', whereArgs: [event.event.id]);
       log('***********Updating event locally [EVENT UPDATED]***********');
-      emit(ModelSuccessState(message: Response(success: true, message: 'Event updated successfully')));
+      emit(ModelUpdatedState(event.event));
     } catch (e) {
       log('***********Updating event locally [EVENT ERROR]***********');
       emit(ModelErrorState(message: Response(success: false, message: e.toString())));

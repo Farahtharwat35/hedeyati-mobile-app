@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var dbInstance = await SqliteConnectionFactory();
   try {
-    await dbInstance.deleteDatabaseFile();
+    // await dbInstance.deleteDatabaseFile();
     final db = await dbInstance.openConnection();
     final version = await db.getVersion();
     print('Database version: $version');

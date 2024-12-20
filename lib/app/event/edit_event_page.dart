@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:hedeyati/app/reusable_components/build_text_field_widget.dart';
 import 'package:hedeyati/bloc/events/event_bloc.dart';
+import 'package:hedeyati/bloc/events/event_events.dart';
 import 'package:hedeyati/bloc/generic_bloc/generic_crud_events.dart';
 import 'package:hedeyati/models/event.dart';
 import 'package:hedeyati/app/reusable_components/app_theme.dart';
@@ -12,9 +13,10 @@ import 'package:intl/intl.dart';
 
 class EditEvent extends StatefulWidget {
   final Event event;
+  final bool isLocalEvent;
   final EventBloc eventBloc;
 
-  const EditEvent({Key? key, required this.event, required this.eventBloc}) : super(key: key);
+  const EditEvent({Key? key, required this.event, required this.eventBloc , required this.isLocalEvent}) : super(key: key);
 
   @override
   State<EditEvent> createState() => _EditEventPageState();
@@ -100,11 +102,19 @@ class _EditEventPageState extends State<EditEvent> {
                                     eventDate: DateTime.parse(_eventDateController.text).toIso8601String(),
                                     updatedAt: DateTime.now(),
                                   );
-                                  widget.eventBloc.add(UpdateModel(updatedEvent));
-                                  if (widget.eventBloc.state is ModelUpdatedState) {
+                                  widget.isLocalEvent ? widget.eventBloc.add(UpdateEventLocally(updatedEvent)) : widget.eventBloc.add(UpdateModel(updatedEvent));
+                                  if(widget.eventBloc is ModelLoadingState){
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Event updated successfully!' , style: TextStyle(fontWeight: FontWeight.bold , fontStyle: FontStyle.italic)), backgroundColor: Colors.pinkAccent),
+                                      const SnackBar(content: Text('Updating event...' , style: TextStyle(fontWeight: FontWeight.bold , fontStyle: FontStyle.italic)), backgroundColor: Colors.pinkAccent),
                                     );
+                                  }
+                                  else if (widget.eventBloc.state is ModelUpdatedState) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text('Event updated successfully!' , style: TextStyle(fontWeight: FontWeight.bold , fontStyle: FontStyle.italic)), backgroundColor: Colors.pinkAccent , duration: Duration(seconds: 1)),
+                                    );
+                                  }
+                                  else if (widget.eventBloc.state is ModelLoadedState){
+                                    CircularProgressIndicator();
                                   }
                                   else{
                                     ScaffoldMessenger.of(context).showSnackBar(

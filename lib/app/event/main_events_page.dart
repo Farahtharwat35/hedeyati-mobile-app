@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,8 +39,8 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
     _mainTabController = TabController(length: 2, vsync: this);
     _mainTabController.addListener(_onTabChanged);
     eventBloc = context.read<EventBloc>();
-    userBloc = context.read<UserBloc>();
     eventBloc.add(GetEventsLocally());
+    userBloc = context.read<UserBloc>();
   }
 
   @override
@@ -74,7 +73,12 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          BlocBuilder<EventBloc,ModelStates>(
+          BlocConsumer<EventBloc,ModelStates>(
+            listener: (context, state) {
+              if (state is ModelUpdatedState) {
+                context.read<EventBloc>().add(GetEventsLocally());
+              }
+            },
             builder: (context, state) {
               if (state is ModelLoadedState) {
                 localEvents = state.models as List<Event>;
@@ -134,10 +138,10 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                                     _buildEventTile(context, event, eventBloc))
                                 .toList(),
                           );
-                          content.addAll(localEvents
+                          if (_mainTabController.index == 0) {content.addAll(localEvents
                               .map((event) =>
                                   _buildEventTile(context, event, eventBloc))
-                              .toList());
+                              .toList());}
                         }
                         return buildCard(context, content);
                       },
@@ -207,8 +211,7 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              EditEvent(event: event, eventBloc: eventBloc),
+                          builder: (context) => localEvents.contains(event) ? EditEvent(event: event, eventBloc: eventBloc, isLocalEvent: true) : EditEvent(event: event, eventBloc: eventBloc , isLocalEvent: false),
                         ),
                       );
                     },
@@ -244,6 +247,4 @@ class _EventsPageState extends State<EventsPage> with TickerProviderStateMixin {
       ),
     );
   }
-
-
 }
