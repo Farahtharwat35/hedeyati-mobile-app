@@ -28,9 +28,6 @@ class _AddGiftPage extends State<AddGift> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _storesLocationRecommendationController =
-      TextEditingController();
-
   late GiftCategoryBloc giftCategoryBloc;
   late EventBloc eventBloc;
   late GiftBloc giftBloc;
@@ -137,14 +134,6 @@ class _AddGiftPage extends State<AddGift> {
                                 'labelText': 'Estimated Price (in \$)',
                                 'prefixIcon': Icons.attach_money,
                                 'keyboardType': TextInputType.number,
-                              },
-                            ),
-                            buildTextField(
-                              controller:
-                                  _storesLocationRecommendationController,
-                              args: {
-                                'labelText': 'Recommended Stores',
-                                'prefixIcon': Icons.shopping_bag_outlined,
                               },
                             ),
                             const SizedBox(height: 20),

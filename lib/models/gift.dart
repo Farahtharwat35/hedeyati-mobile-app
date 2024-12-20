@@ -19,7 +19,6 @@ class Gift extends Model {
   final DateTime? pledgedDate;
   final double price;
   final String categoryID;
-  final String? storesLocationRecommendation;
 
   Gift({
     this.id,
@@ -33,7 +32,6 @@ class Gift extends Model {
     this.pledgedDate,
     required this.price,
     required this.categoryID,
-    this.storesLocationRecommendation,
   }) ;
 
   Gift copyWith({
@@ -47,7 +45,6 @@ class Gift extends Model {
     DateTime? pledgedDate,
     double? price,
     String? categoryID,
-    String? storesLocationRecommendation,
   }) {
     return Gift(
       id: this.id,
@@ -61,7 +58,6 @@ class Gift extends Model {
       pledgedDate: pledgedDate ?? this.pledgedDate,
       price: price ?? this.price,
       categoryID: this.categoryID,
-      storesLocationRecommendation: storesLocationRecommendation ?? this.storesLocationRecommendation,
     ).. createdAt = createdAt
       .. updatedAt = updatedAt
       .. isDeleted = isDeleted;
@@ -94,7 +90,7 @@ class Gift extends Model {
 
   @override
   String toString() {
-    return 'Gift{id: $id, firestoreUserID: $firestoreUserID, eventID: $eventID, description: $description, photoUrl: $photoUrl, isPledged: $isPledged, pledgedBy: $pledgedBy, pledgedDate: $pledgedDate, price: $price, categoryID: $categoryID, storesLocationRecommendation: $storesLocationRecommendation, createdAt: $createdAt, updatedAt: $updatedAt}';
+    return 'Gift{id: $id, firestoreUserID: $firestoreUserID, eventID: $eventID, description: $description, photoUrl: $photoUrl, isPledged: $isPledged, pledgedBy: $pledgedBy, pledgedDate: $pledgedDate, price: $price, categoryID: $categoryID, createdAt: $createdAt, updatedAt: $updatedAt}';
   }
 
 }

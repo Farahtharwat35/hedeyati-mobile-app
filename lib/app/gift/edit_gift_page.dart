@@ -18,9 +18,8 @@ class EditGift extends StatefulWidget {
   final Gift gift;
   final GiftCategoryBloc giftCategoryBloc;
   final GiftBloc giftBloc;
-  final EventBloc eventBloc;
 
-  const EditGift({super.key, required this.giftCategoryBloc ,required this.giftBloc, required this.gift , required this.eventBloc});
+  const EditGift({super.key, required this.giftCategoryBloc ,required this.giftBloc, required this.gift});
 
   @override
   State<EditGift> createState() => _EditGiftPage();
@@ -43,9 +42,6 @@ class _EditGiftPage extends State<EditGift> {
     _nameController = TextEditingController(text: widget.gift.name);
     _descriptionController = TextEditingController(text: widget.gift.description);
     _priceController = TextEditingController(text: widget.gift.price.toString());
-    _storesLocationRecommendationController =
-        TextEditingController(text: widget.gift.storesLocationRecommendation);
-
     selectedCategoryId = widget.gift.categoryID;
     selectedEventId = widget.gift.eventID;
     widget.giftCategoryBloc.add(GetAllGiftCategoriesEvent());
@@ -100,114 +96,115 @@ class _EditGiftPage extends State<EditGift> {
               );
             });
           }
-          return Center(
-            child: SingleChildScrollView(
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16.0),
-                ),
-                elevation: 8,
-                shadowColor: Colors.black.withOpacity(0.8),
-                color: const Color(0xFFF1F1F1),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _header(),
-                      const SizedBox(height: 20),
-                      Form(
-                        key: _formKey,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            buildTextField(
-                              controller: _nameController,
-                              args: {
-                                'labelText': 'Gift Name',
-                                'prefixIcon': Icons.card_membership,
-                              },
-                            ),
-                            buildTextField(
-                              controller: _descriptionController,
-                              args: {
-                                'labelText': 'Gift Description',
-                                'prefixIcon': Icons.card_giftcard,
-                              },
-                            ),
-                            buildTextField(
-                              controller: _priceController,
-                              args: {
-                                'labelText': 'Estimated Price (in \$)',
-                                'prefixIcon': Icons.attach_money,
-                                'keyboardType': TextInputType.number,
-                              },
-                            ),
-                            buildTextField(
-                              controller: _storesLocationRecommendationController,
-                              args: {
-                                'labelText': 'Recommended Stores',
-                                'prefixIcon': Icons.shopping_bag_outlined,
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            BlocBuilder<GiftCategoryBloc, ModelStates>(
-                              builder: (context, state) {
-                                if (state is ModelLoadingState) {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                } else if (state is ModelLoadedState) {
-                                  final categories = state.models as List<GiftCategory>;
-                                  return _buildCategoryDropdown(categories);
-                                } else {
-                                  return const Center(
-                                      child: Text('Failed to load categories'));
-                                }
-                              },
-                            ),
-                            const SizedBox(height: 20),
-                            _buildEventDropdown(),
-                            const SizedBox(height: 20),
-                            Center(
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 12, horizontal: 40),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16)),
-                                  backgroundColor:
-                                  Theme.of(context).colorScheme.primary,
-                                  foregroundColor:
-                                  Theme.of(context).colorScheme.onPrimary,
+          return BlocBuilder<EventBloc, ModelStates>(
+            builder: (context , state) {
+              return AsyncBuilder<void>(
+                future: EventBloc.get(context).initializeStreams(),
+                builder: (context , _) {
+                  return Center(
+                    child: SingleChildScrollView(
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        elevation: 8,
+                        shadowColor: Colors.black.withOpacity(0.8),
+                        color: const Color(0xFFF1F1F1),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _header(),
+                              const SizedBox(height: 20),
+                              Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    buildTextField(
+                                      controller: _nameController,
+                                      args: {
+                                        'labelText': 'Gift Name',
+                                        'prefixIcon': Icons.card_membership,
+                                      },
+                                    ),
+                                    buildTextField(
+                                      controller: _descriptionController,
+                                      args: {
+                                        'labelText': 'Gift Description',
+                                        'prefixIcon': Icons.card_giftcard,
+                                      },
+                                    ),
+                                    buildTextField(
+                                      controller: _priceController,
+                                      args: {
+                                        'labelText': 'Estimated Price (in \$)',
+                                        'prefixIcon': Icons.attach_money,
+                                        'keyboardType': TextInputType.number,
+                                      },
+                                    ),
+                                    const SizedBox(height: 20),
+                                    BlocBuilder<GiftCategoryBloc, ModelStates>(
+                                      builder: (context, state) {
+                                        if (state is ModelLoadingState) {
+                                          return const Center(
+                                              child: CircularProgressIndicator());
+                                        } else if (state is ModelLoadedState) {
+                                          final categories = state.models as List<GiftCategory>;
+                                          return _buildCategoryDropdown(categories);
+                                        } else {
+                                          return const Center(
+                                              child: Text('Failed to load categories'));
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(height: 20),
+                                    _buildEventDropdown(),
+                                    const SizedBox(height: 20),
+                                    Center(
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12, horizontal: 40),
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(16)),
+                                          backgroundColor:
+                                          Theme.of(context).colorScheme.primary,
+                                          foregroundColor:
+                                          Theme.of(context).colorScheme.onPrimary,
+                                        ),
+                                        onPressed: () async {
+                                          if (_formKey.currentState!.validate() &&
+                                              selectedCategoryId != null &&
+                                              selectedEventId != null) {
+                                            final updatedGift = widget.gift.copyWith(
+                                              id: widget.gift.id,
+                                              eventID: selectedEventId!,
+                                              name: _nameController.text,
+                                              description: _descriptionController.text,
+                                              price: double.parse(_priceController.text),
+                                              categoryID: selectedCategoryId!,
+                                            );
+                                            GiftBloc.get(context).add(UpdateModel(updatedGift));
+                                          }
+                                        },
+                                        child: const Text('Update Gift',
+                                            style: TextStyle(fontSize: 18)),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate() &&
-                                      selectedCategoryId != null &&
-                                      selectedEventId != null) {
-                                    final updatedGift = widget.gift.copyWith(
-                                      id: widget.gift.id,
-                                      eventID: selectedEventId!,
-                                      name: _nameController.text,
-                                      description:
-                                      _descriptionController.text,
-                                      price: double.parse(_priceController.text),
-                                      categoryID: selectedCategoryId!,
-                                    );
-                                    GiftBloc.get(context).add(UpdateModel(updatedGift));
-                                  }
-                                },
-                                child: const Text('Update Gift',
-                                    style: TextStyle(fontSize: 18)),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                    ),
+                  );
+                }
+              );
+            }
           );
         },
       ),
@@ -247,7 +244,7 @@ class _EditGiftPage extends State<EditGift> {
 
   Widget _buildEventDropdown() {
     return AsyncBuilder<List<Event>>(
-      stream: widget.eventBloc.myEventsStream,
+      stream: EventBloc.get(context).myEventsStream,
       waiting: (context) => const Center(child: CircularProgressIndicator()),
       error: (context, error, stack) {
         debugPrint('Error: $error');

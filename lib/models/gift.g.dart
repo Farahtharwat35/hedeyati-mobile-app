@@ -20,8 +20,6 @@ Gift _$GiftFromJson(Map<String, dynamic> json) => Gift(
           : DateTime.parse(json['pledgedDate'] as String),
       price: (json['price'] as num).toDouble(),
       categoryID: json['categoryID'] as String,
-      storesLocationRecommendation:
-          json['storesLocationRecommendation'] as String?,
     )
       ..createdAt = json['createdAt'] as String?
       ..updatedAt = json['updatedAt'] as String?
@@ -44,5 +42,4 @@ Map<String, dynamic> _$GiftToJson(Gift instance) => <String, dynamic>{
       'pledgedDate': instance.pledgedDate?.toIso8601String(),
       'price': instance.price,
       'categoryID': instance.categoryID,
-      'storesLocationRecommendation': instance.storesLocationRecommendation,
     };

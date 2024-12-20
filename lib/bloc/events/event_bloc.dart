@@ -24,8 +24,8 @@ class EventBloc extends ModelBloc<Event> {
     on<GetEventsLocally>(getAllLocalEvents);
   }
 
-  late Stream<List<Event>> _myEventsStream;
-  late Stream<List<Event>> _friendsEventsStream;
+  Stream<List<Event>>? _myEventsStream;
+  Stream<List<Event>>? _friendsEventsStream;
 
   Future<void> initializeStreams() async {
 
@@ -122,7 +122,7 @@ class EventBloc extends ModelBloc<Event> {
   }
 
   static EventBloc get(context) => BlocProvider.of(context);
-  Stream<List<Event>> get myEventsStream => _myEventsStream;
-  Stream<List<Event>> get friendsEventsStream => _friendsEventsStream;
+  Stream<List<Event>> get myEventsStream => _myEventsStream?? Stream.value([]);
+  Stream<List<Event>> get friendsEventsStream => _friendsEventsStream?? Stream.value([]);
 
 }

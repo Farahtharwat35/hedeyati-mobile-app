@@ -128,13 +128,12 @@ class _GiftListPageState extends State<GiftListPage> {
                         providers: [
                           BlocProvider.value(value: giftBloc),
                           BlocProvider.value(value: giftCategoryBloc),
-                          BlocProvider.value(value: widget.eventBloc)
+                          BlocProvider(create: (_) => EventBloc()),
                         ],
                         child: EditGift(
                             gift: gift,
                             giftBloc: giftBloc,
                             giftCategoryBloc: giftCategoryBloc,
-                            eventBloc: EventBloc(),
                         ),
                       ),
                     ),
