@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
       child: BlocBuilder<GiftCategoryBloc, ModelStates>(
         builder: (context, state) => Scaffold(
           body: Column(
-            children: [const MySearchBar(), MultiBlocProvider(providers: [
+            children: [MultiBlocProvider(providers: [
             BlocProvider<FriendshipBloc>(
               lazy: false,
               create: (_) => FriendshipBloc(userID: FirebaseAuth.instance.currentUser!.uid)..initializeStreams(),
