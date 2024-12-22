@@ -22,8 +22,8 @@ void main() {
     expect(passwordField, findsOneWidget);
     expect(loginButton, findsOneWidget);
 
-    await tester.enterText(emailField, 'may@gmail.com');
-    await tester.enterText(passwordField, '@may25');
+    await tester.enterText(emailField, 'farahtharwat35gmail.com');
+    await tester.enterText(passwordField, '@rou7a25');
     await tester.tap(loginButton);
 
     await tester.pumpAndSettle(const Duration(seconds: 5));

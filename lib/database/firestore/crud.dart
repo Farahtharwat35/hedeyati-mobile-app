@@ -74,7 +74,7 @@ class CRUD<GenericModel extends Model> {
   }
 
   Future<void> delete(GenericModel model) {
-    return model.getReference().doc(model.id).update({'isDeleted': true , 'deletedAt': DateTime.now()});
+    return model.getReference().doc(model.id).update({'isDeleted': true , 'deletedAt': DateTime.now().toIso8601String()});
   }
 }
 

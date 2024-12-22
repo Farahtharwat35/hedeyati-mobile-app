@@ -111,6 +111,11 @@ class _FriendsListState extends State<FriendsList> {
                         ? friendWidgets
                         : [
                       Center(
+                      child: Text(
+                      "Friends",
+                      style: myTheme.textTheme.headlineMedium,
+                    )),
+                      Center(
                         child: Text(
                           "No friends found.",
                           style: myTheme.textTheme.bodyMedium,
@@ -143,6 +148,11 @@ class _FriendsListState extends State<FriendsList> {
         } else {
           log("No friendships found.");
           return buildCard(context, [
+            Center(
+                child: Text(
+                  "Friends",
+                  style: myTheme.textTheme.headlineMedium,
+                )),
             Center(child: Text("No friends found."))
           ]);
         }
