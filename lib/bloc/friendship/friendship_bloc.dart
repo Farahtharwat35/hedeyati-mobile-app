@@ -25,46 +25,87 @@ class FriendshipBloc extends ModelBloc<Friendship> {
   final FriendshipCRUD friendshipCRUD = FriendshipCRUD();
 
   void initializeStreams() {
-    List<Map<String, QueryArg>> queryArgs = [{'members' : QueryArg(arrayContains: userID)} , {'friendshipStatusID': QueryArg(isEqualTo: FriendshipStatus.accepted.index)}, {'isDeleted': QueryArg(isEqualTo: false)}];
+    List<Map<String, QueryArg>> queryArgs = [
+      {'members': QueryArg(arrayContains: userID)},
+      {
+        'friendshipStatusID':
+            QueryArg(isEqualTo: FriendshipStatus.accepted.index)
+      },
+      {'isDeleted': QueryArg(isEqualTo: false)}
+    ];
 
-    _friendshipStream = friendshipCRUD.getSnapshotsWhere(queryArgs)
-        .map((snapshot) => snapshot.docs.map((doc) => doc.data() as Friendship).toList());
+    _friendshipStream = friendshipCRUD.getSnapshotsWhere(queryArgs).map(
+        (snapshot) =>
+            snapshot.docs.map((doc) => doc.data() as Friendship).toList());
   }
 
-  Future<void> addFriend(AddFriend addFriend , Emitter emit) async{
+  Future<void> addFriend(AddFriend addFriend, Emitter emit) async {
     emit(ModelLoadingState());
+
     //  Checking if you are not adding yourself as a friend
     if (addFriend.friendship.recieverID == addFriend.friendship.requesterID) {
       log('***********You can not add yourself as a friend***********');
-      emit(ModelErrorState(message: Response(success: false, message:'You can not add yourself as a friend')));
+      emit(ModelErrorState(
+          message: Response(
+              success: false,
+              message: 'You can not add yourself as a friend')));
       return;
     }
-    List<Friendship> friends = await friendshipCRUD.getMyFriendships(addFriend.friendship.requesterID);
+    List<Friendship> friends =
+        await friendshipCRUD.getMyFriendships(addFriend.friendship.requesterID);
     if (friends.isEmpty) {
-    try {
-      List<String> pendingFriendRequests = await friendshipCRUD.getMyPendingFriendsIDs(addFriend.friendship.requesterID);
-      if(pendingFriendRequests.contains(addFriend.friendship.recieverID)){
-        log('***********You have already sent a friend request to this user***********');
-        emit(ModelErrorState(message: Response(success: false, message: 'You have already sent a friend request to this user')));
-        return;
+      try {
+        List<String> pendingFriendRequests = await friendshipCRUD
+            .getMyPendingFriendsIDs(addFriend.friendship.requesterID);
+        if (pendingFriendRequests
+            .contains(addFriend.friendship.recieverID) &&
+            addFriend.friendship.requesterID == userID) {
+          log('***********You have a pending friend request from this friend***********');
+          emit(ModelErrorState(
+              message: Response(
+                  success: false,
+                  message:
+                      'You have a pending friend request from this friend')));
+          return;
+        } else if (pendingFriendRequests
+            .contains(addFriend.friendship.recieverID)) {
+          log('***********You have already sent a friend request to this user***********');
+          emit(ModelErrorState(
+              message: Response(
+                  success: false,
+                  message:
+                      'You have already sent a friend request to this user')));
+          return;
+        }
+        friendshipCRUD.add(model: addFriend.friendship);
+        log('***********Friendship added successfully***********');
+        emit(ModelAddedState(addFriend.friendship));
+      } catch (e) {
+        log('***********Failed to add model: $e***********');
+        emit(ModelErrorState(
+            message:
+                Response(success: false, message: 'Failed to add model: $e')));
       }
-      friendshipCRUD.add(model:addFriend.friendship);
-      log('***********Friendship added successfully***********');
-      emit(ModelAddedState(addFriend.friendship));
-    } catch (e) {
-      log('***********Failed to add model: $e***********');
-      emit(ModelErrorState(message: Response(success: false, message: 'Failed to add model: $e')));
     }
-  }else {
+    else {
       log('***********You are already friends***********');
-      emit(ModelErrorState(message: Response(success: false, message: 'You are already friends')));
+      emit(ModelErrorState(
+          message:
+              Response(success: false, message: 'You are already friends')));
     }
   }
 
-  Future<void> getMyFriendsModels(GetMyFriendsList myFriendships , Emitter emit) async{
-    List<String> friendsIDs = myFriendships.friendships.map((friendship) => friendship.requesterID == userID ? friendship.recieverID : friendship.requesterID).toList();
+  Future<void> getMyFriendsModels(
+      GetMyFriendsList myFriendships, Emitter emit) async {
+    List<String> friendsIDs = myFriendships.friendships
+        .map((friendship) => friendship.requesterID == userID
+            ? friendship.recieverID
+            : friendship.requesterID)
+        .toList();
     // I want to get the users by IDs
-    List<Map<String, QueryArg>> queryArgs = [{'id': QueryArg(whereIn: friendsIDs)}];
+    List<Map<String, QueryArg>> queryArgs = [
+      {'id': QueryArg(whereIn: friendsIDs)}
+    ];
     List<User.User> friends = await userCRUD.getWhere(queryArgs);
     if (friends.isEmpty) {
       emit(ModelEmptyState());
@@ -81,61 +122,83 @@ class FriendshipBloc extends ModelBloc<Friendship> {
   //   }
   // }
 
-  Future<void> updateFriendRequestStatus(FriendRequestUpdateStatus friendRequest , Emitter emit) async{
+  Future<void> updateFriendRequestStatus(
+      FriendRequestUpdateStatus friendRequest, Emitter emit) async {
     log('***********Friend Request Update Status Event Triggered***********');
     late Friendship friendship;
     try {
-      List<Friendship> friendships = await friendshipCRUD.getWhere([{'requesterID': QueryArg(isEqualTo: friendRequest.requesterID), 'recieverID': QueryArg(isEqualTo: friendRequest.recieverID)}]);
-      if(friendships.isEmpty) {
-          log('***********No friend request found***********');
-          emit(ModelEmptyState());
-          return;
-        };
+      List<Friendship> friendships = await friendshipCRUD.getWhere([
+        {
+          'requesterID': QueryArg(isEqualTo: friendRequest.requesterID),
+          'recieverID': QueryArg(isEqualTo: friendRequest.recieverID)
+        }
+      ]);
+      if (friendships.isEmpty) {
+        log('***********No friend request found***********');
+        emit(ModelEmptyState());
+        return;
+      }
+      ;
       if (friendRequest.accept) {
         log('***********Updating Friendship status to be accepted ... ***********');
-        friendship = friendships.first.copyWith(id:friendships.first.id,friendshipStatusID: FriendshipStatus.accepted.index);
+        friendship = friendships.first.copyWith(
+            id: friendships.first.id,
+            friendshipStatusID: FriendshipStatus.accepted.index);
         log('-----------------Friendship After Update: $friendship-----------------');
       } else {
         log('***********Updating Friendship status to be rejected ... ***********');
-        friendship =  friendships.first.copyWith(
+        friendship = friendships.first.copyWith(
           id: friendships.first.id,
           friendshipStatusID: FriendshipStatus.rejected.index,
           isDeleted: true,
           deletedAt: DateTime.now().toIso8601String(),
         );
       }
-      try{
+      try {
         await friendshipCRUD.update(friendship);
         log('***********Friendship status updated successfully***********');
         emit(ModelUpdatedState(friendship));
       } catch (e) {
         log('***********Failed to update model: $e***********');
-        emit(ModelErrorState(message: Response(success: false, message: 'Failed to update model: $e')));
+        emit(ModelErrorState(
+            message: Response(
+                success: false, message: 'Failed to update model: $e')));
       }
     } catch (e) {
-      emit(ModelErrorState(message: Response(success: false, message: 'Failed to update model: $e')));
+      emit(ModelErrorState(
+          message:
+              Response(success: false, message: 'Failed to update model: $e')));
     }
   }
 
-  Future<void> getFriendRequestStatus(GetFriendRequestStatus friendRequest , Emitter emit) async{
+  Future<void> getFriendRequestStatus(
+      GetFriendRequestStatus friendRequest, Emitter emit) async {
     log('***********Friend Request Status Event Triggered***********');
     try {
-      List<Friendship> friendships = await friendshipCRUD.getWhere([{'requesterID': QueryArg(isEqualTo: friendRequest.requesterID), 'recieverID': QueryArg(isEqualTo: friendRequest.recieverID)}]);
-      if(friendships.isEmpty) {
+      List<Friendship> friendships = await friendshipCRUD.getWhere([
+        {
+          'requesterID': QueryArg(isEqualTo: friendRequest.requesterID),
+          'recieverID': QueryArg(isEqualTo: friendRequest.recieverID)
+        }
+      ]);
+      if (friendships.isEmpty) {
         log('***********No friend request found***********');
         emit(ModelEmptyState());
         return;
-      };
+      }
+      ;
       log('***********Friend Request Found***********');
       log('***********Friendship Status: ${friendships.first.friendshipStatusID} for notification ${friendRequest.notificationID} ***********');
-      emit(FriendshipStatusLoaded(friendships.first.friendshipStatusID!, friendRequest.notificationID));
+      emit(FriendshipStatusLoaded(
+          friendships.first.friendshipStatusID!, friendRequest.notificationID));
     } catch (e) {
-      emit(ModelErrorState(message: Response(success: false, message: 'Failed to get model: $e')));
+      emit(ModelErrorState(
+          message:
+              Response(success: false, message: 'Failed to get model: $e')));
     }
   }
 
   Stream<List<Friendship>> get myFriendsStream => _friendshipStream;
 
   static FriendshipBloc get(context) => BlocProvider.of(context);
-
 }

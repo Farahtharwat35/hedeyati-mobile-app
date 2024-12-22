@@ -22,10 +22,11 @@ void main() {
     expect(passwordField, findsOneWidget);
     expect(loginButton, findsOneWidget);
 
-    await tester.enterText(emailField, 'farahtharwat35gmail.com');
-    await tester.enterText(passwordField, '@rou7a25');
-    await tester.tap(loginButton);
+    await tester.enterText(emailField, 'Farahtharwat35@gmail.com');
 
+    await tester.enterText(passwordField, '@rou7a25');
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await tester.tap(loginButton);
     await tester.pumpAndSettle(const Duration(seconds: 5));
 
     final homeScreen = find.byIcon(Icons.home);
@@ -60,7 +61,7 @@ void main() {
 
     expect(eventScreen, findsOneWidget);
 
-    final eventName = find.text('My Weddinggg');
+    final eventName = find.text('wedding');
     expect(eventName, findsOneWidget);
 
     final othersEvent = find.text('Others Events');

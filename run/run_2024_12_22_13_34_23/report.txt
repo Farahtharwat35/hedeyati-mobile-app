@@ -1,0 +1,8 @@
+TC: 
+    PATH      : test/integration_test.dart
+    STATUS    : PASSED
+    Duration  : 212
+    Idle time : 185
+    Output:   : test/recording.mp4
+________________________________________________________________________________________
+

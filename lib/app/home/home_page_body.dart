@@ -111,11 +111,6 @@ class _FriendsListState extends State<FriendsList> {
                         ? friendWidgets
                         : [
                       Center(
-                      child: Text(
-                      "Friends",
-                      style: myTheme.textTheme.headlineMedium,
-                    )),
-                      Center(
                         child: Text(
                           "No friends found.",
                           style: myTheme.textTheme.bodyMedium,
